@@ -1,0 +1,31 @@
+version: '3.5'
+
+services:
+  app:
+    build: .
+    volumes:
+      - ./:/app
+    working_dir: /app
+  
+  webserver:
+    image: nginx:latest
+    ports:
+      - 8000:80
+    volumes:
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+
+  db:
+    container_name: symfony_db
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "dbCalendario"
+      MYSQL_USER: "usuario"
+      MYSQL_PASSWORD: "usuario"
+    ports:
+      - 3306:3306
+    volumes:
+      - symfony-data:/var/lib/mysql
+
+volumes:
+  symfony-data:

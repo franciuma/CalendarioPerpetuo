@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calendario{% endblock %}
+
+{% block stylesheets %}
+  <link href="{{ asset('css/calendario.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <table>
+        <tr>
+            {% for j in 0..5%}
+                <td>
+                    <table>
+                        <caption>{{ meses[mes+j] }} {{ ano }}</caption>
+
+                        <tr>
+                            {% for dia in dias_semana %}
+                                <th>{{ dia }}</th>
+                            {% endfor %}
+                        </tr>
+
+                        {% set primer_dia = primer_dia_de_cada_mes[j] %}
+                        {% set ultimo_dia = ultimo_dia_de_cada_mes[j] %}
+
+                        <tr>
+                            {% if primer_dia != 0%}
+                                {% for i in 0..primer_dia-1 %}
+                                    <td></td>
+                                {% endfor %}
+                            {% endif %}
+                            
+                            {% for dia in 1..ultimo_dia %}
+                                {% if primer_dia == 7 %}
+                                {% set primer_dia = 0 %}
+                                </tr><tr>
+                                {% endif %}
+                                <td>
+                                    {{ dia }}
+                                </td>
+                                {% set primer_dia = primer_dia+1 %}
+                            {% endfor %}
+
+                            {% for i in primer_dia..7 %}
+                                <td></td>
+                            {% endfor %}
+                        </tr>
+                    </table>
+                </td> 
+
+                {% if j == 2 %}
+                </tr><tr> 
+                {% endif %}
+
+            {% endfor %}
+        </tr>
+    </table>
+{% endblock %}
