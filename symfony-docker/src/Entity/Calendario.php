@@ -60,19 +60,19 @@ class Calendario
         return $this->mes;
     }
 
+    public function getMeses(): array
+    {
+        return $this->meses;
+    }
+
     public function getAnio(): string
     {
         return $this->anio;
     }
 
-    public function getUltimoDiaMes(): string
+    public function getDiasSemana(): array
     {
-        return $this->UltimoDiaMes;
-    }
-
-    public function getPrimerDiaMes(): string
-    {
-        return $this->PrimerDiaMes;
+        return $this->diasSemana;
     }
     //FALTA DECLARARLO COMO VARIABLE PRIVATE.
 }

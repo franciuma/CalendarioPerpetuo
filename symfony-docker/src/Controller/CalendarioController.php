@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\Calendario;
 
 class CalendarioController extends AbstractController
 {
@@ -17,11 +18,6 @@ class CalendarioController extends AbstractController
         $anio = date('Y');
 
         $calendario = new Calendario($mes,$anio);
-        //FALTA INTENAR QUE EL OBJETO CALENDARIO FUNCIONE.
-        $ultimoDiaDelMes = self::ultimoDiaMes($mes, $anio);
-        $primerDiaDelMes = self::primerDiaMes(1, $mes, $anio);
-        $meses = [1 => 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-        $diasSemana = [0 => 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'];
         $primerDiaDeCadaMes = [];
         $ultimoDiaDeCadaMes = [];
 
@@ -33,10 +29,8 @@ class CalendarioController extends AbstractController
         return $this->render('calendario/index.html.twig', [
             'mes' => $mes,
             'ano' => $anio,
-            'ultimo_dia_mes' => $ultimoDiaDelMes, //no se usa
-            'dia_semana' => $primerDiaDelMes,     //no se usa
-            'meses' => $meses,
-            'dias_semana' => $diasSemana,
+            'meses' => $calendario->getMeses(),
+            'dias_semana' => $calendario->getdiasSemana(),
             'primer_dia_de_cada_mes' => $primerDiaDeCadaMes,
             'ultimo_dia_de_cada_mes' => $ultimoDiaDeCadaMes,
         ]);

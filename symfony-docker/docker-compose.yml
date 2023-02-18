@@ -6,6 +6,8 @@ services:
     volumes:
       - ./:/app
     working_dir: /app
+    networks:
+      - internal
   
   webserver:
     image: nginx:latest
@@ -13,6 +15,8 @@ services:
       - 8000:80
     volumes:
       - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - internal
 
   db:
     container_name: symfony_db
@@ -29,3 +33,7 @@ services:
 
 volumes:
   symfony-data:
+
+networks:
+  internal:
+    driver: bridge

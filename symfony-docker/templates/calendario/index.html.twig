@@ -9,10 +9,10 @@
 {% block body %}
     <table>
         <tr>
-            {% for j in 0..5%}
+            {% for contadorMeses in 0..5%}
                 <td>
                     <table>
-                        <caption>{{ meses[mes+j] }} {{ ano }}</caption>
+                        <caption>{{ meses[mes+contadorMeses] }} {{ ano }}</caption>
 
                         <tr>
                             {% for dia in dias_semana %}
@@ -20,8 +20,8 @@
                             {% endfor %}
                         </tr>
 
-                        {% set primer_dia = primer_dia_de_cada_mes[j] %}
-                        {% set ultimo_dia = ultimo_dia_de_cada_mes[j] %}
+                        {% set primer_dia = primer_dia_de_cada_mes[contadorMeses] %}
+                        {% set ultimo_dia = ultimo_dia_de_cada_mes[contadorMeses] %}
 
                         <tr>
                             {% if primer_dia != 0%}
@@ -48,7 +48,7 @@
                     </table>
                 </td> 
 
-                {% if j == 2 %}
+                {% if contadorMeses == 2 %}
                 </tr><tr> 
                 {% endif %}
 
