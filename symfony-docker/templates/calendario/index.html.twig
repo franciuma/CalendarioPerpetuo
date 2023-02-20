@@ -7,52 +7,47 @@
 {% endblock %}
 
 {% block body %}
+    {% set contadorMeses = 0 %}
     <table>
-        <tr>
-            {% for contadorMeses in 0..5%}
-                <td>
-                    <table>
-                        <caption>{{ meses[mes+contadorMeses] }} {{ ano }}</caption>
+        {% for mes in array_meses %}
+            {% set contadorMeses = contadorMeses + 1 %}
+            <td>
+                {% set primerDia = mes.primerDia %}
+                <table>
+                    <tr>
+                        <th colspan="7">{{ mes.nombre }} {{ anio }}</th>
+                    </tr>
 
-                        <tr>
-                            {% for dia in dias_semana %}
-                                <th>{{ dia }}</th>
-                            {% endfor %}
-                        </tr>
+                    <tr>
+                        {% for NombreDia in dias_semana %}
+                            <th>{{ NombreDia }}</th>
+                        {% endfor %}
+                    </tr>
 
-                        {% set primer_dia = primer_dia_de_cada_mes[contadorMeses] %}
-                        {% set ultimo_dia = ultimo_dia_de_cada_mes[contadorMeses] %}
-
-                        <tr>
-                            {% if primer_dia != 0%}
-                                {% for i in 0..primer_dia-1 %}
-                                    <td></td>
-                                {% endfor %}
-                            {% endif %}
-                            
-                            {% for dia in 1..ultimo_dia %}
-                                {% if primer_dia == 7 %}
-                                {% set primer_dia = 0 %}
-                                </tr><tr>
-                                {% endif %}
-                                <td>
-                                    {{ dia }}
-                                </td>
-                                {% set primer_dia = primer_dia+1 %}
-                            {% endfor %}
-
-                            {% for i in primer_dia..7 %}
+                    <tr>
+                        {% if mes.primerDia != 0 %}
+                            {% for diasVacios in 0..mes.primerDia-1 %}
                                 <td></td>
                             {% endfor %}
-                        </tr>
-                    </table>
-                </td> 
+                        {% endif %}
 
-                {% if contadorMeses == 2 %}
-                </tr><tr> 
+                        {% for dia in mes.dias %}
+                            {% if primerDia == 7 %}
+                                </tr><tr>
+                                {% set primerDia = 0 %}
+                            {% endif %}
+
+                            <td>{{ dia.valor }}</td>
+                            
+                            {% set primerDia = primerDia+1 %}
+                        {% endfor %}
+                    </tr>
+                </table>
+                {% if contadorMeses == 3 %}
+                    </tr><tr>
+                    {% set contadorMeses = 0 %}
                 {% endif %}
-
-            {% endfor %}
-        </tr>
+            </td>
+        {% endfor %}
     </table>
 {% endblock %}

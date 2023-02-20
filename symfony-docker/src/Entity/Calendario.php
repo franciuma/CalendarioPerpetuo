@@ -44,9 +44,8 @@ class Calendario
     #[ORM\Column]
     private string $anio;
 
-    public function __construct($mes,$anio)
+    public function __construct($anio)
     {
-        $this->mes = $mes;
         $this->anio = $anio;
     }
 

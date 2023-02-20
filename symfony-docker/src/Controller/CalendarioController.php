@@ -6,6 +6,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Calendario;
+use App\Entity\Dia;
+use App\Entity\Mes;
+use App\Entity\Anio;
+
 
 class CalendarioController extends AbstractController
 {
@@ -14,25 +18,38 @@ class CalendarioController extends AbstractController
      */
     public function index(): Response
     {
-        $mes = date('n');
-        $anio = date('Y');
+        $anio = new Anio(date('Y'));
+        $calendario = new Calendario($anio->getNombre());
+        $arrayMeses = [];
+        $contadorDias = 1;
 
-        $calendario = new Calendario($mes,$anio);
-        $primerDiaDeCadaMes = [];
-        $ultimoDiaDeCadaMes = [];
-
-        for ($i=0; $i <= 5; $i++) { 
-            array_push($primerDiaDeCadaMes, self::primerDiaMes(1, $mes+$i, $anio));
-            array_push($ultimoDiaDeCadaMes, self::ultimoDiaMes($mes+$i, $anio));
+        for ($i=0; $i <= 5; $i++) {
+            $mesActual = date('n')+$i;
+            $mes = new Mes($mesActual);
+            $mes->setNombre($calendario->getMeses()[$mesActual]);
+            $primerDiaDeMes = intval(self::primerDiaMes(1, $mesActual, $anio->getNombre()));
+            $mes->setPrimerDia($primerDiaDeMes);
+            $ultimoDiaDeMes = intval(self::ultimoDiaMes($mesActual, $anio->getNombre()));
+            //array_push($primerDiaDeCadaMes, self::primerDiaMes(1, $mes+$i, $anio));
+            //array_push($ultimoDiaDeCadaMes, self::ultimoDiaMes($mes+$i, $anio));
+            for($j= 1; $j <= $ultimoDiaDeMes; $j++) {
+                $dia = new Dia($contadorDias);
+                $contadorDias++;
+                $mes->addDia($dia);
+                //$mes[]
+                //array_push($arrayMeses, $dia->getValor());
+            }
+            $contadorDias = 1;
+            array_push($arrayMeses, $mes);
         }
 
         return $this->render('calendario/index.html.twig', [
-            'mes' => $mes,
-            'ano' => $anio,
+            'anio' => $anio->getNombre(),
             'meses' => $calendario->getMeses(),
             'dias_semana' => $calendario->getdiasSemana(),
-            'primer_dia_de_cada_mes' => $primerDiaDeCadaMes,
-            'ultimo_dia_de_cada_mes' => $ultimoDiaDeCadaMes,
+            //'primer_dia_de_cada_mes' => $primerDiaDeCadaMes,
+            //'ultimo_dia_de_cada_mes' => $ultimoDiaDeCadaMes,
+            'array_meses' => $arrayMeses,
         ]);
     }
 
