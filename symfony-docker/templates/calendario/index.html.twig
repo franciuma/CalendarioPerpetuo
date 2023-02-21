@@ -9,13 +9,13 @@
 {% block body %}
     {% set contadorMeses = 0 %}
     <table>
-        {% for mes in array_meses %}
+        {% for mes in anio.mes %}
             {% set contadorMeses = contadorMeses + 1 %}
             <td>
                 {% set primerDia = mes.primerDia %}
                 <table>
                     <tr>
-                        <th colspan="7">{{ mes.nombre }} {{ anio }}</th>
+                        <th colspan="7">{{ mes.nombre }} {{ anio.nombre }}</th>
                     </tr>
 
                     <tr>

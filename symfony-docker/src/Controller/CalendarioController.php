@@ -20,36 +20,25 @@ class CalendarioController extends AbstractController
     {
         $anio = new Anio(date('Y'));
         $calendario = new Calendario($anio->getNombre());
-        $arrayMeses = [];
-        $contadorDias = 1;
 
-        for ($i=0; $i <= 5; $i++) {
-            $mesActual = date('n')+$i;
+        for ($numMes=0; $numMes <= 5; $numMes++) {
+            $mesActual = date('n')+$numMes;
             $mes = new Mes($mesActual);
+            $anio->addMes($mes);
             $mes->setNombre($calendario->getMeses()[$mesActual]);
             $primerDiaDeMes = intval(self::primerDiaMes(1, $mesActual, $anio->getNombre()));
             $mes->setPrimerDia($primerDiaDeMes);
             $ultimoDiaDeMes = intval(self::ultimoDiaMes($mesActual, $anio->getNombre()));
-            //array_push($primerDiaDeCadaMes, self::primerDiaMes(1, $mes+$i, $anio));
-            //array_push($ultimoDiaDeCadaMes, self::ultimoDiaMes($mes+$i, $anio));
-            for($j= 1; $j <= $ultimoDiaDeMes; $j++) {
-                $dia = new Dia($contadorDias);
-                $contadorDias++;
+            
+            for($numDia= 1; $numDia <= $ultimoDiaDeMes; $numDia++) {
+                $dia = new Dia($numDia);
                 $mes->addDia($dia);
-                //$mes[]
-                //array_push($arrayMeses, $dia->getValor());
             }
-            $contadorDias = 1;
-            array_push($arrayMeses, $mes);
         }
 
         return $this->render('calendario/index.html.twig', [
-            'anio' => $anio->getNombre(),
-            'meses' => $calendario->getMeses(),
+            'anio' => $anio,
             'dias_semana' => $calendario->getdiasSemana(),
-            //'primer_dia_de_cada_mes' => $primerDiaDeCadaMes,
-            //'ultimo_dia_de_cada_mes' => $ultimoDiaDeCadaMes,
-            'array_meses' => $arrayMeses,
         ]);
     }
 

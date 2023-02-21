@@ -40,22 +40,22 @@ class Anio
         return $this->mes;
     }
 
-    public function addMe(Mes $me): self
+    public function addMes(Mes $mes): self
     {
-        if (!$this->mes->contains($me)) {
-            $this->mes->add($me);
-            $me->setAnio($this);
+        if (!$this->mes->contains($mes)) {
+            $this->mes->add($mes);
+            $mes->setAnio($this);
         }
 
         return $this;
     }
 
-    public function removeMe(Mes $me): self
+    public function removeMes(Mes $mes): self
     {
-        if ($this->mes->removeElement($me)) {
+        if ($this->mes->removeElement($mes)) {
             // set the owning side to null (unless already changed)
-            if ($me->getAnio() === $this) {
-                $me->setAnio(null);
+            if ($mes->getAnio() === $this) {
+                $mes->setAnio(null);
             }
         }
 
