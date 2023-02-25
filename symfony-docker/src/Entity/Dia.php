@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\DiaRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DiaRepository::class)]
@@ -14,7 +15,7 @@ class Dia
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?int $valor = null;
+    private ?string $valor = null;
 
     #[ORM\ManyToOne(inversedBy: 'dias')]
     private ?Mes $mes = null;
@@ -22,7 +23,10 @@ class Dia
     #[ORM\Column]
     private ?bool $esLectivo = null;
 
-    public function __construct(int $valor)
+    #[ORM\Column(length: 255)]
+    private ?string $fecha = null;
+
+    public function __construct(string $valor)
     {
         $this->valor = $valor;
     }
@@ -32,12 +36,12 @@ class Dia
         return $this->id;
     }
 
-    public function getValor(): ?int
+    public function getValor(): ?string
     {
         return $this->valor;
     }
 
-    public function setValor(int $valor): self
+    public function setValor(string $valor): self
     {
         $this->valor = $valor;
 
@@ -64,6 +68,18 @@ class Dia
     public function setEsLectivo(bool $esLectivo): self
     {
         $this->esLectivo = $esLectivo;
+
+        return $this;
+    }
+
+    public function getFecha(): ?string
+    {
+        return $this->fecha;
+    }
+
+    public function setFecha(string $fecha): self
+    {
+        $this->fecha = $fecha;
 
         return $this;
     }

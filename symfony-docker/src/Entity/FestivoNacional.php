@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\FestivoNacionalRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use DateTime;
 
 #[ORM\Entity(repositoryClass: FestivoNacionalRepository::class)]
 class FestivoNacional
@@ -20,11 +21,22 @@ class FestivoNacional
     #[ORM\Column(length: 255)]
     private ?string $nombre = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $inicio = null;
+    #[ORM\Column(length: 255)]
+    private ?string $abreviatura = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $final = null;
+    #[ORM\Column(length: 255)]
+    private ?string $inicio = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $final = null;
+
+    public function __construct($nombre, $abreviatura, $inicio, $final)
+    {
+        $this->nombre = $nombre;
+        $this->abreviatura = $abreviatura;
+        $this->inicio = $inicio;
+        $this->final = $final;
+    }
 
     public function getId(): ?int
     {
@@ -55,24 +67,36 @@ class FestivoNacional
         return $this;
     }
 
-    public function getInicio(): ?\DateTimeInterface
+    public function getAbreviatura(): ?string
+    {
+        return $this->abreviatura;
+    }
+
+    public function setAbreviatura(string $abreviatura): self
+    {
+        $this->abreviatura = $abreviatura;
+
+        return $this;
+    }
+
+    public function getInicio(): string
     {
         return $this->inicio;
     }
 
-    public function setInicio(\DateTimeInterface $inicio): self
+    public function setInicio(string $inicio): self
     {
         $this->inicio = $inicio;
 
         return $this;
     }
 
-    public function getFinal(): ?\DateTimeInterface
+    public function getFinal(): string
     {
         return $this->final;
     }
 
-    public function setFinal(\DateTimeInterface $final): self
+    public function setFinal(string $final): self
     {
         $this->final = $final;
 

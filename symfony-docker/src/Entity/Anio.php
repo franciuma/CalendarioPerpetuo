@@ -19,12 +19,12 @@ class Anio
     private Collection $mes;
 
     #[ORM\Column(length: 255)]
-    private ?string $nombre = null;
+    private ?string $numAnio = null;
 
-    public function __construct($nombre)
+    public function __construct($numAnio)
     {
         $this->mes = new ArrayCollection();
-        $this->nombre = $nombre;
+        $this->numAnio = $numAnio;
     }
 
     public function getId(): ?int
@@ -62,14 +62,14 @@ class Anio
         return $this;
     }
 
-    public function getNombre(): ?string
+    public function getNumAnio(): ?string
     {
-        return $this->nombre;
+        return $this->numAnio;
     }
 
-    public function setNombre(string $nombre): self
+    public function setNumAnio(string $numAnio): self
     {
-        $this->nombre = $nombre;
+        $this->numAnio = $numAnio;
 
         return $this;
     }

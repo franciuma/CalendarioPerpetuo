@@ -1,102 +1,46 @@
 {
-  "_comment": "El curso 2020/21 se considera año 2021; %AN% es 2020, %AC% es 2021",
-  "inicio":"26-9-%AN%",
-  "vacaciones": [
-      {
-      "nombre":"Navidad",
-      "color":"#00AA00",
-      "corto":"navidad",
-      "inicio":"23-12-%AN%",
-      "final":"8-1-%AC%"},
-      {
-      "nombre":"Semana Santa",
-      "color":"#871F78",
-      "corto":"s.santa",
-      "inicio":"31-3-%AC%",
-      "final":"10-4-%AC%"},
-      {
-        "nombre":"Vacaciones de verano",
-        "color":"#C85A53",
-        "corto":"verano",
-        "inicio":"1-8-%AC%",
-        "final":"31-8-%AC%"} 
-      ],
-    "examenes":[
-      {
-        "color":"#550000",
-        "nombre":"Exámenes de septiembre",
-        "corto":"exam.",
-        "inicio":"1-9-%AN%",
-        "final":"9-9-%AN%" 
-      },
-      {
-        "nombre":"Exámenes de febrero",
-        "corto":"exam.",
-        "inicio":"23-1-%AC%",
-        "final":"13-2-%AC%" 
-      },
-      {
-        "nombre":"Exámenes de junio",
-        "corto":"exam.",
-        "inicio":"5-6-%AC%",
-        "final":"23-6-%AC%" 
-      },
-      {
-        "nombre":"Exámenes de julio",
-        "corto":"exam.",
-        "inicio":"10-7-%AC%",
-        "final":"21-7-%AC%" 
-      }
-
-    ],
     "festivosGlobales": [
       {
         "nombre":"Día del Pilar",
-        "corto":"D Pilar",
-        "dia":"12-10-%AN%"
+        "abreviatura":"DPilar",
+        "inicio":"12-10-%AN%",
+        "final":"12-10-%AN%"
       },
       {
         "nombre":"Día de todos los Santos",
-        "corto":"DSantos",
-        "dia":"1-11-%AN%"
+        "abreviatura":"DSantos",
+        "inicio":"1-11-%AN%",
+        "final":"1-11-%AN%"
       },
       {
         "nombre":"Día de la Constitución",
-        "corto":"Const",
-        "dia":"6-12-%AN%"
+        "abreviatura":"DConst",
+        "inicio":"6-12-%AN%",
+        "final":"6-12-%AN%"
       },
       {
         "nombre":"Día de la Inmaculada",
-        "corto":"Inmac.",
-        "dia":"8-12-%AN%"
+        "abreviatura":"DInmac",
+        "inicio":"8-12-%AN%",
+        "final":"8-12-%AN%"
       },
       {
       "nombre":"Santo Tomás de Aquino",
-      "corto":"stomas",
-      "dia":"27-1-%AC%"
+      "abreviatura":"Stomas",
+      "inicio":"27-1-%AC%",
+      "final":"27-1-%AC%"
       },
       {
       "nombre":"Día de Andalucía",
-      "corto":"stomas",
-      "dia":"28-2-%AC%"
+      "abreviatura":"DAndalucia",
+      "inicio":"28-2-%AC%",
+      "final":"28-2-%AC%"
       },
       {
       "nombre":"Día del Trabajo",
-      "corto":"día TR",
-      "dia":"2-5-%AC%"
+      "abreviatura":"díaTr",
+      "inicio":"2-5-%AC%",
+      "final":"2-5-%AC%"
       }
-    ]    
-    ,
-    "festivosLocales": [
-      {
-        "nombre":"Virgen de la Victoria",
-        "corto":"victoria",
-        "dia":"8-9-%AN%"
-      },
-      {
-        "nombre":"Inauguración del curso académico",
-        "corto":"inaug.",
-        "dia":"23-9-%AN%"
-      }
-    ]    
+    ] 
 }

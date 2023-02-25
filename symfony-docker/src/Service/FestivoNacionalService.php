@@ -16,13 +16,21 @@ class FestivoNacionalService
 
     public function getFestivosNacionales(): array
     {
+        $anio = date('Y');
+        $anioActual = substr($anio, 2, 3);
+        $anioAnterior = substr($anio, 2, 3)-1;
+
         $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosNacionales.json');
         $festivosArray = json_decode($festivosJson, true);
 
-        var_dump($festivosArray);exit();
+            foreach ($festivosArray['festivosGlobales'] as &$festivo) {
+                $festivo['inicio'] = str_replace('%AN%', $anioAnterior, $festivo['inicio']);
+                $festivo['inicio'] = str_replace('%AC%', $anioActual, $festivo['inicio']);
+                $festivo['final'] = str_replace('%AN%', $anioAnterior, $festivo['final']);
+                $festivo['final'] = str_replace('%AC%', $anioActual, $festivo['final']);
+            }
 
-        // Opcionalmente, puedes usar el Serializer para crear objetos
-        $festivos = $this->serializer->denormalize($festivosArray, 'App\Entity\Festivo[]');
+            $festivos = $this->serializer->denormalize($festivosArray['festivosGlobales'], 'App\Entity\FestivoNacional[]');
 
         return $festivos;
     }
