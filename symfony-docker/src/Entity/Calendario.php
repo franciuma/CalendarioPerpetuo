@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CalendarioRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CalendarioRepository::class)]
@@ -44,9 +46,13 @@ class Calendario
     #[ORM\Column]
     private string $anio;
 
+    #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: FestivoNacional::class)]
+    private Collection $festivosNacionales;
+
     public function __construct($anio)
     {
         $this->anio = $anio;
+        $this->festivosNacionales = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -72,5 +78,35 @@ class Calendario
     public function getDiasSemana(): array
     {
         return $this->diasSemana;
+    }
+
+    /**
+     * @return Collection<int, FestivoNacional>
+     */
+    public function getFestivosNacionales(): Collection
+    {
+        return $this->festivosNacionales;
+    }
+
+    public function addFestivosNacionale(FestivoNacional $festivosNacionale): self
+    {
+        if (!$this->festivosNacionales->contains($festivosNacionale)) {
+            $this->festivosNacionales->add($festivosNacionale);
+            $festivosNacionale->setCalendario($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFestivosNacionale(FestivoNacional $festivosNacionale): self
+    {
+        if ($this->festivosNacionales->removeElement($festivosNacionale)) {
+            // set the owning side to null (unless already changed)
+            if ($festivosNacionale->getCalendario() === $this) {
+                $festivosNacionale->setCalendario(null);
+            }
+        }
+
+        return $this;
     }
 }

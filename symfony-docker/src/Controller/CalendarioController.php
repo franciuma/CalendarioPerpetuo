@@ -9,15 +9,27 @@ use App\Entity\Calendario;
 use App\Entity\Dia;
 use App\Entity\Mes;
 use App\Entity\Anio;
+use App\Service\FestivoNacionalService;
+
 
 
 class CalendarioController extends AbstractController
 {
+
+    private FestivoNacionalService $festivoNacionalService;
+
+    public function __construct(FestivoNacionalService $festivoNacionalService)
+    {
+        $this->festivoNacionalService = $festivoNacionalService;
+    }
+
     /**
      * @Route("/calendario", name="calendar")
      */
     public function index(): Response
     {
+        $this->festivoNacionalService->getFestivosNacionales();
+
         $anio = new Anio(date('Y'));
         $calendario = new Calendario($anio->getNombre());
 
