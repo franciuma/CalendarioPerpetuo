@@ -30,6 +30,8 @@ services:
       - 3306:3306
     volumes:
       - symfony-data:/var/lib/mysql
+    networks:
+      - internal
 
 volumes:
   symfony-data:

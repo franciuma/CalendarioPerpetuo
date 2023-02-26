@@ -2,16 +2,19 @@
 
 namespace App\Service;
 
+use App\Repository\FestivoNacionalRepository;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class FestivoNacionalService
 {
     private SerializerInterface $serializer;
+    private FestivoNacionalRepository $festivoNacionalRepository;
 
-    public function __construct(SerializerInterface $serializer)
+    public function __construct(SerializerInterface $serializer, FestivoNacionalRepository $festivoNacionalRepository)
     {
         $this->serializer = $serializer;
+        $this->festivoNacionalRepository = $festivoNacionalRepository;
     }
 
     public function getFestivosNacionales(): array
@@ -31,6 +34,10 @@ class FestivoNacionalService
             }
 
             $festivos = $this->serializer->denormalize($festivosArray['festivosGlobales'], 'App\Entity\FestivoNacional[]');
+
+            foreach ($festivos as $festivo) {
+                $this->festivoNacionalRepository->save($festivo,true);
+            }
 
         return $festivos;
     }
