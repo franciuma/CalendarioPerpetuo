@@ -11,17 +11,21 @@ use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
+use App\Repository\FestivoNacionalRepository;
 
 
 class CalendarioController extends AbstractController
 {
 
     private FestivoNacionalService $festivoNacionalService;
+    private FestivoNacionalRepository $festivoNacionalRepository;
 
-    public function __construct(FestivoNacionalService $festivoNacionalService)
+    public function __construct(
+        FestivoNacionalService $festivoNacionalService,
+        FestivoNacionalRepository $festivoNacionalRepository)
     {
         $this->festivoNacionalService = $festivoNacionalService;
+        $this->festivoNacionalRepository = $festivoNacionalRepository;
     }
 
     /**
@@ -48,7 +52,14 @@ class CalendarioController extends AbstractController
                 $dia->setFecha(self::setDiaFecha($dia->getValor(), $mes->getnumMes(), $anio->getNumAnio()));
                 $mes->addDia($dia);
 
-                // if(FestivoNacionalRepository->findByFecha($fecha)) $dia->setIsFestivo() = true; $dia->setEvento(pasarle el evento).
+                $finDeSemana = intval(self::primerDiaMes($dia->getValor(), $mesActual, $anio->getNumAnio()));
+                // REFACTORIZAR NOMBRE DE LA FUNCION primerDiaMes. Funcion que devuelva directamente el nombre "Sabado" "Domingo"
+
+                if($this->festivoNacionalRepository->findOneFecha($dia->getFecha())
+                    || $finDeSemana == 5 || $finDeSemana == 6) {
+                    $dia->setIsLectivo(true);
+                    //$dia->setEvento(pasarleElEvento) Hacer relacion de festivos uno a muchos con dia.
+                }
             }
         }
 

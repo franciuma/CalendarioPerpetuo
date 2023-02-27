@@ -21,7 +21,7 @@ class Dia
     private ?Mes $mes = null;
 
     #[ORM\Column]
-    private ?bool $esLectivo = null;
+    private ?bool $lectivo = false;
 
     #[ORM\Column(length: 255)]
     private ?string $fecha = null;
@@ -60,14 +60,14 @@ class Dia
         return $this;
     }
 
-    public function isEsLectivo(): ?bool
+    public function isLectivo(): ?bool
     {
-        return $this->esLectivo;
+        return $this->lectivo;
     }
 
-    public function setEsLectivo(bool $esLectivo): self
+    public function setIsLectivo(bool $lectivo): self
     {
-        $this->esLectivo = $esLectivo;
+        $this->lectivo = $lectivo;
 
         return $this;
     }

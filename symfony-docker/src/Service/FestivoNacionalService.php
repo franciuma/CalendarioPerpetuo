@@ -35,8 +35,10 @@ class FestivoNacionalService
 
             $festivos = $this->serializer->denormalize($festivosArray['festivosGlobales'], 'App\Entity\FestivoNacional[]');
 
-            foreach ($festivos as $festivo) {
-                $this->festivoNacionalRepository->save($festivo,true);
+            foreach ($festivos as $festivoNacional) {
+                if(!$this->festivoNacionalRepository->findOneFecha($festivoNacional->getInicio())) {
+                    $this->festivoNacionalRepository->save($festivoNacional,true);
+                }
             }
 
         return $festivos;

@@ -54,13 +54,13 @@ class FestivoNacionalRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?FestivoNacional
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findOneFecha($fecha): ?FestivoNacional
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.inicio = :val')
+            ->setParameter('val', $fecha)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }
