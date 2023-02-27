@@ -43,7 +43,7 @@ class CalendarioController extends AbstractController
             $mes = new Mes($mesActual);
             $anio->addMes($mes);
             $mes->setNombre($calendario->getMeses()[$mesActual]);
-            $primerDiaDeMes = intval(self::primerDiaMes(1, $mesActual, $anio->getNumAnio()));
+            $primerDiaDeMes = intval(self::calcularDiaMes(1, $mesActual, $anio->getNumAnio()));
             $mes->setPrimerDia($primerDiaDeMes);
             $ultimoDiaDeMes = intval(self::ultimoDiaMes($mesActual, $anio->getNumAnio()));
             
@@ -52,11 +52,13 @@ class CalendarioController extends AbstractController
                 $dia->setFecha(self::setDiaFecha($dia->getValor(), $mes->getnumMes(), $anio->getNumAnio()));
                 $mes->addDia($dia);
 
-                $finDeSemana = intval(self::primerDiaMes($dia->getValor(), $mesActual, $anio->getNumAnio()));
+                $diaMes = intval(self::calcularDiaMes($dia->getValor(), $mesActual, $anio->getNumAnio()));
+                $nombreDiaDeLaSemana = $calendario->getDiasSemana()[$diaMes];
+                $dia->setNombreDiaDeLaSemana($nombreDiaDeLaSemana);
                 // REFACTORIZAR NOMBRE DE LA FUNCION primerDiaMes. Funcion que devuelva directamente el nombre "Sabado" "Domingo"
 
                 if($this->festivoNacionalRepository->findOneFecha($dia->getFecha())
-                    || $finDeSemana == 5 || $finDeSemana == 6) {
+                    || $nombreDiaDeLaSemana == "Sabado" || $nombreDiaDeLaSemana == "Domingo") {
                     $dia->setIsLectivo(true);
                     //$dia->setEvento(pasarleElEvento) Hacer relacion de festivos uno a muchos con dia.
                 }
@@ -73,7 +75,7 @@ class CalendarioController extends AbstractController
         return date('d', mktime(0, 0, 0, $mes + 1, 0, $anio));
     }
 
-    public function primerDiaMes($dia, $mes, $anio) {
+    public function calcularDiaMes($dia, $mes, $anio) {
         return date('N', mktime(0, 0, 0, $mes, $dia, $anio)) - 1;
     }
 

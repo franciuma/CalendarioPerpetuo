@@ -26,6 +26,9 @@ class Dia
     #[ORM\Column(length: 255)]
     private ?string $fecha = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $nombreDiaDeLaSemana = null;
+
     public function __construct(string $valor)
     {
         $this->valor = $valor;
@@ -80,6 +83,18 @@ class Dia
     public function setFecha(string $fecha): self
     {
         $this->fecha = $fecha;
+
+        return $this;
+    }
+
+    public function getNombreDiaDeLaSemana(): ?string
+    {
+        return $this->nombreDiaDeLaSemana;
+    }
+
+    public function setNombreDiaDeLaSemana(string $nombreDiaDeLaSemana): self
+    {
+        $this->nombreDiaDeLaSemana = $nombreDiaDeLaSemana;
 
         return $this;
     }
