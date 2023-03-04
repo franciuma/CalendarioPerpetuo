@@ -1,0 +1,12 @@
+body {
+    background-color: lightblue;
+}
+
+#bordered {
+    border: 1px solid black;
+}
+
+#lectivo {
+    border: 1px solid black;
+    color: red;
+}

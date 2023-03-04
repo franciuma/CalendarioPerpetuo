@@ -2,10 +2,6 @@
 
 {% block title %}Calendario{% endblock %}
 
-{% block stylesheets %}
-  <link href="{{ asset('css/calendario.css') }}" rel="stylesheet">
-{% endblock %}
-
 {% block body %}
     {% set contadorMeses = 0 %}
     <table>
@@ -37,8 +33,12 @@
                                 {% set primerDia = 0 %}
                             {% endif %}
 
-                            <td>{{ dia.valor }}</td>
-                            
+                            {% if dia.lectivo %}
+                                <td id="lectivo">{{ dia.valor }}</td>
+                            {% else %}
+                                <td id="bordered">{{ dia.valor }}</td>
+                            {% endif %}
+
                             {% set primerDia = primerDia+1 %}
                         {% endfor %}
                     </tr>

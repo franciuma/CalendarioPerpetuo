@@ -7,7 +7,6 @@ use App\Entity\Calendario;
 use App\Entity\Dia;
 use App\Entity\Mes;
 use App\Service\FestivoNacionalService;
-use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -33,12 +32,12 @@ class CalendarioController extends AbstractController
      */
     public function index(): Response
     {
-        $festivosNacionales = $this->festivoNacionalService->getFestivosNacionales();
+        $this->festivoNacionalService->getFestivosNacionales();
 
         $anio = new Anio(date('Y'));
         $calendario = new Calendario($anio->getNumAnio());
 
-        for ($numMes=0; $numMes <= 5; $numMes++) {
+        for ($numMes = 0; $numMes <= 5; $numMes++) {
             $mesActual = date('n')+$numMes;
             $mes = new Mes($mesActual);
             $anio->addMes($mes);
@@ -49,16 +48,15 @@ class CalendarioController extends AbstractController
             
             for($numDia= 1; $numDia <= $ultimoDiaDeMes; $numDia++) {
                 $dia = new Dia($numDia);
-                $dia->setFecha(self::setDiaFecha($dia->getValor(), $mes->getnumMes(), $anio->getNumAnio()));
+                $dia->setFecha($dia->getValor()."-".$mes->getNumMes()."-".substr($anio->getNumAnio(), 2, 3));
                 $mes->addDia($dia);
 
                 $diaMes = intval(self::calcularDiaMes($dia->getValor(), $mesActual, $anio->getNumAnio()));
                 $nombreDiaDeLaSemana = $calendario->getDiasSemana()[$diaMes];
                 $dia->setNombreDiaDeLaSemana($nombreDiaDeLaSemana);
-                // REFACTORIZAR NOMBRE DE LA FUNCION primerDiaMes. Funcion que devuelva directamente el nombre "Sabado" "Domingo"
 
                 if($this->festivoNacionalRepository->findOneFecha($dia->getFecha())
-                    || $nombreDiaDeLaSemana == "Sabado" || $nombreDiaDeLaSemana == "Domingo") {
+                    || $nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
                     $dia->setIsLectivo(true);
                     //$dia->setEvento(pasarleElEvento) Hacer relacion de festivos uno a muchos con dia.
                 }
@@ -77,9 +75,5 @@ class CalendarioController extends AbstractController
 
     public function calcularDiaMes($dia, $mes, $anio) {
         return date('N', mktime(0, 0, 0, $mes, $dia, $anio)) - 1;
-    }
-
-    public function setDiaFecha($dia, $mes, $anio) {
-        return $dia."-".$mes."-".substr($anio, 2, 3);
     }
 }
