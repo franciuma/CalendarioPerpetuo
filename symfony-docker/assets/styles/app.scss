@@ -1,0 +1,26 @@
+@import "~bootstrap/scss/bootstrap";
+
+body {
+    background-color: lightblue;
+}
+
+.bordered {
+    border: 1px solid black;
+}
+
+.calendario {
+    width: 80%;
+    height: 100px;
+    margin: 20px;
+    padding: 30px;
+}
+
+th {
+    text-align: center;
+}
+
+.calendario td {
+    width: 5px;
+    text-align: center;
+    padding: 2px;
+}

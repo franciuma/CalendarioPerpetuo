@@ -15,6 +15,7 @@ use App\Repository\FestivoNacionalRepository;
 
 class CalendarioController extends AbstractController
 {
+    const NMESES = 5;
 
     private FestivoNacionalService $festivoNacionalService;
     private FestivoNacionalRepository $festivoNacionalRepository;
@@ -37,7 +38,7 @@ class CalendarioController extends AbstractController
         $anio = new Anio(date('Y'));
         $calendario = new Calendario($anio->getNumAnio());
 
-        for ($numMes = 0; $numMes <= 5; $numMes++) {
+        for ($numMes = 0; $numMes <= self::NMESES; $numMes++) {
             $mesActual = date('n')+$numMes;
             $mes = new Mes($mesActual);
             $anio->addMes($mes);

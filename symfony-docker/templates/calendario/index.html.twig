@@ -3,51 +3,49 @@
 {% block title %}Calendario{% endblock %}
 
 {% block body %}
-    {% set contadorMeses = 0 %}
-    <table>
-        {% for mes in anio.mes %}
-            {% set contadorMeses = contadorMeses + 1 %}
-            <td>
-                {% set primerDia = mes.primerDia %}
-                <table>
-                    <tr>
-                        <th colspan="7">{{ mes.nombre }} {{ anio.numAnio }}</th>
-                    </tr>
+    {{ parent() }}
+    
+    <div class="container-fluid">
+        <div class="row">
+            {% for mes in anio.mes %}
+                <div class="col-md-4">
+                    {% set primerDia = mes.primerDia %}
+                    <table class="calendario" >
+                        <tr>
+                            <th colspan="7">{{ mes.nombre }} {{ anio.numAnio }}</th>
+                        </tr>
 
-                    <tr>
-                        {% for NombreDia in dias_semana %}
-                            <th>{{ NombreDia }}</th>
-                        {% endfor %}
-                    </tr>
-
-                    <tr>
-                        {% if mes.primerDia != 0 %}
-                            {% for diasVacios in 0..mes.primerDia-1 %}
-                                <td></td>
+                        <tr>
+                            {% for NombreDia in dias_semana %}
+                                <th>{{ NombreDia }}</th>
                             {% endfor %}
-                        {% endif %}
+                        </tr>
 
-                        {% for dia in mes.dias %}
-                            {% if primerDia == 7 %}
-                                </tr><tr>
-                                {% set primerDia = 0 %}
+                        <tr>
+                            {% if mes.primerDia != 0 %}
+                                {% for diasVacios in 0..mes.primerDia-1 %}
+                                    <td></td>
+                                {% endfor %}
                             {% endif %}
 
-                            {% if dia.lectivo %}
-                                <td id="lectivo">{{ dia.valor }}</td>
-                            {% else %}
-                                <td id="bordered">{{ dia.valor }}</td>
-                            {% endif %}
+                            {% for dia in mes.dias %}
+                                {% if primerDia == 7 %}
+                                    </tr><tr>
+                                    {% set primerDia = 0 %}
+                                {% endif %}
 
-                            {% set primerDia = primerDia+1 %}
-                        {% endfor %}
-                    </tr>
-                </table>
-                {% if contadorMeses == 3 %}
-                    </tr><tr>
-                    {% set contadorMeses = 0 %}
-                {% endif %}
-            </td>
-        {% endfor %}
-    </table>
+                                {% if dia.lectivo %}
+                                    <td class="bordered text-danger">{{ dia.valor }}</td>
+                                {% else %}
+                                    <td class="bordered">{{ dia.valor }}</td>
+                                {% endif %}
+
+                                {% set primerDia = primerDia+1 %}
+                            {% endfor %}
+                        </tr>
+                    </table>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
