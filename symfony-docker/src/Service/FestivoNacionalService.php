@@ -3,8 +3,8 @@
 namespace App\Service;
 
 use App\Repository\FestivoNacionalRepository;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
+use App\Controller\CalendarioController;
 
 class FestivoNacionalService
 {
@@ -19,18 +19,17 @@ class FestivoNacionalService
 
     public function getFestivosNacionales(): array
     {
-        $anio = date('Y');
-        $anioActual = substr($anio, 2, 3);
-        $anioAnterior = substr($anio, 2, 3)-1;
+        $anio = substr(CalendarioController::ANIO, 2, 3);
+        $anioSiguiente = substr(CalendarioController::ANIO_SIGUIENTE, 2, 3);
 
         $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosNacionales.json');
         $festivosArray = json_decode($festivosJson, true);
 
             foreach ($festivosArray['festivosGlobales'] as &$festivo) {
-                $festivo['inicio'] = str_replace('%AN%', $anioAnterior, $festivo['inicio']);
-                $festivo['inicio'] = str_replace('%AC%', $anioActual, $festivo['inicio']);
-                $festivo['final'] = str_replace('%AN%', $anioAnterior, $festivo['final']);
-                $festivo['final'] = str_replace('%AC%', $anioActual, $festivo['final']);
+                $festivo['inicio'] = str_replace('%AN%', $anio, $festivo['inicio']);
+                $festivo['inicio'] = str_replace('%AC%', $anioSiguiente, $festivo['inicio']);
+                $festivo['final'] = str_replace('%AN%', $anio, $festivo['final']);
+                $festivo['final'] = str_replace('%AC%', $anioSiguiente, $festivo['final']);
             }
 
             $festivos = $this->serializer->denormalize($festivosArray['festivosGlobales'], 'App\Entity\FestivoNacional[]');

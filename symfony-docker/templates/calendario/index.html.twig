@@ -7,44 +7,46 @@
     
     <div class="container-fluid">
         <div class="row">
-            {% for mes in anio.mes %}
-                <div class="col-md-4">
-                    {% set primerDia = mes.primerDia %}
-                    <table class="calendario" >
-                        <tr>
-                            <th colspan="7">{{ mes.nombre }} {{ anio.numAnio }}</th>
-                        </tr>
+            {% for anio in calendario.anios %}
+                {% for mes in anio.mes %}
+                    <div class="col-md-4">
+                        {% set primerDia = mes.primerDia %}
+                        <table class="calendario" >
+                            <tr>
+                                <th colspan="7">{{ mes.nombre }} {{ anio.numAnio }}</th>
+                            </tr>
 
-                        <tr>
-                            {% for NombreDia in dias_semana %}
-                                <th>{{ NombreDia }}</th>
-                            {% endfor %}
-                        </tr>
-
-                        <tr>
-                            {% if mes.primerDia != 0 %}
-                                {% for diasVacios in 0..mes.primerDia-1 %}
-                                    <td></td>
+                            <tr>
+                                {% for NombreDia in dias_semana %}
+                                    <th>{{ NombreDia }}</th>
                                 {% endfor %}
-                            {% endif %}
+                            </tr>
 
-                            {% for dia in mes.dias %}
-                                {% if primerDia == 7 %}
-                                    </tr><tr>
-                                    {% set primerDia = 0 %}
+                            <tr>
+                                {% if mes.primerDia != 0 %}
+                                    {% for diasVacios in 0..mes.primerDia-1 %}
+                                        <td></td>
+                                    {% endfor %}
                                 {% endif %}
 
-                                {% if dia.lectivo %}
-                                    <td class="bordered text-danger">{{ dia.valor }}</td>
-                                {% else %}
-                                    <td class="bordered">{{ dia.valor }}</td>
-                                {% endif %}
+                                {% for dia in mes.dias %}
+                                    {% if primerDia == 7 %}
+                                        </tr><tr>
+                                        {% set primerDia = 0 %}
+                                    {% endif %}
 
-                                {% set primerDia = primerDia+1 %}
-                            {% endfor %}
-                        </tr>
-                    </table>
-                </div>
+                                    {% if dia.lectivo %}
+                                        <td class="bordered text-danger">{{ dia.numDia }}</td>
+                                    {% else %}
+                                        <td class="bordered">{{ dia.numDia }}</td>
+                                    {% endif %}
+
+                                    {% set primerDia = primerDia+1 %}
+                                {% endfor %}
+                            </tr>
+                        </table>
+                    </div>
+                {% endfor %}
             {% endfor %}
         </div>
     </div>

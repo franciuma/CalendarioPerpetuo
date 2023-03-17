@@ -43,16 +43,20 @@ class Calendario
     #[ORM\Column(length: 255)]
     private string $mes;
 
-    #[ORM\Column]
-    private string $anio;
-
     #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: FestivoNacional::class)]
     private Collection $festivosNacionales;
 
-    public function __construct($anio)
+    #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: Clase::class)]
+    private Collection $clases;
+
+    #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: Anio::class)]
+    private Collection $anios;
+
+    public function __construct()
     {
-        $this->anio = $anio;
         $this->festivosNacionales = new ArrayCollection();
+        $this->clases = new ArrayCollection();
+        $this->anios = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -68,11 +72,6 @@ class Calendario
     public function getMeses(): array
     {
         return $this->meses;
-    }
-
-    public function getAnio(): string
-    {
-        return $this->anio;
     }
 
     public function getDiasSemana(): array
@@ -104,6 +103,66 @@ class Calendario
             // set the owning side to null (unless already changed)
             if ($festivosNacionale->getCalendario() === $this) {
                 $festivosNacionale->setCalendario(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Clase>
+     */
+    public function getClases(): Collection
+    {
+        return $this->clases;
+    }
+
+    public function addClase(Clase $clase): self
+    {
+        if (!$this->clases->contains($clase)) {
+            $this->clases->add($clase);
+            $clase->setCalendario($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClase(Clase $clase): self
+    {
+        if ($this->clases->removeElement($clase)) {
+            // set the owning side to null (unless already changed)
+            if ($clase->getCalendario() === $this) {
+                $clase->setCalendario(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Anio>
+     */
+    public function getAnios(): Collection
+    {
+        return $this->anios;
+    }
+
+    public function addAnio(Anio $anio): self
+    {
+        if (!$this->anios->contains($anio)) {
+            $this->anios->add($anio);
+            $anio->setCalendario($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnio(Anio $anio): self
+    {
+        if ($this->anios->removeElement($anio)) {
+            // set the owning side to null (unless already changed)
+            if ($anio->getCalendario() === $this) {
+                $anio->setCalendario(null);
             }
         }
 

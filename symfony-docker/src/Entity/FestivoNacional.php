@@ -19,7 +19,7 @@ class FestivoNacional
     #[ORM\ManyToOne(inversedBy: 'festivosNacionales')]
     private ?Calendario $calendario = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255)]
     private ?string $nombre = null;
 
     #[ORM\Column(length: 255)]

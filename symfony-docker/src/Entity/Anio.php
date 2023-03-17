@@ -21,6 +21,9 @@ class Anio
     #[ORM\Column(length: 255)]
     private ?string $numAnio = null;
 
+    #[ORM\ManyToOne(inversedBy: 'anios')]
+    private ?Calendario $calendario = null;
+
     public function __construct($numAnio)
     {
         $this->mes = new ArrayCollection();
@@ -70,6 +73,18 @@ class Anio
     public function setNumAnio(string $numAnio): self
     {
         $this->numAnio = $numAnio;
+
+        return $this;
+    }
+
+    public function getCalendario(): ?Calendario
+    {
+        return $this->calendario;
+    }
+
+    public function setCalendario(?Calendario $calendario): self
+    {
+        $this->calendario = $calendario;
 
         return $this;
     }

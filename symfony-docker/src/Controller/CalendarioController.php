@@ -15,7 +15,10 @@ use App\Repository\FestivoNacionalRepository;
 
 class CalendarioController extends AbstractController
 {
-    const NMESES = 5;
+    const NMESES = 11;
+    const NUM_MES_INICIAL = 9;
+    const ANIO = "2023";
+    const ANIO_SIGUIENTE = "2024";
 
     private FestivoNacionalService $festivoNacionalService;
     private FestivoNacionalRepository $festivoNacionalRepository;
@@ -35,11 +38,20 @@ class CalendarioController extends AbstractController
     {
         $this->festivoNacionalService->getFestivosNacionales();
 
-        $anio = new Anio(date('Y'));
-        $calendario = new Calendario($anio->getNumAnio());
+        $anio = new Anio(self::ANIO);
+        $anioSig = new Anio(self::ANIO_SIGUIENTE);
+        $calendario = new Calendario();
 
-        for ($numMes = 0; $numMes <= self::NMESES; $numMes++) {
-            $mesActual = date('n')+$numMes;
+        for ($numMes = self::NUM_MES_INICIAL; $numMes <= self::NMESES + self::NUM_MES_INICIAL; $numMes++) {
+
+            $mesActual = $numMes % 12;
+            $mesActual = $mesActual === 0 ? 12 : $mesActual;
+
+            if($numMes == 13){
+                $calendario->addAnio($anio);
+                $anio = $anioSig;
+            }
+
             $mes = new Mes($mesActual);
             $anio->addMes($mes);
             $mes->setNombre($calendario->getMeses()[$mesActual]);
@@ -49,11 +61,11 @@ class CalendarioController extends AbstractController
             
             for($numDia= 1; $numDia <= $ultimoDiaDeMes; $numDia++) {
                 $dia = new Dia($numDia);
-                $dia->setFecha($dia->getValor()."-".$mes->getNumMes()."-".substr($anio->getNumAnio(), 2, 3));
+                $dia->setFecha($dia->getNumDia()."-".$mes->getNumMes()."-".substr($anio->getNumAnio(), 2, 3));
                 $mes->addDia($dia);
 
-                $diaMes = intval(self::calcularDiaMes($dia->getValor(), $mesActual, $anio->getNumAnio()));
-                $nombreDiaDeLaSemana = $calendario->getDiasSemana()[$diaMes];
+                $diaSemana = intval(self::calcularDiaMes($dia->getNumDia(), $mesActual, $anio->getNumAnio()));
+                $nombreDiaDeLaSemana = $calendario->getDiasSemana()[$diaSemana];
                 $dia->setNombreDiaDeLaSemana($nombreDiaDeLaSemana);
 
                 if($this->festivoNacionalRepository->findOneFecha($dia->getFecha())
@@ -63,9 +75,10 @@ class CalendarioController extends AbstractController
                 }
             }
         }
+        $calendario->addAnio($anio);
 
         return $this->render('calendario/index.html.twig', [
-            'anio' => $anio,
+            'calendario' => $calendario,
             'dias_semana' => $calendario->getdiasSemana(),
         ]);
     }

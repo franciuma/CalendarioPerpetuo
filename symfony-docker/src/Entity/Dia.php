@@ -15,7 +15,7 @@ class Dia
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?string $valor = null;
+    private ?string $numDia = null;
 
     #[ORM\ManyToOne(inversedBy: 'dias')]
     private ?Mes $mes = null;
@@ -29,9 +29,9 @@ class Dia
     #[ORM\Column(length: 255)]
     private ?string $nombreDiaDeLaSemana = null;
 
-    public function __construct(string $valor)
+    public function __construct(string $numDia)
     {
-        $this->valor = $valor;
+        $this->numDia = $numDia;
     }
 
     public function getId(): ?int
@@ -39,14 +39,14 @@ class Dia
         return $this->id;
     }
 
-    public function getValor(): ?string
+    public function getNumDia(): ?string
     {
-        return $this->valor;
+        return $this->numDia;
     }
 
-    public function setValor(string $valor): self
+    public function setNumDia(string $numDia): self
     {
-        $this->valor = $valor;
+        $this->numDia = $numDia;
 
         return $this;
     }
