@@ -6,12 +6,15 @@ use App\Entity\Anio;
 use App\Entity\Calendario;
 use App\Entity\Dia;
 use App\Entity\Mes;
+use App\Repository\AnioRepository;
+use App\Repository\CalendarioRepository;
+use App\Repository\DiaRepository;
+use App\Repository\FestivoNacionalRepository;
+use App\Repository\MesRepository;
 use App\Service\FestivoNacionalService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\FestivoNacionalRepository;
-
 
 class CalendarioController extends AbstractController
 {
@@ -20,15 +23,29 @@ class CalendarioController extends AbstractController
     const ANIO = "2023";
     const ANIO_SIGUIENTE = "2024";
 
-    private FestivoNacionalService $festivoNacionalService;
+    private $persistirBd = false;
+    private AnioRepository $anioRepository;
+    private CalendarioRepository $calendarioRepository;
+    private DiaRepository $diaRepository;
     private FestivoNacionalRepository $festivoNacionalRepository;
+    private FestivoNacionalService $festivoNacionalService;
+    private MesRepository $mesRepository;
 
     public function __construct(
+        AnioRepository $anioRepository,
+        CalendarioRepository $calendarioRepository,
+        DiaRepository $diaRepository,
+        FestivoNacionalRepository $festivoNacionalRepository,
         FestivoNacionalService $festivoNacionalService,
-        FestivoNacionalRepository $festivoNacionalRepository)
+        MesRepository $mesRepository
+    )
     {
-        $this->festivoNacionalService = $festivoNacionalService;
+        $this->anioRepository = $anioRepository;
+        $this->calendarioRepository = $calendarioRepository;
+        $this->diaRepository = $diaRepository;
         $this->festivoNacionalRepository = $festivoNacionalRepository;
+        $this->festivoNacionalService = $festivoNacionalService;
+        $this->mesRepository = $mesRepository;
     }
 
     /**
@@ -38,9 +55,22 @@ class CalendarioController extends AbstractController
     {
         $this->festivoNacionalService->getFestivosNacionales();
 
+        $nombreCalendario = "Calendario Teleco"; //posteriormente pasarlo por parametro (formulario quizas o json)
+        $calendario = new Calendario($nombreCalendario);
+        
+        if(!$this->calendarioRepository->findOneByNombre($nombreCalendario)){
+            $this->persistirBd = true;
+            $this->calendarioRepository->save($calendario,$this->persistirBd);
+        }
+
         $anio = new Anio(self::ANIO);
         $anioSig = new Anio(self::ANIO_SIGUIENTE);
-        $calendario = new Calendario();
+
+        $anio->setCalendario($calendario);
+        $anioSig->setCalendario($calendario);
+
+        $this->anioRepository->save($anio,$this->persistirBd);
+        $this->anioRepository->save($anioSig,$this->persistirBd);
 
         for ($numMes = self::NUM_MES_INICIAL; $numMes <= self::NMESES + self::NUM_MES_INICIAL; $numMes++) {
 
@@ -56,8 +86,10 @@ class CalendarioController extends AbstractController
             $anio->addMes($mes);
             $mes->setNombre($calendario->getMeses()[$mesActual]);
             $primerDiaDeMes = intval(self::calcularDiaMes(1, $mesActual, $anio->getNumAnio()));
-            $mes->setPrimerDia($primerDiaDeMes);
             $ultimoDiaDeMes = intval(self::ultimoDiaMes($mesActual, $anio->getNumAnio()));
+            $mes->setPrimerDia($primerDiaDeMes);
+            $mes->setAnio($anio);
+            $this->mesRepository->save($mes,$this->persistirBd);
             
             for($numDia= 1; $numDia <= $ultimoDiaDeMes; $numDia++) {
                 $dia = new Dia($numDia);
@@ -73,6 +105,8 @@ class CalendarioController extends AbstractController
                     $dia->setEsLectivo(true);
                     //$dia->setEvento(pasarleElEvento) Hacer relacion de festivos uno a muchos con dia.
                 }
+                $dia->setMes($mes);
+                $this->diaRepository->save($dia,$this->persistirBd);
             }
         }
         $calendario->addAnio($anio);

@@ -40,9 +40,6 @@ class Calendario
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private string $mes;
-
     #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: FestivoNacional::class)]
     private Collection $festivosNacionales;
 
@@ -52,21 +49,20 @@ class Calendario
     #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: Anio::class)]
     private Collection $anios;
 
-    public function __construct()
+    #[ORM\Column(length: 255)]
+    private ?string $nombre = null;
+
+    public function __construct($nombre)
     {
         $this->festivosNacionales = new ArrayCollection();
         $this->clases = new ArrayCollection();
         $this->anios = new ArrayCollection();
+        $this->nombre = $nombre;
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getMes(): string
-    {
-        return $this->mes;
     }
 
     public function getMeses(): array
@@ -165,6 +161,18 @@ class Calendario
                 $anio->setCalendario(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNombre(): ?string
+    {
+        return $this->nombre;
+    }
+
+    public function setNombre(string $nombre): self
+    {
+        $this->nombre = $nombre;
 
         return $this;
     }

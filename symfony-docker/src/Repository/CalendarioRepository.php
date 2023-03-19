@@ -54,13 +54,13 @@ class CalendarioRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Calendario
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findOneByNombre($nombre): ?Calendario
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.nombre = :val')
+            ->setParameter('val', $nombre)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }
