@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\DiaRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DiaRepository::class)]
@@ -21,7 +20,7 @@ class Dia
     private ?Mes $mes = null;
 
     #[ORM\Column]
-    private ?bool $lectivo = false;
+    private ?bool $esLectivo = false;
 
     #[ORM\Column(length: 255)]
     private ?string $fecha = null;
@@ -63,14 +62,14 @@ class Dia
         return $this;
     }
 
-    public function isLectivo(): ?bool
+    public function esLectivo(): ?bool
     {
-        return $this->lectivo;
+        return $this->esLectivo;
     }
 
-    public function setIsLectivo(bool $lectivo): self
+    public function setEsLectivo(bool $esLectivo): self
     {
-        $this->lectivo = $lectivo;
+        $this->esLectivo = $esLectivo;
 
         return $this;
     }

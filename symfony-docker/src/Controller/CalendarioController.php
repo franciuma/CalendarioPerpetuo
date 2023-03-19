@@ -70,7 +70,7 @@ class CalendarioController extends AbstractController
 
                 if($this->festivoNacionalRepository->findOneFecha($dia->getFecha())
                     || $nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
-                    $dia->setIsLectivo(true);
+                    $dia->setEsLectivo(true);
                     //$dia->setEvento(pasarleElEvento) Hacer relacion de festivos uno a muchos con dia.
                 }
             }
