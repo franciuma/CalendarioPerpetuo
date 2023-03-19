@@ -3,8 +3,11 @@ version: '3.5'
 services:
   app:
     build: .
+    environment:
+      XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9000 remote_enable=1
     volumes:
       - ./:/app
+      - ./php.ini:/usr/local/etc/php/php.ini
     working_dir: /app
     networks:
       - internal
