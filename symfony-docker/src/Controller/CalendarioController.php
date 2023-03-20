@@ -100,11 +100,8 @@ class CalendarioController extends AbstractController
                 $nombreDiaDeLaSemana = $calendario->getDiasSemana()[$diaSemana];
                 $dia->setNombreDiaDeLaSemana($nombreDiaDeLaSemana);
 
-                if($this->festivoNacionalRepository->findOneFecha($dia->getFecha())
-                    || $nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
-                    $dia->setEsLectivo(true);
-                    //$dia->setEvento(pasarleElEvento) Hacer relacion de festivos uno a muchos con dia.
-                }
+                self::colocarEventos($dia, $nombreDiaDeLaSemana);
+
                 $dia->setMes($mes);
                 $this->diaRepository->save($dia,$this->persistirBd);
             }
@@ -123,5 +120,21 @@ class CalendarioController extends AbstractController
 
     public function calcularDiaMes($dia, $mes, $anio) {
         return date('N', mktime(0, 0, 0, $mes, $dia, $anio)) - 1;
+    }
+
+    public function colocarEventos($dia, $nombreDiaDeLaSemana) { // Colocar las clases en un futuro aqui
+
+        $evento = $this->festivoNacionalRepository->findOneFecha($dia->getFecha());
+
+        if($nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
+            $dia->setEsLectivo(true);
+            $dia->setEvento($evento);
+        }
+
+        if($evento) {
+            $dia->setEsLectivo(true);
+            $dia->setEvento($evento);
+            $dia->setNombreEvento($evento->getAbreviatura());
+        }
     }
 }

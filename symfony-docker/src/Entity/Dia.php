@@ -28,6 +28,12 @@ class Dia
     #[ORM\Column(length: 255)]
     private ?string $nombreDiaDeLaSemana = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?FestivoNacional $evento = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $nombreEvento = null;
+
     public function __construct(string $numDia)
     {
         $this->numDia = $numDia;
@@ -94,6 +100,30 @@ class Dia
     public function setNombreDiaDeLaSemana(string $nombreDiaDeLaSemana): self
     {
         $this->nombreDiaDeLaSemana = $nombreDiaDeLaSemana;
+
+        return $this;
+    }
+
+    public function getEvento(): ?FestivoNacional
+    {
+        return $this->evento;
+    }
+
+    public function setEvento(?FestivoNacional $evento): self
+    {
+        $this->evento = $evento;
+
+        return $this;
+    }
+
+    public function getNombreEvento(): ?string
+    {
+        return $this->nombreEvento;
+    }
+
+    public function setNombreEvento(?string $nombreEvento): self
+    {
+        $this->nombreEvento = $nombreEvento;
 
         return $this;
     }
