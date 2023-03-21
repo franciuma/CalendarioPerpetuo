@@ -36,9 +36,9 @@
                                     {% endif %}
 
                                     {% if dia.Eslectivo %}
-                                        <td class="bordered text-danger" title={{dia.evento.abreviatura|default('')}}>{{ dia.numDia }}</td>
+                                        <td class="text-danger" title={{dia.evento.abreviatura|default('')}}>{{ dia.numDia }}</td>
                                     {% else %}
-                                        <td class="bordered" title={{dia.evento.abreviatura|default('')}}>{{ dia.numDia }}</td>
+                                        <td title={{dia.evento.abreviatura|default('')}}>{{ dia.numDia }}</td>
                                     {% endif %}
 
                                     {% set primerDia = primerDia+1 %}
