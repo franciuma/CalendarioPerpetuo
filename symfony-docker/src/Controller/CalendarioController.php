@@ -126,15 +126,9 @@ class CalendarioController extends AbstractController
 
         $evento = $this->festivoNacionalRepository->findOneFecha($dia->getFecha());
 
-        if($nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
+        if($evento || $nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
             $dia->setEsLectivo(true);
             $dia->setEvento($evento);
-        }
-
-        if($evento) {
-            $dia->setEsLectivo(true);
-            $dia->setEvento($evento);
-            $dia->setNombreEvento($evento->getAbreviatura());
         }
     }
 }

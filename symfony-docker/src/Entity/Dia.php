@@ -31,9 +31,6 @@ class Dia
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?FestivoNacional $evento = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $nombreEvento = null;
-
     public function __construct(string $numDia)
     {
         $this->numDia = $numDia;
@@ -112,18 +109,6 @@ class Dia
     public function setEvento(?FestivoNacional $evento): self
     {
         $this->evento = $evento;
-
-        return $this;
-    }
-
-    public function getNombreEvento(): ?string
-    {
-        return $this->nombreEvento;
-    }
-
-    public function setNombreEvento(?string $nombreEvento): self
-    {
-        $this->nombreEvento = $nombreEvento;
 
         return $this;
     }
