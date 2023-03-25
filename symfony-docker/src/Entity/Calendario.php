@@ -52,12 +52,20 @@ class Calendario
     #[ORM\Column(length: 255)]
     private ?string $nombre = null;
 
-    public function __construct($nombre)
+    #[ORM\Column(length: 255)]
+    private ?string $provincia = null;
+
+    #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: FestivoLocal::class)]
+    private Collection $festivosLocales;
+
+    public function __construct($nombre, $provincia)
     {
         $this->festivosNacionales = new ArrayCollection();
         $this->clases = new ArrayCollection();
         $this->anios = new ArrayCollection();
         $this->nombre = $nombre;
+        $this->provincia = $provincia;
+        $this->festivosLocales = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -173,6 +181,48 @@ class Calendario
     public function setNombre(string $nombre): self
     {
         $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    public function getProvincia(): ?string
+    {
+        return $this->provincia;
+    }
+
+    public function setProvincia(string $provincia): self
+    {
+        $this->provincia = $provincia;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, FestivoLocal>
+     */
+    public function getFestivosLocales(): Collection
+    {
+        return $this->festivosLocales;
+    }
+
+    public function addFestivoLocal(FestivoLocal $festivoLocal): self
+    {
+        if (!$this->festivosLocales->contains($festivoLocal)) {
+            $this->festivosLocales->add($festivoLocal);
+            $festivoLocal->setCalendario($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFestivoLocal(FestivoLocal $festivoLocal): self
+    {
+        if ($this->festivosLocales->removeElement($festivoLocal)) {
+            // set the owning side to null (unless already changed)
+            if ($festivoLocal->getCalendario() === $this) {
+                $festivoLocal->setCalendario(null);
+            }
+        }
 
         return $this;
     }

@@ -2,22 +2,19 @@
 
 namespace App\Entity;
 
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use App\Repository\FestivoNacionalRepository;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
-use DateTime;
 use App\Interface\FestivoInterface;
+use App\Repository\FestivoLocalRepository;
+use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: FestivoNacionalRepository::class)]
-class FestivoNacional implements FestivoInterface
+#[ORM\Entity(repositoryClass: FestivoLocalRepository::class)]
+class FestivoLocal implements FestivoInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'festivosNacionales')]
+    #[ORM\ManyToOne(inversedBy: 'festivosLocales')]
     private ?Calendario $calendario = null;
 
     #[ORM\Column(length: 255)]
@@ -32,13 +29,8 @@ class FestivoNacional implements FestivoInterface
     #[ORM\Column(length: 255)]
     private ?string $final = null;
 
-    public function __construct($nombre, $abreviatura, $inicio, $final)
-    {
-        $this->nombre = $nombre;
-        $this->abreviatura = $abreviatura;
-        $this->inicio = $inicio;
-        $this->final = $final;
-    }
+    #[ORM\Column(length: 255)]
+    private ?string $provincia = null;
 
     public function getId(): ?int
     {
@@ -81,7 +73,7 @@ class FestivoNacional implements FestivoInterface
         return $this;
     }
 
-    public function getInicio(): string
+    public function getInicio(): ?string
     {
         return $this->inicio;
     }
@@ -93,7 +85,7 @@ class FestivoNacional implements FestivoInterface
         return $this;
     }
 
-    public function getFinal(): string
+    public function getFinal(): ?string
     {
         return $this->final;
     }
@@ -101,6 +93,18 @@ class FestivoNacional implements FestivoInterface
     public function setFinal(string $final): self
     {
         $this->final = $final;
+
+        return $this;
+    }
+
+    public function getProvincia(): ?string
+    {
+        return $this->provincia;
+    }
+
+    public function setProvincia(string $provincia): self
+    {
+        $this->provincia = $provincia;
 
         return $this;
     }

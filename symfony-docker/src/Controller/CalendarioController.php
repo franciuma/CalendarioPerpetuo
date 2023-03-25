@@ -9,8 +9,10 @@ use App\Entity\Mes;
 use App\Repository\AnioRepository;
 use App\Repository\CalendarioRepository;
 use App\Repository\DiaRepository;
+use App\Repository\FestivoLocalRepository;
 use App\Repository\FestivoNacionalRepository;
 use App\Repository\MesRepository;
+use App\Service\FestivoLocalService;
 use App\Service\FestivoNacionalService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,11 +24,14 @@ class CalendarioController extends AbstractController
     const NUM_MES_INICIAL = 9;
     const ANIO = "2023";
     const ANIO_SIGUIENTE = "2024";
+    const PROVINCIA = "Malaga";
 
     private $persistirBd = false;
     private AnioRepository $anioRepository;
     private CalendarioRepository $calendarioRepository;
     private DiaRepository $diaRepository;
+    private FestivoLocalRepository $festivoLocalRepository;
+    private FestivoLocalService $festivoLocalService;
     private FestivoNacionalRepository $festivoNacionalRepository;
     private FestivoNacionalService $festivoNacionalService;
     private MesRepository $mesRepository;
@@ -35,6 +40,8 @@ class CalendarioController extends AbstractController
         AnioRepository $anioRepository,
         CalendarioRepository $calendarioRepository,
         DiaRepository $diaRepository,
+        FestivoLocalRepository $festivoLocalRepository,
+        FestivoLocalService $festivoLocalService,
         FestivoNacionalRepository $festivoNacionalRepository,
         FestivoNacionalService $festivoNacionalService,
         MesRepository $mesRepository
@@ -43,6 +50,8 @@ class CalendarioController extends AbstractController
         $this->anioRepository = $anioRepository;
         $this->calendarioRepository = $calendarioRepository;
         $this->diaRepository = $diaRepository;
+        $this->festivoLocalRepository = $festivoLocalRepository;
+        $this->festivoLocalService = $festivoLocalService;
         $this->festivoNacionalRepository = $festivoNacionalRepository;
         $this->festivoNacionalService = $festivoNacionalService;
         $this->mesRepository = $mesRepository;
@@ -53,10 +62,10 @@ class CalendarioController extends AbstractController
      */
     public function index(): Response
     {
-        $this->festivoNacionalService->getFestivosNacionales();
+        self::colocarFestivos();
 
         $nombreCalendario = "Calendario Teleco"; //posteriormente pasarlo por parametro (formulario quizas o json)
-        $calendario = new Calendario($nombreCalendario);
+        $calendario = new Calendario($nombreCalendario, self::PROVINCIA);
         
         if(!$this->calendarioRepository->findOneByNombre($nombreCalendario)){
             $this->persistirBd = true;
@@ -124,11 +133,21 @@ class CalendarioController extends AbstractController
 
     public function colocarEventos($dia, $nombreDiaDeLaSemana) { // Colocar las clases en un futuro aqui
 
-        $evento = $this->festivoNacionalRepository->findOneFecha($dia->getFecha());
+        $eventoNacional = $this->festivoNacionalRepository->findOneFecha($dia->getFecha());
+        $eventoLocal = $this->festivoLocalRepository->findOneFecha($dia->getFecha());
+        $provinciaEventoLocal = $eventoLocal ? $eventoLocal->getProvincia() : null;
 
-        if($evento || $nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
+        if($eventoNacional || $nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
             $dia->setEsLectivo(true);
-            $dia->setEvento($evento);
+            $dia->setEvento($eventoNacional);
+        } else if($eventoLocal && self::PROVINCIA == $provinciaEventoLocal) { //PASAR POR PARAMETRO LA PROVINCIA EN VEZ DE CON SELF
+            $dia->setEsLectivo(true);
+            $dia->setEvento($eventoLocal);
         }
+    }
+
+    public function colocarFestivos() {
+        $this->festivoNacionalService->getFestivosNacionales();
+        $this->festivoLocalService->getFestivosLocales();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Interface\FestivoInterface;
 use App\Repository\DiaRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -29,7 +30,7 @@ class Dia
     private ?string $nombreDiaDeLaSemana = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?FestivoNacional $evento = null;
+    private ?FestivoInterface $evento = null;
 
     public function __construct(string $numDia)
     {
@@ -101,12 +102,12 @@ class Dia
         return $this;
     }
 
-    public function getEvento(): ?FestivoNacional
+    public function getEvento(): ?FestivoInterface
     {
         return $this->evento;
     }
 
-    public function setEvento(?FestivoNacional $evento): self
+    public function setEvento(?FestivoInterface $evento): self
     {
         $this->evento = $evento;
 
