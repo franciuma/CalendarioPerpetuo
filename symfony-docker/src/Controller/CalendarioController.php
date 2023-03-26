@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Anio;
 use App\Entity\Calendario;
 use App\Entity\Dia;
+use App\Entity\Evento;
 use App\Entity\Mes;
 use App\Repository\AnioRepository;
 use App\Repository\CalendarioRepository;
@@ -97,7 +98,7 @@ class CalendarioController extends AbstractController
             $primerDiaDeMes = intval(self::calcularDiaMes(1, $mesActual, $anio->getNumAnio()));
             $ultimoDiaDeMes = intval(self::ultimoDiaMes($mesActual, $anio->getNumAnio()));
             $mes->setPrimerDia($primerDiaDeMes);
-            $mes->setAnio($anio);
+            $mes->setAnio($anio);//considerar borrar
             $this->mesRepository->save($mes,$this->persistirBd);
             
             for($numDia= 1; $numDia <= $ultimoDiaDeMes; $numDia++) {
@@ -111,7 +112,7 @@ class CalendarioController extends AbstractController
 
                 self::colocarEventos($dia, $nombreDiaDeLaSemana);
 
-                $dia->setMes($mes);
+                $dia->setMes($mes);//considerar borrar
                 $this->diaRepository->save($dia,$this->persistirBd);
             }
         }
@@ -133,16 +134,16 @@ class CalendarioController extends AbstractController
 
     public function colocarEventos($dia, $nombreDiaDeLaSemana) { // Colocar las clases en un futuro aqui
 
-        $eventoNacional = $this->festivoNacionalRepository->findOneFecha($dia->getFecha());
-        $eventoLocal = $this->festivoLocalRepository->findOneFecha($dia->getFecha());
-        $provinciaEventoLocal = $eventoLocal ? $eventoLocal->getProvincia() : null;
+        $festivoNacional = $this->festivoNacionalRepository->findOneFecha($dia->getFecha());
+        $festivoLocal = $this->festivoLocalRepository->findOneFecha($dia->getFecha());
+        $provinciaEventoLocal = $festivoLocal ? $festivoLocal->getProvincia() : null;
+        $evento = new Evento($festivoLocal ?? $festivoNacional);
 
-        if($eventoNacional || $nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
-            $dia->setEsLectivo(true);
-            $dia->setEvento($eventoNacional);
-        } else if($eventoLocal && self::PROVINCIA == $provinciaEventoLocal) { //PASAR POR PARAMETRO LA PROVINCIA EN VEZ DE CON SELF
-            $dia->setEsLectivo(true);
-            $dia->setEvento($eventoLocal);
+        if($nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
+            $dia->setEsNoLectivo(true);
+        } else if($festivoNacional || $festivoLocal && self::PROVINCIA == $provinciaEventoLocal) { //PASAR POR PARAMETRO LA PROVINCIA EN VEZ DE CON SELF
+            $dia->setEsNoLectivo(true);
+            $dia->setEvento($evento);
         }
     }
 

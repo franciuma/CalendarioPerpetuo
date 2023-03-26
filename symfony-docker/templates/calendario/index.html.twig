@@ -35,10 +35,10 @@
                                         {% set primerDia = 0 %}
                                     {% endif %}
 
-                                    {% if dia.Eslectivo %}
-                                        <td class="text-danger" title={{dia.evento.abreviatura|default('')}}>{{ dia.numDia }}</td>
+                                    {% if dia.EsNolectivo %}
+                                        <td class="text-danger" title={{dia.evento.getNombreFestivo(dia.evento)|default('')}}>{{ dia.numDia }}</td>
                                     {% else %}
-                                        <td title={{dia.evento.abreviatura|default('')}}>{{ dia.numDia }}</td>
+                                        <td>{{ dia.numDia }}</td>
                                     {% endif %}
 
                                     {% set primerDia = primerDia+1 %}

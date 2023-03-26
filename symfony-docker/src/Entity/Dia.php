@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Interface\FestivoInterface;
 use App\Repository\DiaRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -21,7 +20,7 @@ class Dia
     private ?Mes $mes = null;
 
     #[ORM\Column]
-    private ?bool $esLectivo = false;
+    private ?bool $esNoLectivo = false;
 
     #[ORM\Column(length: 255)]
     private ?string $fecha = null;
@@ -29,8 +28,8 @@ class Dia
     #[ORM\Column(length: 255)]
     private ?string $nombreDiaDeLaSemana = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?FestivoInterface $evento = null;
+    #[ORM\OneToOne(mappedBy: 'dia', cascade: ['persist', 'remove'])]
+    private ?Evento $evento = null;
 
     public function __construct(string $numDia)
     {
@@ -66,14 +65,14 @@ class Dia
         return $this;
     }
 
-    public function esLectivo(): ?bool
+    public function esNoLectivo(): ?bool
     {
-        return $this->esLectivo;
+        return $this->esNoLectivo;
     }
 
-    public function setEsLectivo(bool $esLectivo): self
+    public function setEsNoLectivo(bool $esNoLectivo): self
     {
-        $this->esLectivo = $esLectivo;
+        $this->esNoLectivo = $esNoLectivo;
 
         return $this;
     }
@@ -102,13 +101,23 @@ class Dia
         return $this;
     }
 
-    public function getEvento(): ?FestivoInterface
+    public function getEvento(): ?Evento
     {
         return $this->evento;
     }
 
-    public function setEvento(?FestivoInterface $evento): self
+    public function setEvento(?Evento $evento): self
     {
+        // unset the owning side of the relation if necessary
+        if ($evento === null && $this->evento !== null) {
+            $this->evento->setDia(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($evento !== null && $evento->getDia() !== $this) {
+            $evento->setDia($this);
+        }
+
         $this->evento = $evento;
 
         return $this;
