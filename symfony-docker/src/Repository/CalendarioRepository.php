@@ -60,6 +60,18 @@ class CalendarioRepository extends ServiceEntityRepository
             ->andWhere('c.nombre = :val')
             ->setParameter('val', $nombre)
             ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult()
+        ;
+    }
+
+    public function findOneByProvincia($provincia): ?Calendario
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.provincia = :val')
+            ->setParameter('val', $provincia)
+            ->getQuery()
+            ->setMaxResults(1)
             ->getOneOrNullResult()
         ;
     }

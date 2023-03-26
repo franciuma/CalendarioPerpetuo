@@ -17,9 +17,6 @@ class FestivoNacional implements FestivoInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'festivosNacionales')]
-    private ?Calendario $calendario = null;
-
     #[ORM\Column(length: 255)]
     private ?string $nombre = null;
 
@@ -43,18 +40,6 @@ class FestivoNacional implements FestivoInterface
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getCalendario(): ?Calendario
-    {
-        return $this->calendario;
-    }
-
-    public function setCalendario(?Calendario $calendario): self
-    {
-        $this->calendario = $calendario;
-
-        return $this;
     }
 
     public function getNombre(): ?string

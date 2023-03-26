@@ -40,12 +40,6 @@ class Calendario
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: FestivoNacional::class)]
-    private Collection $festivosNacionales;
-
-    #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: Clase::class)]
-    private Collection $clases;
-
     #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: Anio::class)]
     private Collection $anios;
 
@@ -55,17 +49,11 @@ class Calendario
     #[ORM\Column(length: 255)]
     private ?string $provincia = null;
 
-    #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: FestivoLocal::class)]
-    private Collection $festivosLocales;
-
     public function __construct($nombre, $provincia)
     {
-        $this->festivosNacionales = new ArrayCollection();
-        $this->clases = new ArrayCollection();
         $this->anios = new ArrayCollection();
         $this->nombre = $nombre;
         $this->provincia = $provincia;
-        $this->festivosLocales = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -81,66 +69,6 @@ class Calendario
     public function getDiasSemana(): array
     {
         return $this->diasSemana;
-    }
-
-    /**
-     * @return Collection<int, FestivoNacional>
-     */
-    public function getFestivosNacionales(): Collection
-    {
-        return $this->festivosNacionales;
-    }
-
-    public function addFestivosNacionale(FestivoNacional $festivosNacionale): self
-    {
-        if (!$this->festivosNacionales->contains($festivosNacionale)) {
-            $this->festivosNacionales->add($festivosNacionale);
-            $festivosNacionale->setCalendario($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFestivosNacionale(FestivoNacional $festivosNacionale): self
-    {
-        if ($this->festivosNacionales->removeElement($festivosNacionale)) {
-            // set the owning side to null (unless already changed)
-            if ($festivosNacionale->getCalendario() === $this) {
-                $festivosNacionale->setCalendario(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Clase>
-     */
-    public function getClases(): Collection
-    {
-        return $this->clases;
-    }
-
-    public function addClase(Clase $clase): self
-    {
-        if (!$this->clases->contains($clase)) {
-            $this->clases->add($clase);
-            $clase->setCalendario($this);
-        }
-
-        return $this;
-    }
-
-    public function removeClase(Clase $clase): self
-    {
-        if ($this->clases->removeElement($clase)) {
-            // set the owning side to null (unless already changed)
-            if ($clase->getCalendario() === $this) {
-                $clase->setCalendario(null);
-            }
-        }
-
-        return $this;
     }
 
     /**
@@ -193,36 +121,6 @@ class Calendario
     public function setProvincia(string $provincia): self
     {
         $this->provincia = $provincia;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, FestivoLocal>
-     */
-    public function getFestivosLocales(): Collection
-    {
-        return $this->festivosLocales;
-    }
-
-    public function addFestivoLocal(FestivoLocal $festivoLocal): self
-    {
-        if (!$this->festivosLocales->contains($festivoLocal)) {
-            $this->festivosLocales->add($festivoLocal);
-            $festivoLocal->setCalendario($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFestivoLocal(FestivoLocal $festivoLocal): self
-    {
-        if ($this->festivosLocales->removeElement($festivoLocal)) {
-            // set the owning side to null (unless already changed)
-            if ($festivoLocal->getCalendario() === $this) {
-                $festivoLocal->setCalendario(null);
-            }
-        }
 
         return $this;
     }

@@ -29,9 +29,6 @@ class Clase
     #[ORM\Column(length: 255)]
     private ?string $asignatura = null;
 
-    #[ORM\ManyToOne(inversedBy: 'clases')]
-    private ?Calendario $calendario = null;
-
     #[ORM\Column(length: 255)]
     private ?string $abreviatura = null;
 
@@ -96,18 +93,6 @@ class Clase
     public function setAsignatura(string $asignatura): self
     {
         $this->asignatura = $asignatura;
-
-        return $this;
-    }
-
-    public function getCalendario(): ?Calendario
-    {
-        return $this->calendario;
-    }
-
-    public function setCalendario(?Calendario $calendario): self
-    {
-        $this->calendario = $calendario;
 
         return $this;
     }
