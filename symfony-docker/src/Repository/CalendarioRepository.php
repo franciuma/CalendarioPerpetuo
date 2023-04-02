@@ -9,10 +9,10 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<Calendario>
  *
- * @method Calendario|null find($id, $lockMode = null, $lockVersion = null)
- * @method Calendario|null findOneBy(array $criteria, array $orderBy = null)
  * @method Calendario[]    findAll()
  * @method Calendario[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Calendario|null findOneByNombre(array $criteria, array $orderBy = null)
+ * @method Calendario|null findOneByProvincia(array $criteria, array $orderBy = null)
  */
 class CalendarioRepository extends ServiceEntityRepository
 {

@@ -6,6 +6,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\DBAL\Driver\Connection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+/**
+ * Aun no especificada, inutilizada
+ */
 class UserController
 {
     public function test()

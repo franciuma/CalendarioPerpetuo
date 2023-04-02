@@ -5,8 +5,10 @@ namespace App\Service;
 use App\Repository\FestivoLocalRepository;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Controller\CalendarioController;
-use App\Entity\FestivoLocal;
 
+/**
+ * Clase utilizada para traducir JSON festivoLocales y persistirlo en la base de datos.
+ */
 class FestivoLocalService
 {
     private SerializerInterface $serializer;

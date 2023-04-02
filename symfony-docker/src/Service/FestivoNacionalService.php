@@ -6,6 +6,9 @@ use App\Repository\FestivoNacionalRepository;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Controller\CalendarioController;
 
+/**
+ * Clase utilizada para traducir JSON festivoNacional y persistirlo en la base de datos.
+ */
 class FestivoNacionalService
 {
     private SerializerInterface $serializer;

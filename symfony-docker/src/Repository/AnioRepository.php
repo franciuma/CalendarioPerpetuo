@@ -10,9 +10,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<Anio>
  *
  * @method Anio|null find($id, $lockMode = null, $lockVersion = null)
- * @method Anio|null findOneBy(array $criteria, array $orderBy = null)
  * @method Anio[]    findAll()
  * @method Anio[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Anio|null findOneBynumAnio(array $criteria, array $orderBy = null)
  */
 class AnioRepository extends ServiceEntityRepository
 {
@@ -54,13 +54,14 @@ class AnioRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Anio
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findOneByNumAnio($anio): ?Anio
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.numAnio = :val')
+            ->setParameter('val', $anio)
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult()
+        ;
+    }
 }

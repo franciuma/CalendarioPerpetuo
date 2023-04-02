@@ -6,6 +6,10 @@ use App\Repository\EventoRepository;
 use Doctrine\ORM\Mapping as ORM;
 use App\Interface\FestivoInterface;
 
+/**
+ * Clase Evento:
+ * Un evento puede ser un festivo Nacional, un festivo local, un festivo de un centro, o una clase (lección).
+ */
 #[ORM\Entity(repositoryClass: EventoRepository::class)]
 class Evento
 {
@@ -14,14 +18,15 @@ class Evento
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?FestivoNacional $festivoNacional = null;
-
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?FestivoLocal $festivoLocal = null;
-
     #[ORM\OneToOne(inversedBy: 'evento', cascade: ['persist', 'remove'])]
     private ?Dia $dia = null;
+
+    #[ORM\ManyToOne]
+    private ?FestivoNacional $festivoNacional = null;
+
+    #[ORM\ManyToOne]
+    private ?FestivoLocal $festivoLocal = null;
+
 
     public function __construct(?FestivoInterface $festivo = null)
     {
@@ -49,6 +54,18 @@ class Evento
         return null;
     }
 
+    public function getDia(): ?Dia
+    {
+        return $this->dia;
+    }
+
+    public function setDia(?Dia $dia): self
+    {
+        $this->dia = $dia;
+
+        return $this;
+    }
+
     public function getFestivoNacional(): ?FestivoNacional
     {
         return $this->festivoNacional;
@@ -73,15 +90,4 @@ class Evento
         return $this;
     }
 
-    public function getDia(): ?Dia
-    {
-        return $this->dia;
-    }
-
-    public function setDia(?Dia $dia): self
-    {
-        $this->dia = $dia;
-
-        return $this;
-    }
 }

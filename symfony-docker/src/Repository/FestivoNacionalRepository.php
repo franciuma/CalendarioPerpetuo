@@ -13,6 +13,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method FestivoNacional|null findOneBy(array $criteria, array $orderBy = null)
  * @method FestivoNacional[]    findAll()
  * @method FestivoNacional[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method FestivoNacional|null findOneFecha(array $criteria, array $orderBy = null)
  */
 class FestivoNacionalRepository extends ServiceEntityRepository
 {

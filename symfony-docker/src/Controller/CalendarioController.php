@@ -63,13 +63,16 @@ class CalendarioController extends AbstractController
      */
     public function index(): Response
     {
-        self::colocarFestivos();
+        self::colocarFestivosBd();
 
         $nombreCalendario = "Calendario Teleco"; //posteriormente pasarlo por parametro (formulario quizas o json)
         $calendario = new Calendario($nombreCalendario, self::PROVINCIA);
 
         if(!$this->calendarioRepository->findOneByNombre($nombreCalendario)
-            || !$this->calendarioRepository->findOneByProvincia(self::PROVINCIA)){
+            || !$this->calendarioRepository->findOneByProvincia(self::PROVINCIA)
+            || !$this->anioRepository->findOneByNumAnio(self::ANIO) &&
+            !$this->anioRepository->findOneByNumAnio(self::ANIO_SIGUIENTE)
+        ){
             $this->persistirBd = true;
             $this->calendarioRepository->save($calendario,$this->persistirBd);
         }
@@ -96,7 +99,7 @@ class CalendarioController extends AbstractController
             $mes = new Mes($mesActual);
             $anio->addMes($mes);
             $mes->setNombre($calendario->getMeses()[$mesActual]);
-            $primerDiaDeMes = intval(self::calcularDiaMes(1, $mesActual, $anio->getNumAnio()));
+            $primerDiaDeMes = intval(self::calcularDiaDeLaSemana(1, $mesActual, $anio->getNumAnio()));
             $ultimoDiaDeMes = intval(self::ultimoDiaMes($mesActual, $anio->getNumAnio()));
             $mes->setPrimerDia($primerDiaDeMes);
             $mes->setAnio($anio);
@@ -107,7 +110,7 @@ class CalendarioController extends AbstractController
                 $dia->setFecha($dia->getNumDia()."-".$mes->getNumMes()."-".substr($anio->getNumAnio(), 2, 3));
                 $mes->addDia($dia);
 
-                $diaSemana = intval(self::calcularDiaMes($dia->getNumDia(), $mesActual, $anio->getNumAnio()));
+                $diaSemana = intval(self::calcularDiaDeLaSemana($dia->getNumDia(), $mesActual, $anio->getNumAnio()));
                 $nombreDiaDeLaSemana = $calendario->getDiasSemana()[$diaSemana];
                 $dia->setNombreDiaDeLaSemana($nombreDiaDeLaSemana);
 
@@ -125,30 +128,45 @@ class CalendarioController extends AbstractController
         ]);
     }
 
+    /**
+     * Función que calcula el último día del mes en un año determinado.
+     * El formato devuelto es un entero.
+     */
     public function ultimoDiaMes($mes, $anio) {
         return date('d', mktime(0, 0, 0, $mes + 1, 0, $anio));
     }
 
-    public function calcularDiaMes($dia, $mes, $anio) {
+    /**
+     * Función que calcula el día de la semana del mes correspondiente en un año determinado.
+     * El formato devuelto es un número del 0 al 6, correspondiendo el 0 al lunes y el 6 al domingo.
+     */
+    public function calcularDiaDeLaSemana($dia, $mes, $anio) {
         return date('N', mktime(0, 0, 0, $mes, $dia, $anio)) - 1;
     }
 
+    /**
+     * Función dedicada a colocar los eventos en el calendario.
+     * Un evento es una clase (lección), o un festivo.
+     */
     public function colocarEventos($dia, $nombreDiaDeLaSemana) { // Colocar las clases en un futuro aqui
 
         $festivoNacional = $this->festivoNacionalRepository->findOneFecha($dia->getFecha());
         $festivoLocal = $this->festivoLocalRepository->findOneFecha($dia->getFecha());
         $provinciaEventoLocal = $festivoLocal ? $festivoLocal->getProvincia() : null;
 
-        if($nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
-            $dia->setEsNoLectivo(true);
-        } else if($festivoNacional || $festivoLocal && self::PROVINCIA == $provinciaEventoLocal) { //PASAR POR PARAMETRO LA PROVINCIA EN VEZ DE CON SELF
+        if($festivoNacional || $festivoLocal && self::PROVINCIA == $provinciaEventoLocal) { //PASAR POR PARAMETRO LA PROVINCIA EN VEZ DE CON SELF
             $evento = new Evento($festivoLocal ?? $festivoNacional);
             $dia->setEsNoLectivo(true);
             $dia->setEvento($evento);
+        } else if($nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
+            $dia->setEsNoLectivo(true);
         }
     }
 
-    public function colocarFestivos() {
+    /**
+     * Función dedicada a colocar festivos en la base de datos.
+     */
+    public function colocarFestivosBd() {
         $this->festivoNacionalService->getFestivosNacionales();
         $this->festivoLocalService->getFestivosLocales();
     }
