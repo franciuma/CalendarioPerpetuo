@@ -10,6 +10,7 @@ use DateTime;
 use App\Interface\FestivoInterface;
 
 #[ORM\Entity(repositoryClass: FestivoNacionalRepository::class)]
+#[ORM\Index(name: "inicio_nacional_idx" , fields: ["inicio"])]
 class FestivoNacional implements FestivoInterface
 {
     #[ORM\Id]

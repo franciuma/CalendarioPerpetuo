@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AnioRepository::class)]
+#[ORM\Index(name: "numAnio_idx" , fields: ["numAnio"])]
 class Anio
 {
     #[ORM\Id]

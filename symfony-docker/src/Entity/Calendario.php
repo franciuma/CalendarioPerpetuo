@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CalendarioRepository::class)]
+#[ORM\Index(name: "nombre_idx" , fields: ["nombre"])]
+#[ORM\Index(name: "provincia_idx" , fields: ["provincia"])]
 class Calendario
 {
     public $meses = array(

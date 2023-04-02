@@ -7,6 +7,7 @@ use App\Repository\FestivoLocalRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FestivoLocalRepository::class)]
+#[ORM\Index(name: "inicio_local_idx" , fields: ["inicio"])]
 class FestivoLocal implements FestivoInterface
 {
     #[ORM\Id]
@@ -20,7 +21,7 @@ class FestivoLocal implements FestivoInterface
     #[ORM\Column(length: 255)]
     private ?string $abreviatura = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, options: ["index" => true])]
     private ?string $inicio = null;
 
     #[ORM\Column(length: 255)]
