@@ -23,11 +23,11 @@
                             </tr>
 
                             <tr>
-                                {% set diasVacios = mes.primerDia %}
-                                {% while diasVacios > 0 %}
-                                    <td></td>
-                                    {% set diasVacios = diasVacios - 1 %}
-                                {% endwhile %}
+                                {% if mes.primerDia != 0 %}
+                                    {% for diasVacios in 0..mes.primerDia-1 %}
+                                        <td></td>
+                                    {% endfor %}
+                                {% endif %}
 
                                 {% for dia in mes.dias %}
                                     {% if primerDia == 7 %}
