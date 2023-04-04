@@ -1612,6 +1612,13 @@
   "resolved" "https://registry.npmjs.org/boolbase/-/boolbase-1.0.0.tgz"
   "version" "1.0.0"
 
+"bootstrap-datepicker@^1.9.0":
+  "integrity" "sha512-9rYYbaVOheGYxjOr/+bJCmRPihfy+LkLSg4fIFMT9Od8WwWB/MB50w0JO1eBgKUMbb7PFHQD5uAfI3ArAxZRXA=="
+  "resolved" "https://registry.npmjs.org/bootstrap-datepicker/-/bootstrap-datepicker-1.9.0.tgz"
+  "version" "1.9.0"
+  dependencies:
+    "jquery" ">=1.7.1 <4.0.0"
+
 "bootstrap@^5.2.3":
   "integrity" "sha512-cEKPM+fwb3cT8NzQZYEu4HilJ3anCrWqh3CHAok1p9jXqMPsPTBhU25fBckEJHJ/p+tTxTFTsFQGM+gaHpi3QQ=="
   "resolved" "https://registry.npmjs.org/bootstrap/-/bootstrap-5.2.3.tgz"
@@ -2765,7 +2772,7 @@
     "merge-stream" "^2.0.0"
     "supports-color" "^8.0.0"
 
-"jquery@^3.6.3":
+"jquery@^3.6.3", "jquery@>=1.7.1 <4.0.0":
   "integrity" "sha512-bZ5Sy3YzKo9Fyc8wH2iIQK4JImJ6R0GWI9kL1/k7Z91ZBNgkRXE6U0JfHIizZbort8ZunhSI3jw9I6253ahKfg=="
   "resolved" "https://registry.npmjs.org/jquery/-/jquery-3.6.3.tgz"
   "version" "3.6.3"
@@ -4295,9 +4302,9 @@
   "version" "3.2.3"
 
 "webpack@^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0", "webpack@^4.0.0 || ^5.0.0", "webpack@^4.37.0 || ^5.0.0", "webpack@^5.0.0", "webpack@^5.1.0", "webpack@^5.72", "webpack@^5.74.0", "webpack@>=2", "webpack@>=4.0.0 <6.0.0", "webpack@>=5.0.0", "webpack@4.x.x || 5.x.x":
-  "integrity" "sha512-piaIaoVJlqMsPtX/+3KTTO6jfvrSYgauFVdt8cr9LTHKmcq/AMd4mhzsiP7ZF/PGRNPGA8336jldh9l2Kt2ogQ=="
-  "resolved" "https://registry.npmjs.org/webpack/-/webpack-5.75.0.tgz"
-  "version" "5.75.0"
+  "integrity" "sha512-sbGNjBr5Ya5ss91yzjeJTLKyfiwo5C628AFjEa6WSXcZa4E+F57om3Cc8xLb1Jh0b243AWuSYRf3dn7HVeFQ9Q=="
+  "resolved" "https://registry.npmjs.org/webpack/-/webpack-5.77.0.tgz"
+  "version" "5.77.0"
   dependencies:
     "@types/eslint-scope" "^3.7.3"
     "@types/estree" "^0.0.51"

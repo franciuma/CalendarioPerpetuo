@@ -4,6 +4,10 @@
 
 {% block body %}
     {{ parent() }}
+
+    {% set anioActual = calendario.anios|first.numAnio %}
+
+    <h1 class="font-weight-bold text-center">Calendario {{ anioActual }}-{{ anioActual+1 }}</h1>
     
     <div class="container-fluid">
         <div class="row">

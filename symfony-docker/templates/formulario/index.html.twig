@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Formulario
+{% endblock %}
+
+{% block body %}
+	{{ parent() }}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<h1 class="font-weight-bold">Creación de calendario</h1>
+				<form>
+					<div class="form-group">
+						<label for="nombreDelCentro">Nombre del centro</label>
+						<input type="text" class="form-control" id="nombreDelCentro" placeholder="ETSII Informatica">
+						<label for="nombreDeProvincia">Provincia</label>
+						<input type="text" class="form-control" id="nombreDeProvincia" placeholder="Málaga">
+					</div>
+					<input type="text" class="form-control datepicker" id="datepickerInput" placeholder="Selecciona una fecha">
+					<table id="fechasTable" class="table">
+						<thead>
+							<tr>
+								<th>Fecha</th>
+								<th>Eliminar</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+
+					<div class="form-group">
+						<label for="exampleFormControlSelect1">Example select</label>
+						<select class="form-control" id="exampleFormControlSelect1">
+							<option>1</option>
+							<option>2</option>
+							<option>3</option>
+							<option>4</option>
+							<option>5</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="exampleFormControlSelect2">Example multiple select</label>
+						<select multiple class="form-control" id="exampleFormControlSelect2">
+							<option>1</option>
+							<option>2</option>
+							<option>3</option>
+							<option>4</option>
+							<option>5</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="exampleFormControlTextarea1">Example textarea</label>
+						<textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+{% endblock %}
