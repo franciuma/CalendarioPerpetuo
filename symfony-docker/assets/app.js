@@ -15,8 +15,8 @@ import './bootstrap';
 //importamos css de datepicker
 import 'bootstrap-datepicker/dist/css/bootstrap-datepicker.css';
 
+let contador = 0;
 $(function() {
-    let contador = 0;
     $('.datepicker').datepicker({
         multidate: true,
         format: 'dd-mm-yyyy',
@@ -81,6 +81,9 @@ $(document).on('click', '.eliminar-fecha', function() {
     if (nuevasFechas.length === 0) {
         $('#datepickerInput').datepicker('setDates', '');
     }
+
+    //Disminuimos el contador
+    contador--;
 
      // Eliminar la fila de la tabla
     fila.remove();
