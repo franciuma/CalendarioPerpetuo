@@ -10,12 +10,16 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-    
+
     App\Service\FestivoNacionalService:
         autowire: true
         autoconfigure: true
 
-    App\Entity\FestivoLocal:
+    App\Service\FestivoLocalService:
+        autowire: true
+        autoconfigure: true
+
+    App\Service\ClaseService:
         autowire: true
         autoconfigure: true
 

@@ -14,51 +14,24 @@ class Clase
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
-    private ?\DateTimeInterface $inicio = null;
-
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
-    private ?\DateTimeInterface $final = null;
-
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255 , nullable: true)]
     private ?string $aula = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255 , nullable: true)]
     private ?string $correo = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255 , nullable: true)]
     private ?string $asignatura = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $abreviatura = null;
+    private ?string $tipoDeClase = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $nombre = null;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getInicio(): ?\DateTimeInterface
-    {
-        return $this->inicio;
-    }
-
-    public function setInicio(\DateTimeInterface $inicio): self
-    {
-        $this->inicio = $inicio;
-
-        return $this;
-    }
-
-    public function getFinal(): ?\DateTimeInterface
-    {
-        return $this->final;
-    }
-
-    public function setFinal(\DateTimeInterface $final): self
-    {
-        $this->final = $final;
-
-        return $this;
     }
 
     public function getAula(): ?string
@@ -97,14 +70,26 @@ class Clase
         return $this;
     }
 
-    public function getAbreviatura(): ?string
+    public function getTipoDeClase(): ?string
     {
-        return $this->abreviatura;
+        return $this->tipoDeClase;
     }
 
-    public function setAbreviatura(string $abreviatura): self
+    public function setTipoDeClase(string $tipoDeClase): self
     {
-        $this->abreviatura = $abreviatura;
+        $this->tipoDeClase = $tipoDeClase;
+
+        return $this;
+    }
+
+    public function getNombre(): ?string
+    {
+        return $this->nombre;
+    }
+
+    public function setNombre(string $nombre): self
+    {
+        $this->nombre = $nombre;
 
         return $this;
     }

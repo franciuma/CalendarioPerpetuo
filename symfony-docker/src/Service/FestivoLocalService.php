@@ -28,7 +28,6 @@ class FestivoLocalService
         $anio = substr(CalendarioController::ANIO, 2, 3);
         $anioSiguiente = substr(CalendarioController::ANIO_SIGUIENTE, 2, 3);
         $provincia = CalendarioController::PROVINCIA;
-        $espacio = '\u00A0';
 
         $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosLocales.json');
         $festivosArray = json_decode($festivosJson, true);
@@ -38,7 +37,6 @@ class FestivoLocalService
             $festivo['inicio'] = str_replace('%AC%', $anioSiguiente, $festivo['inicio']);
             $festivo['final'] = str_replace('%AN%', $anio, $festivo['final']);
             $festivo['final'] = str_replace('%AC%', $anioSiguiente, $festivo['final']);
-            $festivo['abreviatura'] = str_replace(' ', $espacio, $festivo['abreviatura']);
         }
 
         $festivos = $this->serializer->denormalize($festivosArray['festivosLocales'.$provincia], 'App\Entity\FestivoLocal[]');
