@@ -24,45 +24,69 @@ $(function() {
         weekStart: 1
     }).on('changeDate', function(e) {
         const fechasTotales = e.dates.length;
-        
+
         if (fechasTotales > contador) {
             contador++;
             // Obtener la fecha seleccionada
             const fecha = e.date;
             // Formatear la fecha como una cadena
-            const fechaString = fecha.toLocaleDateString('es-ES');
-            // Darle formato
-            const fechaStringFormato = fechaString.split('/').join('-');
-            // Crear una nueva fila de entrada
-            const fila = $('<tr id="fecha' + fechaStringFormato + 
-            '"><td><input type="text" value="' + fechaStringFormato + 
-            '"></td><td><button class="btn btn-danger eliminar-fecha">Eliminar</button></td></tr>'
-            );
-            // Agregar la nueva fila
+            const fechaStringFormato = formatearFecha(fecha);
+            // Crear una nueva fila
+            const fila = crearFila(fechaStringFormato);
             $('#fechasTable tbody').append(fila);
-        }
+        } 
+        //meter que si se da boton eliminar, se baje el contador 1.
     });
 });
 
-$(document).on('click', '.eliminar-fecha', function() {
-    const nuevasFechas = [];
+function formatearFecha(fecha) {
+    const fechaString = fecha.toLocaleDateString('es-ES');
+    return fechaString.split('/').join('-');
+}
 
+function crearFila(fechaStringFormato) {
+    return $(`
+        <tr id="fecha${fechaStringFormato}">
+            <td><input type="text" class="fecha" value="${fechaStringFormato}"></td>
+            <td><input type="text" class="form-control titulo" id="titulo${fechaStringFormato}" placeholder="Tema 0: Introducción de la asignatura"></td>
+            <td>
+                <select class="form-control tipoClase" id="tipoClase${fechaStringFormato}">
+                    <option>Teorica</option>
+                    <option>Practica</option>
+                </select>
+            </td>
+            <td><button class="btn btn-danger eliminar-fecha">Eliminar</button></td>
+        </tr>
+    `);
+}
+
+$(document).on('click', '.eliminar-fecha', function() {
+    // Obtener la fila y la fecha seleccionada
     const fila = $(this).closest('tr');
     const fechaStringFormato = fila.find('input[type="text"]').val();
-    const [dia, mes, anio] = fechaStringFormato.split('-').map(Number);
 
-    const fecha = new Date(anio, mes - 1, dia);
+    // Crear un objeto Date a partir de la fecha seleccionada
+    const fecha = crearFecha(fechaStringFormato);
+
+    // Obtener las fechas actuales del datepicker
     const fechas = $('#datepickerInput').datepicker('getDates');
 
-    for (const f of fechas) {
-        if (f.toISOString() !== fecha.toISOString()) {
-            nuevasFechas.push(f);
-        }
-    }
+    // Crear un nuevo array con todas las fechas excepto la fecha seleccionada
+    const nuevasFechas = fechas.filter(f => f.toISOString() !== fecha.toISOString());
+
+    // Actualizar las fechas del datepicker
     $('#datepickerInput').datepicker('setDates', nuevasFechas);
+
+    // Si no hay más fechas, limpiar el datepicker
     if (nuevasFechas.length === 0) {
         $('#datepickerInput').datepicker('setDates', '');
     }
-    console.log(nuevasFechas.length);
+
+     // Eliminar la fila de la tabla
     fila.remove();
 });
+
+function crearFecha(fechaStringFormato) {
+    const [dia, mes, anio] = fechaStringFormato.split('-').map(Number);
+    return new Date(anio, mes - 1, dia);
+}
