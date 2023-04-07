@@ -1,0 +1,74 @@
+{
+	"profesores": [
+		{
+		"nombre":"Luis Felipe Romero Gómez",
+		"email":"felipe@uma.es",
+		"direccion":"Despacho 2.2.47",
+		"telefono":"952134169"
+		},
+		{
+		"nombre":"Francisco Manuel Castro Payán",
+		"email":"fcastro@uma.es",
+		"direccion":"",
+		"telefono":""
+		}
+		],
+	"clases": [
+		{"nombre": "Tema 0: Introducción a la asignatura AC", "abreviatura": "tema 0","profesor":  0,"aula":"1.28","modalidad":"teorica"},
+		{"nombre": "Tema 1: Introducción a las arquitecturas RISC", "abreviatura": "t1 risc","profesor":  0,"modalidad":"teorica","url":"https://eii.cv.uma.es/mod/resource/view.php?id=385187"},
+		{"nombre": "Tema 2: Introducción al DLX", "abreviatura": "t1 dlx","profesor":  0,"modalidad":"teorica"},
+		{"nombre": "Tema 2: Introducción a la segmentación del DLX", "abreviatura": "t2 segm","profesor":  0,"modalidad":"teorica"},
+		{"nombre": "Tema 2: Control del DLX", "abreviatura": "t2 ctrl","profesor":  0,"modalidad":"teorica"},
+		
+		{"nombre": "Tema 3: Riesgos de datos. abreviaturacircuitos", "abreviatura": "t3 ccirc","profesor":  0,"modalidad":"teorica"},
+		{"nombre": "Tema 3: Riesgos de control", "abreviatura": "t3 pred","profesor":  0,"modalidad":"teorica"},
+		{"nombre": "Tema 3: Interrupciones y excepciones", "abreviatura": "t3 int","profesor":  0,"modalidad":"teorica"},
+		{"nombre": "Tema 3: Instrucciones multiciclo", "abreviatura": "t3 mulc","profesor":  0,"modalidad":"teorica"},
+		{"nombre": "Tema 4: Planificación", "abreviatura": "t4 plan","profesor":  0,"modalidad":"teorica"},
+		
+		
+		{"nombre": "Tema 3: Diseño del juego de instrucciones MIPSr 1", "abreviatura": "t4 tomas","profesor":  0,"modalidad":"teorica"},
+		{"nombre": "Tema 3: Diseño del juego de instrucciones MIPSr 2", "abreviatura": "t4 tomas","profesor":  0,"modalidad":"teorica"},
+		{"nombre": "Tema 4: Predicción dinámica", "abreviatura": "t4 pred","profesor":  0,"modalidad":"teorica"},
+		{"nombre": "Tema 4: Predicción dinámica", "abreviatura": "t4 pred","profesor":  0, "modalidad":"teorica"},
+		{"nombre": "Tema 5: Especulación", "abreviatura": "t5 esp","profesor":  0, "modalidad":"teorica"},
+		
+		{"nombre": "Tema 5: Tomasulo con especulación", "abreviatura": "t5 esp","profesor":  0, "modalidad":"teorica"},
+		{"nombre": "Seminario High Performance Computing", "abreviatura": "sem hpc","profesor":  0, "modalidad":"teorica"}, 
+		{"nombre": "Repaso examen temas 1 a 5", "abreviatura": "repaso","profesor":  0, "modalidad":"teorica"},
+		{"nombre": "Examen de los temas 1 a 5", "abreviatura": "t1-5 ex","profesor":  0, "modalidad":"teorica", "bgcolor": "#FFAAAA"},
+		{"nombre": "Libre, según total de horas", "abreviatura": "Libre","profesor":  0, "modalidad":"teorica"},
+		
+		{"nombre": "Tema 6: Memorias", "abreviatura": "Mem 1","profesor":  0, "modalidad":"teorica"},
+		{"nombre": "Tema 6: Memorias 2", "abreviatura": "Mem 2","profesor":  0, "modalidad":"teorica"},
+		{"nombre": "Tema 6: Sistemas de Archivos", "abreviatura": "filesys","profesor":  0, "modalidad":"teorica"},
+		{"nombre": "Examen T6", "abreviatura": "t6 ex","profesor":  0, "modalidad":"teorica", "bgcolor": "#FFAAAA" },
+		{"nombre": "Programación con Android 3", "abreviatura": "Andr-3","profesor":  1, "modalidad":"teorica"},
+		{"nombre": "Programación con Android 4", "abreviatura": "Andr-4","profesor":  1, "modalidad":"teorica"},
+		{"nombre": "Computación cuántica", "abreviatura": "quantum","profesor":  0, "modalidad":"teorica"},
+		{"nombre": "Seminario por determinar", "abreviatura": "libre","profesor":  0, "modalidad":"teorica"},
+		{"nombre": "Examen final", "abreviatura": "ex fin","profesor":  0, "modalidad":"teorica"},
+
+		{"nombre": "Conceptos básicos de informática, Introducción a Unix", "abreviatura":  "Unix","profesor": 0, "modalidad":"practica"},
+		{"nombre": "Conceptos básicos de informática, Introducción a Python", "abreviatura":  "Python","profesor": 0, "modalidad":"practica"},
+		{"nombre": "Conceptos básicos de compilación, librerías y enlazado", "abreviatura":  "Compil","profesor": 0, "modalidad":"practica"},
+		{"nombre": "Conceptos básicos de compilación, librerías y enlazado", "abreviatura":  "Link","profesor": 0, "modalidad":"practica"},
+		{"nombre": "Compilación cruzada", "abreviatura":  "Cross","profesor": 0, "modalidad":"practica"},
+		{"nombre": "Threads 1", "abreviatura":  "threads 1","profesor": 0, "modalidad":"practica"},
+		{"nombre": "Threads 2", "abreviatura":  "threads 2","profesor": 0, "modalidad":"practica"},
+		{"nombre": "Sockets 1", "abreviatura":  "sockets 1","profesor": 0, "modalidad":"practica"},
+		{"nombre": "Sockets 2", "abreviatura":  "sockets 2","profesor": 0, "modalidad":"practica"},
+		{"nombre": "Sockets 3", "abreviatura":  "sockets 3","profesor": 0, "modalidad":"practica"},
+		{"nombre": "Programación visual", "abreviatura":  "Visual","profesor": 0, "modalidad":"practica"},
+		{"nombre": "Programación con Android 1", "abreviatura":  "Andr-1-2","profesor": 1, "modalidad":"practica"}
+	
+	],
+	"_comment3": "TODO: Fechas separadas si hay examen final prácticas",
+	"examen":"7-2-2023",
+	"_comment1": "Excepciones: Fechas que se consideran no lectivos para la asignatura",
+	"excepcionesT":[],
+	"excepcionesP":["5-12-2022","19-12-2022"],
+	"_comment2": "Intercambios de fechas entre lecciones",
+	"intercambios":[["T1","P1"],["T2","T1"]]
+}
+

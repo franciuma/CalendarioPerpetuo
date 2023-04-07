@@ -24,7 +24,7 @@ class Clase
     private ?string $asignatura = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $tipoDeClase = null;
+    private ?string $modalidad = null;
 
     #[ORM\Column(length: 255)]
     private ?string $nombre = null;
@@ -70,14 +70,14 @@ class Clase
         return $this;
     }
 
-    public function getTipoDeClase(): ?string
+    public function getModalidad(): ?string
     {
-        return $this->tipoDeClase;
+        return $this->modalidad;
     }
 
-    public function setTipoDeClase(string $tipoDeClase): self
+    public function setModalidad(string $modalidad): self
     {
-        $this->tipoDeClase = $tipoDeClase;
+        $this->modalidad = $modalidad;
 
         return $this;
     }

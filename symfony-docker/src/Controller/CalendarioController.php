@@ -179,8 +179,7 @@ class CalendarioController extends AbstractController
         if($this->persistirBd){
             $this->festivoNacionalService->getFestivosNacionales();
             $this->festivoLocalService->getFestivosLocales();
-            $this->claseService->getClasesTeoricas();
-            $this->claseService->getClasesPracticas();
+            $this->claseService->getClases();
         }
     }
 }

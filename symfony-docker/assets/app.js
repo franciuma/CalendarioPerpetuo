@@ -47,10 +47,10 @@ function formatearFecha(fecha) {
 function crearFila(fechaStringFormato) {
     return $(`
         <tr id="fecha${fechaStringFormato}">
-            <td><input type="text" class="fecha" value="${fechaStringFormato}"></td>
-            <td><input type="text" class="form-control titulo" id="titulo${fechaStringFormato}" placeholder="Tema 0: Introducción de la asignatura"></td>
+            <td><input type="text" class="fecha" name="fecha" value="${fechaStringFormato}"></td>
+            <td><input type="text" class="form-control nombre" name="nombre" id="nombre${fechaStringFormato}" placeholder="Tema 0: Introducción de la asignatura"></td>
             <td>
-                <select class="form-control tipoClase" id="tipoClase${fechaStringFormato}">
+                <select class="form-control modalidad" name="modalidad" id="modalidad${fechaStringFormato}">
                     <option>Teorica</option>
                     <option>Practica</option>
                 </select>
@@ -85,7 +85,7 @@ $(document).on('click', '.eliminar-fecha', function() {
     //Disminuimos el contador
     contador--;
 
-     // Eliminar la fila de la tabla
+    // Eliminar la fila de la tabla
     fila.remove();
 });
 
@@ -93,3 +93,38 @@ function crearFecha(fechaStringFormato) {
     const [dia, mes, anio] = fechaStringFormato.split('-').map(Number);
     return new Date(anio, mes - 1, dia);
 }
+
+//Creamos el POST del formulario
+$(document).on('click', '.crear-calendario', function() {
+    const provincia = $('#nombreDeProvincia').val();
+    const centro = $('#nombreDelCentro').val();
+
+    // Obtener los valores de las filas de la tabla
+    const clases = [];
+    $('#fechasTable tbody tr').each(function() {
+        const fecha = $(this).find('.fecha').val();
+        const nombre = $(this).find('.nombre').val();
+        const modalidad = $(this).find('.modalidad').val();
+        clases.push({ fecha, nombre, modalidad });
+    });
+
+    // Convertir el objeto a JSON
+    const clasesJSON = JSON.stringify(clases);
+
+    // Enviar el objeto JSON a través de una petición AJAX
+    $.ajax({
+        url: 'http://localhost:8000/formulario', // ruta donde enviar la petición POST
+        type: 'POST',
+        data: {
+            clasesJSON: clasesJSON,
+            provincia: provincia,
+            centro: centro
+        }, // los datos a enviar, en este caso el objeto JSON
+        success: function(response) {
+            console.log(response); // loguear la respuesta del servidor (opcional)
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(textStatus, errorThrown); // loguear el error (opcional)
+        }
+    });
+});

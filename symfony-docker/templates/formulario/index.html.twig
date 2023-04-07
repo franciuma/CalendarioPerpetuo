@@ -5,6 +5,7 @@
 
 {% block body %}
 	{{ parent() }}
+	<!DOCTYPE html>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6">
@@ -23,14 +24,14 @@
 							<tr>
 								<th>Fecha</th>
 								<th>Titulo</th>
-								<th>Tipo de clase</th>
+								<th>Modalidad</th>
 								<th>Eliminar</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
 					</table>
 
-					<button type="button" class="btn btn-primary">Crear calendario</button>	
+					<button type="button" class="btn btn-primary crear-calendario">Crear calendario</button>	
 				</form>
 			</div>
 		</div>
