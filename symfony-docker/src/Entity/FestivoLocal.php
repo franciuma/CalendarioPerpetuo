@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Interface\FestivoInterface;
+use App\Interface\EventoInterface;
 use App\Repository\FestivoLocalRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FestivoLocalRepository::class)]
 #[ORM\Index(name: "inicio_local_idx" , fields: ["inicio"])]
-class FestivoLocal implements FestivoInterface
+class FestivoLocal implements EventoInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

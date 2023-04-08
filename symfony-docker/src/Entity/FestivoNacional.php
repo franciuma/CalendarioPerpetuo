@@ -7,11 +7,11 @@ use App\Repository\FestivoNacionalRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
-use App\Interface\FestivoInterface;
+use App\Interface\EventoInterface;
 
 #[ORM\Entity(repositoryClass: FestivoNacionalRepository::class)]
 #[ORM\Index(name: "inicio_nacional_idx" , fields: ["inicio"])]
-class FestivoNacional implements FestivoInterface
+class FestivoNacional implements EventoInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

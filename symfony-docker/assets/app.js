@@ -19,9 +19,10 @@ let contador = 0;
 $(function() {
     $('.datepicker').datepicker({
         multidate: true,
-        format: 'dd-mm-yyyy',
+        format: 'dd-mm-yy',
         language: 'es',
-        weekStart: 1
+        weekStart: 1,
+        startDate: new Date()
     }).on('changeDate', function(e) {
         const fechasTotales = e.dates.length;
 
@@ -41,7 +42,12 @@ $(function() {
 
 function formatearFecha(fecha) {
     const fechaString = fecha.toLocaleDateString('es-ES');
-    return fechaString.split('/').join('-');
+    //Dividir la fecha por /
+    const fechasPartes = fechaString.split('/');
+    //El año lo ponemos a 2 digitos
+    fechasPartes[2] = fechasPartes[2].substring(2);
+    //Devolvemos la fecha con formato -
+    return fechasPartes.join('-');
 }
 
 function crearFila(fechaStringFormato) {
@@ -91,7 +97,7 @@ $(document).on('click', '.eliminar-fecha', function() {
 
 function crearFecha(fechaStringFormato) {
     const [dia, mes, anio] = fechaStringFormato.split('-').map(Number);
-    return new Date(anio, mes - 1, dia);
+    return new Date(anio + 2000, mes - 1, dia);
 }
 
 //Creamos el POST del formulario

@@ -5,9 +5,10 @@ namespace App\Entity;
 use App\Repository\ClaseRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Interface\EventoInterface;
 
 #[ORM\Entity(repositoryClass: ClaseRepository::class)]
-class Clase
+class Clase implements EventoInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -28,6 +29,9 @@ class Clase
 
     #[ORM\Column(length: 255)]
     private ?string $nombre = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $fecha = null;
 
     public function getId(): ?int
     {
@@ -90,6 +94,18 @@ class Clase
     public function setNombre(string $nombre): self
     {
         $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    public function getFecha(): ?string
+    {
+        return $this->fecha;
+    }
+
+    public function setFecha(string $fecha): self
+    {
+        $this->fecha = $fecha;
 
         return $this;
     }

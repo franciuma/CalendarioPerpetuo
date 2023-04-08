@@ -15,6 +15,7 @@ use App\Repository\FestivoNacionalRepository;
 use App\Repository\MesRepository;
 use App\Service\FestivoLocalService;
 use App\Service\FestivoNacionalService;
+use App\Repository\ClaseRepository;
 use App\Service\ClaseService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,11 +40,13 @@ class CalendarioController extends AbstractController
     private FestivoNacionalRepository $festivoNacionalRepository;
     private FestivoNacionalService $festivoNacionalService;
     private MesRepository $mesRepository;
+    private ClaseRepository $claseRepository;
 
     public function __construct(
         AnioRepository $anioRepository,
         CalendarioRepository $calendarioRepository,
         ClaseService $claseService,
+        ClaseRepository $claseRepository,
         DiaRepository $diaRepository,
         FestivoLocalRepository $festivoLocalRepository,
         FestivoLocalService $festivoLocalService,
@@ -59,6 +62,7 @@ class CalendarioController extends AbstractController
         $this->anioRepository = $anioRepository;
         $this->calendarioRepository = $calendarioRepository;
         $this->claseService = $claseService;
+        $this->claseRepository = $claseRepository;
         $this->diaRepository = $diaRepository;
         $this->festivoLocalRepository = $festivoLocalRepository;
         $this->festivoLocalService = $festivoLocalService;
@@ -161,13 +165,17 @@ class CalendarioController extends AbstractController
      * Un evento es una clase (lección), o un festivo.
      */
     public function colocarEventos($dia, $nombreDiaDeLaSemana)
-    { // Colocar las clases en un futuro aqui
-
+    {
+        $clase = $this->claseRepository->findOneFecha($dia->getFecha());
         $festivoNacional = $this->festivoNacionalRepository->findOneFecha($dia->getFecha());
         $festivoLocal = $this->festivoLocalRepository->findOneFecha($dia->getFecha());
         $provinciaEventoLocal = $festivoLocal ? $festivoLocal->getProvincia() : null;
 
-        if ($festivoNacional || ($festivoLocal && $this->provincia == $provinciaEventoLocal)) {
+        if($clase){
+            $evento = new Evento($clase);
+            $dia->setHayClase(true);
+            $dia->setEvento($evento);
+        } else if ($festivoNacional || ($festivoLocal && $this->provincia == $provinciaEventoLocal)) {
             $evento = new Evento($festivoLocal ?? $festivoNacional);
             $dia->setEsNoLectivo(true);
             $dia->setEvento($evento);

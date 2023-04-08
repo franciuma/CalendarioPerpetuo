@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Repository\EventoRepository;
 use Doctrine\ORM\Mapping as ORM;
-use App\Interface\FestivoInterface;
+use App\Interface\EventoInterface;
 
 /**
  * Clase Evento:
@@ -27,13 +27,17 @@ class Evento
     #[ORM\ManyToOne]
     private ?FestivoLocal $festivoLocal = null;
 
+    #[ORM\ManyToOne]
+    private ?Clase $clase = null;
 
-    public function __construct(?FestivoInterface $festivo = null)
+    public function __construct(?EventoInterface $evento = null)
     {
-        if ($festivo instanceof FestivoNacional) {
-            $this->setFestivoNacional($festivo);
-        } elseif ($festivo instanceof FestivoLocal) {
-            $this->setFestivoLocal($festivo);
+        if ($evento instanceof FestivoNacional) {
+            $this->setFestivoNacional($evento);
+        } elseif ($evento instanceof FestivoLocal) {
+            $this->setFestivoLocal($evento);
+        } elseif ($evento instanceof Clase){
+            $this->setClase($evento);
         }
     }
 
@@ -49,6 +53,15 @@ class Evento
         }
         if ($this->festivoLocal) {
             return $this->festivoLocal->getAbreviatura();
+        }
+
+        return null;
+    }
+
+    public function getNombreClase(): ?string
+    {
+        if($this->clase){
+            return $this->clase->getNombre();
         }
 
         return null;
@@ -86,6 +99,18 @@ class Evento
     public function setFestivoLocal(?FestivoLocal $festivoLocal): self
     {
         $this->festivoLocal = $festivoLocal;
+
+        return $this;
+    }
+
+    public function getClase(): ?Clase
+    {
+        return $this->clase;
+    }
+
+    public function setClase(?Clase $clase): self
+    {
+        $this->clase = $clase;
 
         return $this;
     }

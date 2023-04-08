@@ -54,6 +54,16 @@ class ClaseRepository extends ServiceEntityRepository
 //        ;
 //    }
 
+    public function findOneFecha($fecha): ?Clase
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.fecha = :val')
+            ->setParameter('val', $fecha)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     public function findOneByNombre($nombre): ?Clase
     {
         return $this->createQueryBuilder('c')

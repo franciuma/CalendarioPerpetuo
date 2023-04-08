@@ -31,6 +31,9 @@ class Dia
     #[ORM\OneToOne(mappedBy: 'dia', cascade: ['persist', 'remove'])]
     private ?Evento $evento = null;
 
+    #[ORM\Column]
+    private ?bool $hayClase = false;
+
     public function __construct(string $numDia)
     {
         $this->numDia = $numDia;
@@ -119,6 +122,18 @@ class Dia
         }
 
         $this->evento = $evento;
+
+        return $this;
+    }
+
+    public function hayClase(): ?bool
+    {
+        return $this->hayClase;
+    }
+
+    public function setHayClase(bool $hayClase): self
+    {
+        $this->hayClase = $hayClase;
 
         return $this;
     }
