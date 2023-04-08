@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Repository\FestivoLocalRepository;
 use Symfony\Component\Serializer\SerializerInterface;
+use App\Entity\Calendario;
 use App\Controller\CalendarioController;
 
 /**
@@ -23,11 +24,11 @@ class FestivoLocalService
         $this->festivoLocalRepository = $festivoLocalRepository;
     }
 
-    public function getFestivosLocales(): array
+    public function getFestivosLocales(Calendario $calendario): array
     {
         $anio = substr(CalendarioController::ANIO, 2, 3);
         $anioSiguiente = substr(CalendarioController::ANIO_SIGUIENTE, 2, 3);
-        $provincia = CalendarioController::PROVINCIA;
+        $provincia = $calendario->getProvincia();
 
         $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosLocales.json');
         $festivosArray = json_decode($festivosJson, true);

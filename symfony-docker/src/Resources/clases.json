@@ -1,18 +1,18 @@
 {
     "clases": [
         {
-            "fecha": "1-4-2023",
-            "nombre": "Tema 0",
+            "fecha": "7-4-2023",
+            "nombre": "Tema 2",
             "modalidad": "Teorica"
         },
         {
-            "fecha": "2-4-2023",
-            "nombre": "Tema 1",
-            "modalidad": "Practica"
+            "fecha": "8-4-2023",
+            "nombre": "Tema 4",
+            "modalidad": "Teorica"
         },
         {
-            "fecha": "3-4-2023",
-            "nombre": "Tema 2",
+            "fecha": "9-4-2023",
+            "nombre": "Tema 5",
             "modalidad": "Teorica"
         }
     ]

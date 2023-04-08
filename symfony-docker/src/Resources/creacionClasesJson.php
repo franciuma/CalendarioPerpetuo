@@ -1,10 +1,17 @@
 <?php
 
+namespace App\Resources;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Iniciamos la sesión para guardar las variables
+    session_start();
+    //Guardamos datos de la sesión para crear el calendario
+    $_SESSION['provincia'] = $_POST['provincia'];
+    $_SESSION['centro'] = $_POST['centro'];
+
     // Obtener los datos del POST
     $clasesJSON = $_POST['clasesJSON'];
     $clases = json_decode($clasesJSON, true);
-
     // Crear el array asociativo y agregar el array de clases dentro de él
     $clasesData = array("clases" => $clases);
 
@@ -13,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Guardar el archivo JSON
     $guardado = file_put_contents("/app/src/Resources/clases.json", $clasesJSON);
-
     // Verificar si el archivo se guardó correctamente
     if ($guardado !== false) {
         var_dump("Archivo guardado correctamente");
@@ -21,5 +27,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         var_dump("Error al guardar el archivo");
     }
 }
-
-

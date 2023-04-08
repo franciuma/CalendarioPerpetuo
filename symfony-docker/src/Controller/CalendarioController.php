@@ -26,8 +26,9 @@ class CalendarioController extends AbstractController
     const ANIO_SIGUIENTE = "2024";
     const NMESES = 9;
     const NUM_MES_INICIAL = 9;
-    const PROVINCIA = "Malaga";
 
+    private $nombreCalendario;
+    private $provincia;
     private $persistirBd = false;
     private AnioRepository $anioRepository;
     private CalendarioRepository $calendarioRepository;
@@ -50,6 +51,11 @@ class CalendarioController extends AbstractController
         FestivoNacionalService $festivoNacionalService,
         MesRepository $mesRepository
     ) {
+        session_start();
+        // Obtener los valores de provincia y centro de las variables de sesión
+        $this->provincia = $_SESSION['provincia'] ?? "Malaga";
+        $this->nombreCalendario = $_SESSION['centro'] ?? "etsii informatica";
+
         $this->anioRepository = $anioRepository;
         $this->calendarioRepository = $calendarioRepository;
         $this->claseService = $claseService;
@@ -67,12 +73,11 @@ class CalendarioController extends AbstractController
     public function index(): Response
     {
 
-        $nombreCalendario = "Calendario Teleco"; //posteriormente pasarlo por parametro (formulario quizas o json)
-        $calendario = new Calendario($nombreCalendario, self::PROVINCIA);
+        $calendario = new Calendario($this->nombreCalendario, $this->provincia);
 
         if (
-            !$this->calendarioRepository->findOneByNombre($nombreCalendario)
-            || !$this->calendarioRepository->findOneByProvincia(self::PROVINCIA)
+            !$this->calendarioRepository->findOneByNombre($this->nombreCalendario)
+            || !$this->calendarioRepository->findOneByProvincia($this->provincia)
             || !$this->anioRepository->findOneByNumAnio(self::ANIO) &&
             !$this->anioRepository->findOneByNumAnio(self::ANIO_SIGUIENTE)
         ) {
@@ -80,7 +85,7 @@ class CalendarioController extends AbstractController
             $this->calendarioRepository->save($calendario, $this->persistirBd);
         }
 
-        self::colocarEventosBd();
+        self::colocarEventosBd($calendario);
 
         $anio = new Anio(self::ANIO);
         $anioSig = new Anio(self::ANIO_SIGUIENTE);
@@ -162,7 +167,7 @@ class CalendarioController extends AbstractController
         $festivoLocal = $this->festivoLocalRepository->findOneFecha($dia->getFecha());
         $provinciaEventoLocal = $festivoLocal ? $festivoLocal->getProvincia() : null;
 
-        if ($festivoNacional || ($festivoLocal && self::PROVINCIA == $provinciaEventoLocal)) { //PASAR POR PARAMETRO LA PROVINCIA EN VEZ DE CON SELF
+        if ($festivoNacional || ($festivoLocal && $this->provincia == $provinciaEventoLocal)) {
             $evento = new Evento($festivoLocal ?? $festivoNacional);
             $dia->setEsNoLectivo(true);
             $dia->setEvento($evento);
@@ -174,11 +179,11 @@ class CalendarioController extends AbstractController
     /**
      * Función dedicada a colocar los eventos en la base de datos (festivos y clases).
      */
-    public function colocarEventosBd()
+    public function colocarEventosBd($calendario)
     {
         if($this->persistirBd){
             $this->festivoNacionalService->getFestivosNacionales();
-            $this->festivoLocalService->getFestivosLocales();
+            $this->festivoLocalService->getFestivosLocales($calendario);
             $this->claseService->getClases();
         }
     }
