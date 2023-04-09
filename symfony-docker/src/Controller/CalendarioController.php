@@ -128,7 +128,7 @@ class CalendarioController extends AbstractController
                 $nombreDiaDeLaSemana = $calendario->getDiasSemana()[$diaSemana];
                 $dia->setNombreDiaDeLaSemana($nombreDiaDeLaSemana);
 
-                self::colocarEventos($dia, $nombreDiaDeLaSemana);
+                self::colocarEventos($dia, $nombreDiaDeLaSemana, $calendario);
 
                 $dia->setMes($mes);
                 $this->diaRepository->save($dia, $this->persistirBd);
@@ -164,14 +164,15 @@ class CalendarioController extends AbstractController
      * Función dedicada a colocar los eventos en el calendario.
      * Un evento es una clase (lección), o un festivo.
      */
-    public function colocarEventos($dia, $nombreDiaDeLaSemana)
+    public function colocarEventos(Dia $dia, $nombreDiaDeLaSemana, Calendario $calendario)
     {
-        $clase = $this->claseRepository->findOneFecha($dia->getFecha());
+        $clase = $this->claseRepository->findOneFecha($dia->getFecha(), $calendario->getId());
         $festivoNacional = $this->festivoNacionalRepository->findOneFecha($dia->getFecha());
         $festivoLocal = $this->festivoLocalRepository->findOneFecha($dia->getFecha());
         $provinciaEventoLocal = $festivoLocal ? $festivoLocal->getProvincia() : null;
 
-        if($clase){
+        //Si es clase y pertenece al mismo calendario.
+        if($clase && ($calendario->getId() == $clase->getCalendarioId())) {
             $evento = new Evento($clase);
             $dia->setHayClase(true);
             $dia->setEvento($evento);
@@ -187,12 +188,12 @@ class CalendarioController extends AbstractController
     /**
      * Función dedicada a colocar los eventos en la base de datos (festivos y clases).
      */
-    public function colocarEventosBd($calendario)
+    public function colocarEventosBd(Calendario $calendario)
     {
         if($this->persistirBd){
             $this->festivoNacionalService->getFestivosNacionales();
             $this->festivoLocalService->getFestivosLocales($calendario);
-            $this->claseService->getClases();
+            $this->claseService->getClases($calendario);
         }
     }
 }

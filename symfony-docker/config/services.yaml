@@ -23,6 +23,10 @@ services:
         autowire: true
         autoconfigure: true
 
+    App\Interface\FestivoInterface:
+        autowire: true
+        autoconfigure: true
+
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:

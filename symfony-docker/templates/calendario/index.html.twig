@@ -42,7 +42,7 @@
                                     {% if dia.EsNolectivo %}
                                         <td class="text-danger" title="{{dia.evento.getNombreFestivo(dia.evento)|default('')}}">{{ dia.numDia }}</td>
                                     {% elseif dia.hayClase %}
-                                        <td class="bg-primary" title="{{dia.evento.getNombreClase(dia.evento)|default('')}}">{{ dia.numDia }}</td>
+                                        <td class="fecha-clase" title="{{dia.evento.getNombreClase(dia.evento)|default('')}}">{{ dia.numDia }}</td>
                                     {% else %}
                                         <td>{{ dia.numDia }}</td>
                                     {% endif %}

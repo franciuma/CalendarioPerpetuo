@@ -54,12 +54,15 @@ class ClaseRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-    public function findOneFecha($fecha): ?Clase
+    public function findOneFecha($fecha,$calendarioId): ?Clase
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.fecha = :val')
+            ->andWhere('c.calendario = :valo')
             ->setParameter('val', $fecha)
+            ->setParameter('valo', $calendarioId)
             ->getQuery()
+            ->setMaxResults(1)
             ->getOneOrNullResult()
         ;
     }

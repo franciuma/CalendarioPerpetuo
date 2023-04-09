@@ -33,6 +33,10 @@ class Clase implements EventoInterface
     #[ORM\Column(length: 255)]
     private ?string $fecha = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Calendario $calendario = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -106,6 +110,23 @@ class Clase implements EventoInterface
     public function setFecha(string $fecha): self
     {
         $this->fecha = $fecha;
+
+        return $this;
+    }
+
+    public function getCalendario(): ?Calendario
+    {
+        return $this->calendario;
+    }
+
+    public function getCalendarioId(): ?int
+    {
+        return $this->calendario->getId();
+    }
+
+    public function setCalendario(?Calendario $calendario): self
+    {
+        $this->calendario = $calendario;
 
         return $this;
     }
