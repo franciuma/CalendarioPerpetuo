@@ -3,5 +3,5 @@ controllers:
     type: attribute
 
 homepage:
-  path: /
+  path: /calendario
   controller: App\Controller\CalendarioController::index

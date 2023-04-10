@@ -54,10 +54,8 @@ class CalendarioController extends AbstractController
         FestivoNacionalService $festivoNacionalService,
         MesRepository $mesRepository
     ) {
-        session_start();
-        // Obtener los valores de provincia y centro de las variables de sesión
-        $this->provincia = $_SESSION['provincia'] ?? "Malaga";
-        $this->nombreCalendario = $_SESSION['centro'] ?? "etsii informatica";
+        $this->provincia = $_GET['provincia'];
+        $this->nombreCalendario = $_GET['centro'];
 
         $this->anioRepository = $anioRepository;
         $this->calendarioRepository = $calendarioRepository;
@@ -76,7 +74,6 @@ class CalendarioController extends AbstractController
      */
     public function index(): Response
     {
-
         $calendario = new Calendario($this->nombreCalendario, $this->provincia);
 
         if (

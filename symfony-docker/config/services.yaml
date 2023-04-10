@@ -23,7 +23,11 @@ services:
         autowire: true
         autoconfigure: true
 
-    App\Interface\FestivoInterface:
+    App\Interface\EventoInterface:
+        autowire: true
+        autoconfigure: true
+
+    App\Resources\CreacionClasesJson:
         autowire: true
         autoconfigure: true
 

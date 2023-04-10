@@ -69,7 +69,7 @@ function crearFila(fechaStringFormato) {
 $(document).on('click', '.eliminar-fecha', function() {
     // Obtener la fila y la fecha seleccionada
     const fila = $(this).closest('tr');
-    const fechaStringFormato = fila.find('input[type="text"]').val();
+    const fechaStringFormato = fila.find('input[name="fecha"]').val();
 
     // Crear un objeto Date a partir de la fecha seleccionada
     const fecha = crearFecha(fechaStringFormato);
@@ -121,11 +121,7 @@ $(document).on('click', '.crear-calendario', function() {
     $.ajax({
         url: 'http://localhost:8000/formulario', // ruta donde enviar la petición POST
         type: 'POST',
-        data: {
-            clasesJSON: clasesJSON,
-            provincia: provincia,
-            centro: centro
-        }, // los datos a enviar, en este caso el objeto JSON
+        data: {clasesJSON: clasesJSON}, // los datos a enviar, en este caso el objeto JSON
         success: function(response) {
             console.log(response); // loguear la respuesta del servidor (opcional)
         },
@@ -133,4 +129,5 @@ $(document).on('click', '.crear-calendario', function() {
             console.log(textStatus, errorThrown); // loguear el error (opcional)
         }
     });
+    window.location.href = 'http://localhost:8000/calendario?provincia=' + provincia + '&centro=' + centro; //parametros de URL
 });

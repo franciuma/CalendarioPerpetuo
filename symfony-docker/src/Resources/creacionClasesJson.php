@@ -3,11 +3,7 @@
 namespace App\Resources;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Iniciamos la sesión para guardar las variables
     session_start();
-    //Guardamos datos de la sesión para crear el calendario
-    $_SESSION['provincia'] = $_POST['provincia'];
-    $_SESSION['centro'] = $_POST['centro'];
 
     // Obtener los datos del POST
     $clasesJSON = $_POST['clasesJSON'];
