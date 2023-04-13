@@ -15,7 +15,7 @@ import './bootstrap';
 //importamos css de datepicker
 import 'bootstrap-datepicker/dist/css/bootstrap-datepicker.css';
 
-// Funcionalidad DATEPICKER
+// Formulario de Calendario
 let contador = 0;
 $(function() {
     $('.datepicker').datepicker({
@@ -132,7 +132,8 @@ $(document).on('click', '.crear-calendario', function() {
     window.location.href = 'http://localhost:8000/calendario?provincia=' + provincia + '&centro=' + centro; //parametros de URL
 });
 
-//Funcionalidad crear grupos
+
+//Formulario profesor
 let idGrupo = 0;
 $(document).on('click', '.aniadir-fila', function() {
     idGrupo++;
@@ -157,7 +158,7 @@ function crearFilaGrupo() {
 }
 
 $(document).on('click', '.eliminar-grupo', function() {
-    // Obtener la fila y la fecha seleccionada
+    // Obtener la fila
     const fila = $(this).closest('tr');
     fila.remove();
 });
@@ -195,4 +196,53 @@ $(document).on('click', '.crear-profesor', function() {
         }
     });
     window.location.href = 'http://localhost:8000/calendario?provincia=' + provincia + '&centro=' + centro; //parametros de URL
+});
+
+//Formulario Asignatura
+let idAsignatura = 0;
+$(document).on('click', '.aniadir-fila', function() {
+    idAsignatura++;
+    const fila = crearFilaAsignatura();
+    $('#asignaturasTable tbody').append(fila);
+});
+
+function crearFilaAsignatura() {
+    return $(`
+        <tr id="grupo${idAsignatura}">
+            <td><input type="text" class="form-control asignatura" name="nombreAsig" id="nombreAsignatura${idAsignatura}"</td>
+            <td><button class="btn btn-danger eliminar-asignatura">Eliminar</button></td>
+        </tr>
+    `);
+}
+
+$(document).on('click', '.eliminar-asignatura', function() {
+    // Obtener la fila
+    const fila = $(this).closest('tr');
+    fila.remove();
+});
+
+//Creamos el POST del formulario
+$(document).on('click', '.crear-asignatura', function() {
+    // Obtener los valores de las filas de la tabla
+    const asignaturas = [];
+    $('#asignaturasTable tbody tr').each(function() {
+        const nombre = $(this).find('.nombreAsig').val();
+        asignaturas.push({ nombre });
+    });
+
+    // Convertir el objeto a JSON
+    const asignaturasJSON = JSON.stringify(asignaturas);
+
+    // Enviar el objeto JSON a través de una petición AJAX
+    $.ajax({
+        url: 'http://localhost:8000/formulario/asignatura', // ruta donde enviar la petición POST
+        type: 'POST',
+        data: {asignaturasJSON: asignaturasJSON}, // los datos a enviar, en este caso el objeto JSON
+        success: function(response) {
+            console.log(response); // loguear la respuesta del servidor (opcional)
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(textStatus, errorThrown); // loguear el error (opcional)
+        }
+    });
 });

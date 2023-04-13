@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Formulario asignatura
+{% endblock %}
+
+{% block body %}
+	{{ parent() }}
+	<!DOCTYPE html>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<h1 class="font-weight-bold">Creación de asignatura/s</h1>
+				<form>
+					<table id="asignaturasTable" class="table">
+						<thead>
+							<tr>
+								<th>Nombre de asignatura</th>
+								<th>Eliminar</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+                    <button type="button" class="btn btn-primary aniadir-fila">Añadir fila</button>
+					<button type="button" class="btn btn-primary crear-asignatura">Crear asignatura/s</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

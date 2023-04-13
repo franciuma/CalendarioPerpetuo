@@ -6,13 +6,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class FormularioController extends AbstractController
+class FormularioCalendarioController extends AbstractController
 {
-    #[Route('/formulario', name: 'app_formulario')]
+    #[Route('/formulario/calendario', name: 'app_formulario')]
     public function index(): Response
     {
-        return $this->render('formulario/index.html.twig', [
-            'controller_name' => 'FormularioController',
+        return $this->render('formularios/calendario.html.twig', [
+            'controller_name' => 'FormularioCalendarioController',
         ]);
     }
 }

@@ -11,7 +11,7 @@ class FormularioProfesorController extends AbstractController
     #[Route('/formulario/profesor', name: 'app_formulario_profesor')]
     public function index(): Response
     {
-        return $this->render('formulario/formularioProfesor.html.twig', [
+        return $this->render('formularios/profesor.html.twig', [
             'controller_name' => 'FormularioProfesorController',
         ]);
     }
