@@ -15,6 +15,7 @@ import './bootstrap';
 //importamos css de datepicker
 import 'bootstrap-datepicker/dist/css/bootstrap-datepicker.css';
 
+// Funcionalidad DATEPICKER
 let contador = 0;
 $(function() {
     $('.datepicker').datepicker({
@@ -33,10 +34,9 @@ $(function() {
             // Formatear la fecha como una cadena
             const fechaStringFormato = formatearFecha(fecha);
             // Crear una nueva fila
-            const fila = crearFila(fechaStringFormato);
+            const fila = crearFilaCalendario(fechaStringFormato);
             $('#fechasTable tbody').append(fila);
         } 
-        //meter que si se da boton eliminar, se baje el contador 1.
     });
 });
 
@@ -50,7 +50,7 @@ function formatearFecha(fecha) {
     return fechasPartes.join('-');
 }
 
-function crearFila(fechaStringFormato) {
+function crearFilaCalendario(fechaStringFormato) {
     return $(`
         <tr id="fecha${fechaStringFormato}">
             <td><input type="text" class="fecha" name="fecha" value="${fechaStringFormato}"></td>
@@ -120,6 +120,71 @@ $(document).on('click', '.crear-calendario', function() {
     // Enviar el objeto JSON a través de una petición AJAX
     $.ajax({
         url: 'http://localhost:8000/formulario', // ruta donde enviar la petición POST
+        type: 'POST',
+        data: {clasesJSON: clasesJSON}, // los datos a enviar, en este caso el objeto JSON
+        success: function(response) {
+            console.log(response); // loguear la respuesta del servidor (opcional)
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(textStatus, errorThrown); // loguear el error (opcional)
+        }
+    });
+    window.location.href = 'http://localhost:8000/calendario?provincia=' + provincia + '&centro=' + centro; //parametros de URL
+});
+
+//Funcionalidad crear grupos
+let idGrupo = 0;
+$(document).on('click', '.aniadir-fila', function() {
+    idGrupo++;
+    const fila = crearFilaGrupo();
+    $('#gruposTable tbody').append(fila);
+});
+
+function crearFilaGrupo() {
+    return $(`
+        <tr id="grupo${idGrupo}">
+            <td><input type="text" class="form-control" name="grupo" id="grupo${idGrupo}"></td>
+            <td><input type="text" class="form-control asignatura" name="asignatura" id="asignatura${idGrupo}"</td>
+            <td>
+                <select class="form-control horario" name="horario" id="horario${idGrupo}">
+                    <option>Mañana</option>
+                    <option>Tarde</option>
+                </select>
+            </td>
+            <td><button class="btn btn-danger eliminar-grupo">Eliminar</button></td>
+        </tr>
+    `);
+}
+
+$(document).on('click', '.eliminar-grupo', function() {
+    // Obtener la fila y la fecha seleccionada
+    const fila = $(this).closest('tr');
+    fila.remove();
+});
+
+//Creamos el POST del formulario
+$(document).on('click', '.crear-profesor', function() {
+    const nombre = $('#nombreProf').val();
+    const primerapellido = $('#papellidoProf').val();
+    const segundoapellido = $('#sapellidoProf').val();
+    const despacho = $('#aula').val();
+    const correo = $('#correo').val();
+
+    // Obtener los valores de las filas de la tabla
+    const clases = [];
+    $('#gruposTable tbody tr').each(function() {
+        const grupo = $(this).find('.grupo').val();
+        const asignatura = $(this).find('.asignatura').val();
+        const horario = $(this).find('.horario').val();
+        clases.push({ grupo, asignatura, horario });
+    });
+
+    // Convertir el objeto a JSON
+    const clasesJSON = JSON.stringify(clases);
+
+    // Enviar el objeto JSON a través de una petición AJAX
+    $.ajax({
+        url: 'http://localhost:8000/formulario/profesor', // ruta donde enviar la petición POST
         type: 'POST',
         data: {clasesJSON: clasesJSON}, // los datos a enviar, en este caso el objeto JSON
         success: function(response) {

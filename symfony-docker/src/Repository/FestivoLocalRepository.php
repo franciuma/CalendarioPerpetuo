@@ -53,7 +53,7 @@ class FestivoLocalRepository extends ServiceEntityRepository
 //            ->getResult()
 //        ;
 //    }
-
+// ->andWhere(':val BETWEEN f.inicio AND f.final OR f.final = :val') para el tema de inicio y final
     public function findOneFecha($fecha): ?FestivoLocal
     {
         return $this->createQueryBuilder('f')

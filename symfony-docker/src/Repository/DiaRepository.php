@@ -16,6 +16,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class DiaRepository extends ServiceEntityRepository
 {
+    /**
+     * Lo que hace la funcion
+     * @param $registry esto es ...
+     * @return 
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Dia::class);
