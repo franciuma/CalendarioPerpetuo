@@ -21,9 +21,6 @@ class Clase implements EventoInterface
     #[ORM\Column(length: 255 , nullable: true)]
     private ?string $correo = null;
 
-    #[ORM\Column(length: 255 , nullable: true)]
-    private ?string $asignatura = null;
-
     #[ORM\Column(length: 255)]
     private ?string $modalidad = null;
 
@@ -36,6 +33,10 @@ class Clase implements EventoInterface
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?Calendario $calendario = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Asignatura $asignatura = null;
 
     public function getId(): ?int
     {
@@ -62,18 +63,6 @@ class Clase implements EventoInterface
     public function setCorreo(string $correo): self
     {
         $this->correo = $correo;
-
-        return $this;
-    }
-
-    public function getAsignatura(): ?string
-    {
-        return $this->asignatura;
-    }
-
-    public function setAsignatura(string $asignatura): self
-    {
-        $this->asignatura = $asignatura;
 
         return $this;
     }
@@ -127,6 +116,18 @@ class Clase implements EventoInterface
     public function setCalendario(?Calendario $calendario): self
     {
         $this->calendario = $calendario;
+
+        return $this;
+    }
+
+    public function getAsignatura(): ?Asignatura
+    {
+        return $this->asignatura;
+    }
+
+    public function setAsignatura(?Asignatura $asignatura): self
+    {
+        $this->asignatura = $asignatura;
 
         return $this;
     }
