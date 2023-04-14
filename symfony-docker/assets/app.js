@@ -119,17 +119,17 @@ $(document).on('click', '.crear-calendario', function() {
 
     // Enviar el objeto JSON a través de una petición AJAX
     $.ajax({
-        url: 'http://localhost:8000/formulario', // ruta donde enviar la petición POST
+        url: '/post/clase', // ruta donde enviar la petición POST
         type: 'POST',
         data: {clasesJSON: clasesJSON}, // los datos a enviar, en este caso el objeto JSON
         success: function(response) {
             console.log(response); // loguear la respuesta del servidor (opcional)
+            window.location.href = 'http://localhost:8000/calendario?provincia=' + provincia + '&centro=' + centro; //parametros de URL
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(textStatus, errorThrown); // loguear el error (opcional)
         }
     });
-    window.location.href = 'http://localhost:8000/calendario?provincia=' + provincia + '&centro=' + centro; //parametros de URL
 });
 
 
@@ -144,7 +144,7 @@ $(document).on('click', '.aniadir-fila', function() {
 function crearFilaGrupo() {
     return $(`
         <tr id="grupo${idGrupo}">
-            <td><input type="text" class="form-control" name="grupo" id="grupo${idGrupo}"></td>
+            <td><input type="text" class="form-control grupo" name="grupo" id="grupo${idGrupo}"></td>
             <td><input type="text" class="form-control asignatura" name="asignatura" id="asignatura${idGrupo}"</td>
             <td>
                 <select class="form-control horario" name="horario" id="horario${idGrupo}">
@@ -208,8 +208,8 @@ $(document).on('click', '.aniadir-fila', function() {
 
 function crearFilaAsignatura() {
     return $(`
-        <tr id="grupo${idAsignatura}">
-            <td><input type="text" class="form-control asignatura" name="nombreAsig" id="nombreAsignatura${idAsignatura}"</td>
+        <tr id="asignatura${idAsignatura}">
+            <td><input type="text" class="form-control nombreAsig" name="nombreAsig" id="nombreAsignatura${idAsignatura}"</td>
             <td><button class="btn btn-danger eliminar-asignatura">Eliminar</button></td>
         </tr>
     `);
@@ -235,11 +235,12 @@ $(document).on('click', '.crear-asignatura', function() {
 
     // Enviar el objeto JSON a través de una petición AJAX
     $.ajax({
-        url: 'http://localhost:8000/formulario/asignatura', // ruta donde enviar la petición POST
+        url: '/post/asignatura', // ruta donde enviar la petición POST
         type: 'POST',
         data: {asignaturasJSON: asignaturasJSON}, // los datos a enviar, en este caso el objeto JSON
         success: function(response) {
             console.log(response); // loguear la respuesta del servidor (opcional)
+            window.location.href = 'http://localhost:8000/post/asignatura';
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(textStatus, errorThrown); // loguear el error (opcional)

@@ -54,13 +54,13 @@ class AsignaturaRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Asignatura
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findOneByNombre($nombre): ?Asignatura
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.nombre = :val')
+            ->setParameter('val', $nombre)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }
