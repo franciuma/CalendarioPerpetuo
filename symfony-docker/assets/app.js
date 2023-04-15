@@ -118,20 +118,8 @@ $(document).on('click', '.crear-calendario', function() {
     const clasesJSON = JSON.stringify(clases);
 
     // Enviar el objeto JSON a través de una petición AJAX
-    $.ajax({
-        url: '/post/clase', // ruta donde enviar la petición POST
-        type: 'POST',
-        data: {clasesJSON: clasesJSON}, // los datos a enviar, en este caso el objeto JSON
-        success: function(response) {
-            console.log(response); // loguear la respuesta del servidor (opcional)
-            window.location.href = 'http://localhost:8000/calendario?provincia=' + provincia + '&centro=' + centro; //parametros de URL
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log(textStatus, errorThrown); // loguear el error (opcional)
-        }
-    });
+    enviarPost('/post/clase',{clasesJSON: clasesJSON},'http://localhost:8000/calendario?provincia=' + provincia + '&centro=' + centro); //parametros de URL');
 });
-
 
 //Formulario profesor
 let idGrupo = 0;
@@ -142,10 +130,21 @@ $(document).on('click', '.aniadir-fila', function() {
 });
 
 function crearFilaGrupo() {
+    var options = '';
+    //Obtenemos las asignaturas del template de formulario/profesor
+    const asignaturas = JSON.parse(decodeURIComponent(document.getElementById('asignaturas').dataset.asignaturas));
+    //Los recorremos y agregamos las opciones
+    for (var i = 0; i < asignaturas.length; i++) {
+        options += `<option>${asignaturas[i]}</option>`;
+    }
     return $(`
         <tr id="grupo${idGrupo}">
             <td><input type="text" class="form-control grupo" name="grupo" id="grupo${idGrupo}"></td>
-            <td><input type="text" class="form-control asignatura" name="asignatura" id="asignatura${idGrupo}"</td>
+            <td>
+                <select type="text" class="form-control asignatura" name="asignatura" id="asignatura${idGrupo}">
+                ${options}
+                </select>
+            </td>
             <td>
                 <select class="form-control horario" name="horario" id="horario${idGrupo}">
                     <option>Mañana</option>
@@ -184,18 +183,7 @@ $(document).on('click', '.crear-profesor', function() {
     const clasesJSON = JSON.stringify(clases);
 
     // Enviar el objeto JSON a través de una petición AJAX
-    $.ajax({
-        url: 'http://localhost:8000/formulario/profesor', // ruta donde enviar la petición POST
-        type: 'POST',
-        data: {clasesJSON: clasesJSON}, // los datos a enviar, en este caso el objeto JSON
-        success: function(response) {
-            console.log(response); // loguear la respuesta del servidor (opcional)
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log(textStatus, errorThrown); // loguear el error (opcional)
-        }
-    });
-    window.location.href = 'http://localhost:8000/calendario?provincia=' + provincia + '&centro=' + centro; //parametros de URL
+    enviarPost('http://localhost:8000/formulario/profesor',{clasesJSON: clasesJSON},'http://localhost:8000/calendario');
 });
 
 //Formulario Asignatura
@@ -232,18 +220,22 @@ $(document).on('click', '.crear-asignatura', function() {
 
     // Convertir el objeto a JSON
     const asignaturasJSON = JSON.stringify(asignaturas);
-
     // Enviar el objeto JSON a través de una petición AJAX
+    enviarPost('/post/asignatura',{asignaturasJSON: asignaturasJSON},'http://localhost:8000/post/asignatura');
+
+});
+
+function enviarPost(url, data, href) {
     $.ajax({
-        url: '/post/asignatura', // ruta donde enviar la petición POST
+        url: url, // ruta donde enviar la petición POST
         type: 'POST',
-        data: {asignaturasJSON: asignaturasJSON}, // los datos a enviar, en este caso el objeto JSON
+        data: data, // los datos a enviar, en este caso el objeto JSON
         success: function(response) {
             console.log(response); // loguear la respuesta del servidor (opcional)
-            window.location.href = 'http://localhost:8000/post/asignatura';
+            window.location.href = href;
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(textStatus, errorThrown); // loguear el error (opcional)
         }
     });
-});
+}
