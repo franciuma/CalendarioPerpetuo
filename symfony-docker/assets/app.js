@@ -123,7 +123,7 @@ $(document).on('click', '.crear-calendario', function() {
 
 //Formulario profesor
 let idGrupo = 0;
-$(document).on('click', '.aniadir-fila', function() {
+$(document).on('click', '.aniadir-fila-prof', function() {
     idGrupo++;
     const fila = crearFilaGrupo();
     $('#gruposTable tbody').append(fila);
@@ -188,7 +188,7 @@ $(document).on('click', '.crear-profesor', function() {
 
 //Formulario Asignatura
 let idAsignatura = 0;
-$(document).on('click', '.aniadir-fila', function() {
+$(document).on('click', '.aniadir-fila-asig', function() {
     idAsignatura++;
     const fila = crearFilaAsignatura();
     $('#asignaturasTable tbody').append(fila);
