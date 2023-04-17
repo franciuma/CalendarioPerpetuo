@@ -164,26 +164,32 @@ $(document).on('click', '.eliminar-grupo', function() {
 
 //Creamos el POST del formulario
 $(document).on('click', '.crear-profesor', function() {
+    const profesor = [];
     const nombre = $('#nombreProf').val();
     const primerapellido = $('#papellidoProf').val();
     const segundoapellido = $('#sapellidoProf').val();
     const despacho = $('#aula').val();
     const correo = $('#correo').val();
 
+    profesor.push({nombre,primerapellido,segundoapellido,despacho,correo});
+
+    const grupo = [];
     // Obtener los valores de las filas de la tabla
-    const clases = [];
     $('#gruposTable tbody tr').each(function() {
-        const grupo = $(this).find('.grupo').val();
-        const asignatura = $(this).find('.asignatura').val();
+        const letra = $(this).find('.grupo').val();
+        const asignaturaNombre = $(this).find('.asignatura').val();
         const horario = $(this).find('.horario').val();
-        clases.push({ grupo, asignatura, horario });
+        grupo.push({letra,asignaturaNombre});
     });
 
-    // Convertir el objeto a JSON
-    const clasesJSON = JSON.stringify(clases);
+    const datos = {
+        profesor: profesor,
+        grupos: grupo
+    };
+    const jsonDatos = JSON.stringify(datos);
 
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('http://localhost:8000/formulario/profesor',{clasesJSON: clasesJSON},'http://localhost:8000/calendario');
+    enviarPost('../post/docente',{jsonDatos: jsonDatos},'http://localhost:8000/post/docente');
 });
 
 //Formulario Asignatura
@@ -232,7 +238,9 @@ function enviarPost(url, data, href) {
         data: data, // los datos a enviar, en este caso el objeto JSON
         success: function(response) {
             console.log(response); // loguear la respuesta del servidor (opcional)
-            window.location.href = href;
+            if(href) {
+                window.location.href = href;
+            }
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(textStatus, errorThrown); // loguear el error (opcional)

@@ -72,7 +72,7 @@ class Grupo
         return $this->asignatura;
     }
 
-    public function setAsignaturaId(?Asignatura $asignatura): self
+    public function setAsignatura(?Asignatura $asignatura): self
     {
         $this->asignatura = $asignatura;
 
