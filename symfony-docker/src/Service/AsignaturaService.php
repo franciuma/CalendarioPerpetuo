@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Entity\Asignatura;
 use App\Repository\AsignaturaRepository;
 use Symfony\Component\Serializer\SerializerInterface;
 

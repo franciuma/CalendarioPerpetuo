@@ -18,7 +18,7 @@ class GrupoService
     public function __construct(
         SerializerInterface $serializer,
         GrupoRepository $grupoRepository,
-        AsignaturaRepository $asignaturaRepository
+        AsignaturaRepository $asignaturaRepository,
     )
     {
         $this->serializer = $serializer;
@@ -26,12 +26,13 @@ class GrupoService
         $this->asignaturaRepository = $asignaturaRepository;
     }
 
-    public function getGrupos(): void
+    public function getGrupos()
     {
         $grupoJSON = file_get_contents(__DIR__ . '/../resources/profesorGrupo.json');
         $gruposArray = json_decode($grupoJSON, true);
 
         $gruposDatos = $gruposArray['grupos'];
+        $grupos = [];
 
         foreach ($gruposDatos as $grupoDatos) {
             $asignaturaNombre = $grupoDatos['asignaturaNombre'];
@@ -39,6 +40,9 @@ class GrupoService
             $asignatura = $this->asignaturaRepository->findOneByNombre($asignaturaNombre);
             $grupo->setAsignatura($asignatura);
             $this->grupoRepository->save($grupo,true);
+            $grupos[] = $grupo;
         }
+
+        return $grupos;
     }
 }

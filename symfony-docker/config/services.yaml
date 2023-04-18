@@ -23,6 +23,18 @@ services:
         autowire: true
         autoconfigure: true
 
+    App\Service\ProfesorGrupoService:
+        autowire: true
+        autoconfigure: true
+
+    App\Service\ProfesorService:
+        autowire: true
+        autoconfigure: true
+
+    App\Entity\ProfesorGrupo:
+        autowire: true
+        autoconfigure: true
+
     App\Interface\EventoInterface:
         autowire: true
         autoconfigure: true

@@ -118,7 +118,7 @@ $(document).on('click', '.crear-calendario', function() {
     const clasesJSON = JSON.stringify(clases);
 
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/post/clase',{clasesJSON: clasesJSON},'http://localhost:8000/calendario?provincia=' + provincia + '&centro=' + centro); //parametros de URL');
+    enviarPost('/manejar/posts/clase',{clasesJSON: clasesJSON},'http://localhost:8000/calendario?provincia=' + provincia + '&centro=' + centro); //parametros de URL');
 });
 
 //Formulario profesor
@@ -186,10 +186,10 @@ $(document).on('click', '.crear-profesor', function() {
         profesor: profesor,
         grupos: grupo
     };
-    const jsonDatos = JSON.stringify(datos);
+    const profesorGrupoJSON = JSON.stringify(datos);
 
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('../post/docente',{jsonDatos: jsonDatos},'http://localhost:8000/post/docente');
+    enviarPost('/manejar/posts/docente',{profesorGrupoJSON: profesorGrupoJSON},'http://localhost:8000/post/docente');
 });
 
 //Formulario Asignatura
@@ -227,7 +227,7 @@ $(document).on('click', '.crear-asignatura', function() {
     // Convertir el objeto a JSON
     const asignaturasJSON = JSON.stringify(asignaturas);
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/post/asignatura',{asignaturasJSON: asignaturasJSON},'http://localhost:8000/post/asignatura');
+    enviarPost('/manejar/posts/asignatura',{asignaturasJSON: asignaturasJSON},'http://localhost:8000/post/asignatura');
 
 });
 
@@ -238,9 +238,7 @@ function enviarPost(url, data, href) {
         data: data, // los datos a enviar, en este caso el objeto JSON
         success: function(response) {
             console.log(response); // loguear la respuesta del servidor (opcional)
-            if(href) {
-                window.location.href = href;
-            }
+            window.location.replace(href);
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(textStatus, errorThrown); // loguear el error (opcional)
