@@ -12,25 +12,21 @@ use App\Repository\ProfesorGrupoRepository;
 class ProfesorGrupoService
 {
     private ProfesorGrupoRepository $profesorGrupoRepository;
-    private ProfesorGrupo $profesorGrupo;
 
     public function __construct(
         ProfesorGrupoRepository $profesorGrupoRepository,
-        ProfesorGrupo $profesorGrupo
     )
     {
         $this->profesorGrupoRepository = $profesorGrupoRepository;
-        $this->profesorGrupo = $profesorGrupo;
     }
 
     public function getProfesorGrupo(Profesor $profesor, array $grupos): void
     {
-        $this->profesorGrupo->setProfesor($profesor);
-
         foreach ($grupos as $grupo) {
-            $this->profesorGrupo->setGrupo($grupo);
+            $profesorGrupo = new ProfesorGrupo();
+            $profesorGrupo->setProfesor($profesor);
+            $profesorGrupo->setGrupo($grupo);
+            $this->profesorGrupoRepository->save($profesorGrupo,true);
         }
-
-        $this->profesorGrupoRepository->save($this->profesorGrupo,true);
     }
 }
