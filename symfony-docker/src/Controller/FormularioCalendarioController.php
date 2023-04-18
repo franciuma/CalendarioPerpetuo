@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FormularioCalendarioController extends AbstractController
 {
-    #[Route('/formulario/calendario', name: 'app_formulario')]
+    #[Route('/formulario/calendario', name: 'app_formulario_calendario')]
     public function index(): Response
     {
         return $this->render('formularios/calendario.html.twig', [
