@@ -3,8 +3,8 @@
 namespace App\Interface;
 
 /**
- * Interfaz para los festivos, dedicada a que un evento pueda definirse como varios tipos de clases.
- * Estas clases ahora mismo son Festivo Nacional y Festivo Local. Hay que ampliarla a Clase (leccion) y Festivo de Centro
+ * Interfaz para los festivos y clases, dedicada a que un evento pueda definirse como varios tipos de clases.
+ * Estas clases ahora mismo son Festivo Nacional, Festivo Local y clase. Hay que ampliarla a Festivo de Centro
  */
 interface EventoInterface
 {

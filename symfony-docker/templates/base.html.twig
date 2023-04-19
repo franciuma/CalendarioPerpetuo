@@ -13,10 +13,13 @@
         {% endblock %}
 
         {% block javascripts %}
-            {# Incluimos las dependencias de date-picker (incluido jquery)#}
+            {# Incluimos las dependencias de jquery) #}
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            {# Incluimos las dependencias de date-picker #}
             <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.es.min.js"></script>
+            {# Incluimos las dependencias de select-picker #}
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/js/bootstrap-multiselect.min.js" integrity="sha512-lxQ4VnKKW7foGFV6L9zlSe+6QppP9B2t+tMMaV4s4iqAv4iHIyXED7O+fke1VeLNaRdoVkVt8Hw/jmZ+XocsXQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
             {# Incluimos el contenido de app.js#}
             {{ encore_entry_script_tags('app') }}
             <script src="{{ asset('build/app.js') }}"></script>

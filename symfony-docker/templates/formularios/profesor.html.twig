@@ -5,7 +5,7 @@
 
 {% block body %}
 	{{ parent() }}
-	<!DOCTYPE html>
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6">
@@ -27,6 +27,8 @@
                         <label for="labelCorreo">Correo</label>
 						<input type="text" class="form-control" id="correo">
 					</div>
+					<label for="labelnombreGrupos">En caso de que necesite crear una asignatura: </label>
+					<a href="{{ path('app_formulario_asignatura') }}">Crear asignatura</a>
 					<label for="labelnombreGrupos">Rellene los grupos a los que da clase:</label>
 					<table id="gruposTable" class="table">
 						<thead>
@@ -34,6 +36,8 @@
 								<th>Grupo</th>
 								<th>Asignatura</th>
 								<th>Horario</th>
+								<th>Dias teoria</th>
+								<th>Dias practica</th>
 								<th>Eliminar</th>
 							</tr>
 						</thead>

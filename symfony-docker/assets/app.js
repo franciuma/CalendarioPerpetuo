@@ -15,6 +15,8 @@ import './bootstrap';
 //importamos css de datepicker
 import 'bootstrap-datepicker/dist/css/bootstrap-datepicker.css';
 
+import 'bootstrap-multiselect/dist/css/bootstrap-multiselect.css';
+
 // Formulario de Calendario
 let contador = 0;
 $(function() {
@@ -23,8 +25,9 @@ $(function() {
         format: 'dd-mm-yy',
         language: 'es',
         weekStart: 1,
-        startDate: new Date()
-    }).on('changeDate', function(e) {
+        startDate: new Date(),
+    }).datepicker('setDate', [new Date(2024, 1, 1), new Date(2024, 1, 1)]) // Setear dos fechas
+    .on('changeDate', function(e) {
         const fechasTotales = e.dates.length;
 
         if (fechasTotales > contador) {
@@ -127,9 +130,35 @@ $(document).on('click', '.aniadir-fila-prof', function() {
     idGrupo++;
     const fila = crearFilaGrupo();
     $('#gruposTable tbody').append(fila);
+    $(`#diasTeoria${idGrupo}`).multiselect({
+        // Compatibilidad con bootstrap 5
+        templates: {
+            button: '<button type="button" class="multiselect dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false"><span class="multiselect-selected-text" style="margin-right: 10px;"></span></button>',
+        },
+        includeSelectAllOption: true,
+        selectAllText: 'Seleccionar todo',
+        nonSelectedText: 'Ningun día seleccionado',
+        nSelectedText: 'Dias seleccionados'
+    });
+    $(`#diasPractica${idGrupo}`).multiselect({
+        // Compatibilidad con bootstrap 5
+        templates: {
+            button: '<button type="button" class="multiselect dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false"><span class="multiselect-selected-text" style="margin-right: 10px;"></span></button>',
+        },
+        includeSelectAllOption: true,
+        selectAllText: 'Seleccionar todo',
+        nonSelectedText: 'Ningun día seleccionado',
+        nSelectedText: 'Dias seleccionados'
+    });
 });
 
 function crearFilaGrupo() {
+    var diasSemana = `<option>Lunes</option>
+    <option>Martes</option>
+    <option>Miercoles</option>
+    <option>Jueves</option>
+    <option>Viernes</option>`;
+
     var options = '';
     //Obtenemos las asignaturas del template de formulario/profesor
     const asignaturas = JSON.parse(decodeURIComponent(document.getElementById('asignaturas').dataset.asignaturas));
@@ -149,6 +178,16 @@ function crearFilaGrupo() {
                 <select class="form-control horario" name="horario" id="horario${idGrupo}">
                     <option>Mañana</option>
                     <option>Tarde</option>
+                </select>
+            </td>
+            <td>
+                <select class="form-control diasTeoria" name="diasTeoria" id="diasTeoria${idGrupo}" multiple="multiple">
+                    ${diasSemana}
+                </select>
+            </td>
+            <td>
+                <select class="form-control diasPractica" name="diasPractica" id="diasPractica${idGrupo}" multiple="multiple">
+                    ${diasSemana}
                 </select>
             </td>
             <td><button class="btn btn-danger eliminar-grupo">Eliminar</button></td>

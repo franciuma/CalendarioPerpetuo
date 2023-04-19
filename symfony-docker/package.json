@@ -25,6 +25,7 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "bootstrap-datepicker": "^1.9.0"
+        "bootstrap-datepicker": "^1.9.0",
+        "bootstrap-multiselect": "^1.1.0"
     }
 }
