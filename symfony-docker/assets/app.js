@@ -15,6 +15,7 @@ import './bootstrap';
 //importamos css de datepicker
 import 'bootstrap-datepicker/dist/css/bootstrap-datepicker.css';
 
+//importamos css del multiselect
 import 'bootstrap-multiselect/dist/css/bootstrap-multiselect.css';
 
 // Formulario de Calendario
@@ -135,8 +136,9 @@ $(document).on('click', '.aniadir-fila-prof', function() {
         templates: {
             button: '<button type="button" class="multiselect dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false"><span class="multiselect-selected-text" style="margin-right: 10px;"></span></button>',
         },
+        buttonClass: 'boton-multiselect',
         includeSelectAllOption: true,
-        selectAllText: 'Seleccionar todo',
+        allSelectedText: 'Todo seleccionado',
         nonSelectedText: 'Ningun día seleccionado',
         nSelectedText: 'Dias seleccionados'
     });
@@ -145,8 +147,9 @@ $(document).on('click', '.aniadir-fila-prof', function() {
         templates: {
             button: '<button type="button" class="multiselect dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false"><span class="multiselect-selected-text" style="margin-right: 10px;"></span></button>',
         },
+        buttonClass: 'boton-multiselect',
         includeSelectAllOption: true,
-        selectAllText: 'Seleccionar todo',
+        allSelectedText: 'Todo seleccionado',
         nonSelectedText: 'Ningun día seleccionado',
         nSelectedText: 'Dias seleccionados'
     });
@@ -218,7 +221,10 @@ $(document).on('click', '.crear-profesor', function() {
         const letra = $(this).find('.grupo').val();
         const asignaturaNombre = $(this).find('.asignatura').val();
         const horario = $(this).find('.horario').val();
-        grupo.push({letra,asignaturaNombre});
+        const diasTeoria = $(this).find('.diasTeoria').val();
+        const diasPractica = $(this).find('.diasPractica').val();
+
+        grupo.push({letra, asignaturaNombre, diasTeoria, diasPractica, horario});
     });
 
     const datos = {
