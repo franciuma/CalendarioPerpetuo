@@ -6,7 +6,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 
-
+/**
+ * Clase encargada de manejar todos los POST de los formularios, creando un fichero JSON de cada uno de ellos.
+ */
 class ManejarPostsController extends AbstractController
 {
     #[Route('/manejar/posts/docente', name: 'profesorGrupo')]

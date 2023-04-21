@@ -242,17 +242,88 @@ let idAsignatura = 0;
 $(document).on('click', '.aniadir-fila-asig', function() {
     idAsignatura++;
     const fila = crearFilaAsignatura();
-    $('#asignaturasTable tbody').append(fila);
+    // Buscamos la última fila de asignatura en la tabla
+    const ultimaFilaAsignatura = $('#asignaturasTable tbody .fila-asignatura').last();
+    // Buscamos si hay una tabla de lecciones después de la última fila de asignatura
+    const tablaLecciones = ultimaFilaAsignatura.next('div');
+    // Si hay una tabla de lecciones después de la última fila de asignatura
+    if (tablaLecciones.length) {
+        // Agregamos la nueva fila después de esta tabla
+        tablaLecciones.after(fila);
+    // Si no hay una tabla de lecciones después de la última fila de asignatura pero sí hay una última fila de asignatura
+    } else if (ultimaFilaAsignatura.length) {
+        // Agregamos la nueva fila después de esta última fila de asignatura
+        ultimaFilaAsignatura.after(fila);
+    } else {
+        // Si no hay ninguna fila, la agregamos
+        $('#asignaturasTable tbody').append(fila);
+    }
 });
 
 function crearFilaAsignatura() {
     return $(`
-        <tr id="asignatura${idAsignatura}">
-            <td><input type="text" class="form-control nombreAsig" name="nombreAsig" id="nombreAsignatura${idAsignatura}"</td>
+        <tr class="fila-asignatura" id="asignatura${idAsignatura}">
+            <td><input type="text" class="form-control nombreAsig" name="nombreAsig" id="nombreAsignatura${idAsignatura}"></td>
+            <td><button class="btn btn-primary aniadir-lecciones" data-id="${idAsignatura}">Añadir lecciones</button></td>
+            <td><input type="number" class="form-control numLecciones" name="numLecc" id="numLecciones${idAsignatura}" value="1"></td>
             <td><button class="btn btn-danger eliminar-asignatura">Eliminar</button></td>
         </tr>
     `);
 }
+
+let idLeccion = 0;
+let idLeccionTabla = 0;
+$(document).on('click', '.aniadir-lecciones', function(event) {
+    event.preventDefault();
+    const asignaturaId = $(this).data('id');
+    const tabla = crearTablaLeccion(asignaturaId);
+    $(`#asignatura${asignaturaId}`).after(tabla);
+});
+
+function crearTablaLeccion(asignaturaId) {
+    var filas = '';
+    idLeccionTabla++;
+    let tema = 0;
+    //Agregamos el numero de filas
+    for (var i = 0; i < $($(`#numLecciones${asignaturaId}`)).val(); i++) {
+        tema++;
+        idLeccion++;
+        filas += `<tr id="tabla${idLeccionTabla}leccion${idLeccion}">
+        <td><input type="text" class="form-control tituloLecc" name="tituloLecc" id="tituloLeccion${idLeccion}" value="Tema ${tema}"</td>
+        <td><button class="btn btn-danger eliminar-leccion">Eliminar</button></td>
+        </tr>`;
+    }
+
+    return $(`
+        <div id="leccionesTabla${idLeccionTabla}">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Título de lección</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filas}
+                </tbody>
+            </table>
+        </div>
+    `);
+}
+
+$(document).on('click', '.eliminar-leccion', function() {
+    // Obtener la fila
+    const fila = $(this).closest('tr');
+    // Obtener la tabla
+    const tabla = fila.closest('div');
+    // Eliminar la fila
+    fila.remove();
+    // Verificar si quedan filas en la tabla
+    if (tabla.find('tbody tr').length === 0) {
+        // Si no quedan filas, eliminar la tabla
+        tabla.remove();
+    }
+});
 
 $(document).on('click', '.eliminar-asignatura', function() {
     // Obtener la fila
