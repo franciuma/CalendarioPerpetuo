@@ -131,28 +131,21 @@ $(document).on('click', '.aniadir-fila-prof', function() {
     idGrupo++;
     const fila = crearFilaGrupo();
     $('#gruposTable tbody').append(fila);
-    $(`#diasTeoria${idGrupo}`).multiselect({
+    const multiselectConfig = {
         // Compatibilidad con bootstrap 5
         templates: {
             button: '<button type="button" class="multiselect dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false"><span class="multiselect-selected-text" style="margin-right: 10px;"></span></button>',
         },
         buttonClass: 'boton-multiselect',
+        selectAllText: 'Selecciona todo',
         includeSelectAllOption: true,
         allSelectedText: 'Todo seleccionado',
         nonSelectedText: 'Ningun día seleccionado',
         nSelectedText: 'Dias seleccionados'
-    });
-    $(`#diasPractica${idGrupo}`).multiselect({
-        // Compatibilidad con bootstrap 5
-        templates: {
-            button: '<button type="button" class="multiselect dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false"><span class="multiselect-selected-text" style="margin-right: 10px;"></span></button>',
-        },
-        buttonClass: 'boton-multiselect',
-        includeSelectAllOption: true,
-        allSelectedText: 'Todo seleccionado',
-        nonSelectedText: 'Ningun día seleccionado',
-        nSelectedText: 'Dias seleccionados'
-    });
+    }
+
+    $(`#diasTeoria${idGrupo}`).multiselect(multiselectConfig);
+    $(`#diasPractica${idGrupo}`).multiselect(multiselectConfig);
 });
 
 function crearFilaGrupo() {
@@ -272,7 +265,6 @@ function crearFilaAsignatura() {
 }
 
 let idLeccion = 0;
-let idLeccionTabla = 0;
 $(document).on('click', '.aniadir-lecciones', function(event) {
     event.preventDefault();
     const asignaturaId = $(this).data('id');
@@ -282,20 +274,21 @@ $(document).on('click', '.aniadir-lecciones', function(event) {
 
 function crearTablaLeccion(asignaturaId) {
     var filas = '';
-    idLeccionTabla++;
     let tema = 0;
     //Agregamos el numero de filas
     for (var i = 0; i < $($(`#numLecciones${asignaturaId}`)).val(); i++) {
         tema++;
         idLeccion++;
-        filas += `<tr id="tabla${idLeccionTabla}leccion${idLeccion}">
+        filas += `<tr id="tabla${asignaturaId}leccion${idLeccion}" class="fila-leccion">
         <td><input type="text" class="form-control tituloLecc" name="tituloLecc" id="tituloLeccion${idLeccion}" value="Tema ${tema}"</td>
         <td><button class="btn btn-danger eliminar-leccion">Eliminar</button></td>
         </tr>`;
     }
 
+    idLeccion = 0;
+
     return $(`
-        <div id="leccionesTabla${idLeccionTabla}">
+        <div id="leccionesTabla${asignaturaId}">
             <table class="table">
                 <thead>
                     <tr>
@@ -333,11 +326,18 @@ $(document).on('click', '.eliminar-asignatura', function() {
 
 //Creamos el POST del formulario
 $(document).on('click', '.crear-asignatura', function() {
+
     // Obtener los valores de las filas de la tabla
     const asignaturas = [];
-    $('#asignaturasTable tbody tr').each(function() {
+    let lecciones = [];
+    $('#asignaturasTable tbody tr[id^="asignatura"]').each(function() {
         const nombre = $(this).find('.nombreAsig').val();
-        asignaturas.push({ nombre });
+        $(this).next('div').find('.fila-leccion').each(function() {
+            const titulo = $(this).find('.tituloLecc').val();
+            lecciones.push({ titulo })
+        });
+        asignaturas.push({ nombre , lecciones });
+        lecciones = [];
     });
 
     // Convertir el objeto a JSON

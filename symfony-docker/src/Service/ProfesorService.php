@@ -31,7 +31,6 @@ class ProfesorService
         $profesor = $this->serializer->denormalize($profesorArray['profesor'][0], 'App\Entity\Profesor');
 
         $this->profesorRepository->save($profesor,true);
-        error_log('Profesor guardado en la base de datos');
 
         return $profesor;
     }
