@@ -23,7 +23,7 @@ let contadorFechas = 0;
 //variable que contendrá las fechas
 let fechasDatepicker = [];
 let fechasPractica = [];
-let esPractica;
+const mapFechaGrupo = new Map();
 $(function() {
     //Obtenemos las asignaturas del template de formulario/calendario
     const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
@@ -54,12 +54,27 @@ $(function() {
         while (fechaActual < fechaFin) {
             // Si se incluyen dias teoria, se añaden al array
             if (diasTeoria.includes(diasSemana[fechaActual.getDay()])) {
+                //Se incluye la fecha actual en formato Date para el setDates de datepicker
                 fechasDatepicker.push(new Date(fechaActual));
+                //Formateamos la fecha para incluirla en el map
+                let fechaFormateada = formatearFecha(new Date(fechaActual));
+                // Incluimos en el map la entidad grupo y un valor esPractica: true
+                mapFechaGrupo.set(fechaFormateada, {
+                    ...grupo,
+                    esPractica: false,
+                });
             }
             // Si se incluyen dias practica, se añaden al array
             if (diasPractica.includes(diasSemana[fechaActual.getDay()])) {
+                //Se incluye la fecha actual en formato Date para el setDates de datepicker
                 fechasDatepicker.push(new Date(fechaActual));
-                fechasPractica.push(new Date(fechaActual));
+                //Formateamos la fecha para incluirla en el map
+                let fechaFormateada = formatearFecha(new Date(fechaActual));
+                // Incluimos en el map la entidad grupo y un valor esPractica: true
+                mapFechaGrupo.set(fechaFormateada, {
+                    ...grupo,
+                    esPractica: true,
+                });
             }
             // Se actualiza la fecha actual
             fechaActual.setDate(fechaActual.getDate() + 1);
@@ -84,14 +99,10 @@ $(function() {
     
     // Creamos una fila por cada fecha
     fechasDatepicker.forEach(function(fecha) {
+        const fechaStringFormato = formatearFecha(fecha); 
         contadorFechas++;
-        const fechaFormato = formatearFecha(fecha);
-        if(fechasPractica.includes(fechaFormato)){
-            esPractica = true;
-        }
-        const fila = crearFilaCalendario(fechaFormato);
+        const fila = crearFilaCalendario(fechaStringFormato);
         $('#fechasTable tbody').append(fila);
-        esPractica = false;
     });
 
     $('.datepicker').on('changeDate', function(e) {
@@ -120,12 +131,29 @@ function formatearFecha(fecha) {
 }
 
 function crearFilaCalendario(fechaStringFormato) {
+    const asignaturas = obtenerAsignaturasSelect();
+    let esPractica = "";
+    let asignatura = "";
+    let inactivo = "";
+    if (mapFechaGrupo.has(fechaStringFormato)) {
+        esPractica = mapFechaGrupo.get(fechaStringFormato).esPractica;
+        asignatura = mapFechaGrupo.get(fechaStringFormato).asignatura;
+        // Si las fechas tienen un map asociado, ya estarán colocadas en el calendario. Estas serán inamovibles.
+        inactivo = "disabled";
+    }
+
     return $(`
         <tr id="fecha${fechaStringFormato}">
-            <td><input type="text" class="fecha" name="fecha" value="${fechaStringFormato}"></td>
+            <td><input type="text" class="fecha" name="fecha" value="${fechaStringFormato}" disabled></td>
             <td><input type="text" class="form-control nombre" name="nombre" id="nombre${fechaStringFormato}" placeholder="Tema 0: Introducción de la asignatura"></td>
             <td>
-                <select class="form-control modalidad" name="modalidad" id="modalidad${fechaStringFormato}">
+            <select ${inactivo} type="text" class="form-control asignaturaCalendario" name="asignaturaCalendario" id="asignatura${fechaStringFormato}">
+            <option selected>${asignatura}</option>
+            ${asignaturas}
+            </select>
+            </td>
+            <td>
+                <select ${inactivo} class="form-control modalidad" name="modalidad" id="modalidad${fechaStringFormato}">
                     <option>Teorica</option>
                     <option ${esPractica ? "selected" : ""}>Practica</option>
                 </select>
@@ -225,19 +253,14 @@ function crearFilaGrupo() {
     <option>Jueves</option>
     <option>Viernes</option>`;
 
-    var options = '';
-    //Obtenemos las asignaturas del template de formulario/profesor
-    const asignaturas = JSON.parse(decodeURIComponent(document.getElementById('asignaturas').dataset.asignaturas));
-    //Los recorremos y agregamos las opciones
-    for (var i = 0; i < asignaturas.length; i++) {
-        options += `<option>${asignaturas[i]}</option>`;
-    }
+    const asignaturasOptions = obtenerAsignaturasSelect();
+
     return $(`
         <tr id="grupo${idGrupo}">
             <td><input type="text" class="form-control grupo" name="grupo" id="grupo${idGrupo}"></td>
             <td>
                 <select type="text" class="form-control asignatura" name="asignatura" id="asignatura${idGrupo}">
-                ${options}
+                ${asignaturasOptions}
                 </select>
             </td>
             <td>
@@ -259,6 +282,18 @@ function crearFilaGrupo() {
             <td><button class="btn btn-danger eliminar-grupo">Eliminar</button></td>
         </tr>
     `);
+}
+
+function obtenerAsignaturasSelect(){
+    //Obtenemos las asignaturas del template de formulario/profesor
+    const asignaturas = JSON.parse(decodeURIComponent(document.getElementById('asignaturas').dataset.asignaturas));
+    let options = "";
+    //Los recorremos y agregamos las opciones
+    for (var i = 0; i < asignaturas.length; i++) {
+        options += `<option>${asignaturas[i]}</option>`;
+    }
+
+    return options;
 }
 
 $(document).on('click', '.eliminar-grupo', function() {
