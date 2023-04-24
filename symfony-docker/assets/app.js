@@ -19,20 +19,85 @@ import 'bootstrap-datepicker/dist/css/bootstrap-datepicker.css';
 import 'bootstrap-multiselect/dist/css/bootstrap-multiselect.css';
 
 // Formulario de Calendario
-let contador = 0;
+let contadorFechas = 0;
+//variable que contendrá las fechas
+let fechasDatepicker = [];
+let fechasPractica = [];
+let esPractica;
 $(function() {
+    //Obtenemos las asignaturas del template de formulario/calendario
+    const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
+    //Fecha en la que comienzan las clases
+    const fechaInicio = new Date("2023-11-12"); // RECOGER FECHA INICIO DEL FORMULARIO
+    //Fecha en la que finalizan las clases (+9 meses)
+    const fechaFin = new Date(fechaInicio);
+    fechaFin.setMonth(fechaFin.getMonth() + 2);
+
+    //Creamos un array de días de la semana
+    const diasSemana = {
+        0: "Domingo",
+        1: "Lunes",
+        2: "Martes",
+        3: "Miércoles",
+        4: "Jueves",
+        5: "Viernes",
+        6: "Sábado"
+    };    
+
+    //Recorrer los grupo
+    grupos.forEach(function(grupo) {
+        let diasTeoria = grupo.diasTeoria;
+        let diasPractica = grupo.diasPractica;
+        let fechaActual = new Date(fechaInicio);
+        
+        // Recorrer de la fecha actual a la fecha fin
+        while (fechaActual < fechaFin) {
+            // Si se incluyen dias teoria, se añaden al array
+            if (diasTeoria.includes(diasSemana[fechaActual.getDay()])) {
+                fechasDatepicker.push(new Date(fechaActual));
+            }
+            // Si se incluyen dias practica, se añaden al array
+            if (diasPractica.includes(diasSemana[fechaActual.getDay()])) {
+                fechasDatepicker.push(new Date(fechaActual));
+                fechasPractica.push(new Date(fechaActual));
+            }
+            // Se actualiza la fecha actual
+            fechaActual.setDate(fechaActual.getDate() + 1);
+        }
+
+        //Formatear fechasPractica para poder comparar luego
+        fechasPractica = fechasPractica.map(function(fecha){
+            return formatearFecha(fecha);
+        })
+    });
+
     $('.datepicker').datepicker({
         multidate: true,
         format: 'dd-mm-yy',
         language: 'es',
         weekStart: 1,
         startDate: new Date(),
-    }).datepicker('setDate', [new Date(2024, 1, 1), new Date(2024, 1, 1)]) // Setear dos fechas
-    .on('changeDate', function(e) {
-        const fechasTotales = e.dates.length;
+    }).datepicker(
+        //Establecemos las fechas de los grupos
+        'setDate', fechasDatepicker
+        );
+    
+    // Creamos una fila por cada fecha
+    fechasDatepicker.forEach(function(fecha) {
+        contadorFechas++;
+        const fechaFormato = formatearFecha(fecha);
+        if(fechasPractica.includes(fechaFormato)){
+            esPractica = true;
+        }
+        const fila = crearFilaCalendario(fechaFormato);
+        $('#fechasTable tbody').append(fila);
+        esPractica = false;
+    });
 
-        if (fechasTotales > contador) {
-            contador++;
+    $('.datepicker').on('changeDate', function(e) {
+    const fechasTotales = e.dates.length;
+        if (fechasTotales > contadorFechas) {
+            contadorFechas++;
             // Obtener la fecha seleccionada
             const fecha = e.date;
             // Formatear la fecha como una cadena
@@ -62,7 +127,7 @@ function crearFilaCalendario(fechaStringFormato) {
             <td>
                 <select class="form-control modalidad" name="modalidad" id="modalidad${fechaStringFormato}">
                     <option>Teorica</option>
-                    <option>Practica</option>
+                    <option ${esPractica ? "selected" : ""}>Practica</option>
                 </select>
             </td>
             <td><button class="btn btn-danger eliminar-fecha">Eliminar</button></td>
@@ -82,7 +147,12 @@ $(document).on('click', '.eliminar-fecha', function() {
     const fechas = $('#datepickerInput').datepicker('getDates');
 
     // Crear un nuevo array con todas las fechas excepto la fecha seleccionada
-    const nuevasFechas = fechas.filter(f => f.toISOString() !== fecha.toISOString());
+    const nuevasFechas = fechas.filter(f => {
+        // Comparar la fecha (año, mes y día)
+        return f.getFullYear() !== fecha.getFullYear() ||
+            f.getMonth() !== fecha.getMonth() ||
+            f.getDate() !== fecha.getDate();
+    });
 
     // Actualizar las fechas del datepicker
     $('#datepickerInput').datepicker('setDates', nuevasFechas);
@@ -93,7 +163,7 @@ $(document).on('click', '.eliminar-fecha', function() {
     }
 
     //Disminuimos el contador
-    contador--;
+    contadorFechas--;
 
     // Eliminar la fila de la tabla
     fila.remove();
@@ -151,7 +221,7 @@ $(document).on('click', '.aniadir-fila-prof', function() {
 function crearFilaGrupo() {
     var diasSemana = `<option>Lunes</option>
     <option>Martes</option>
-    <option>Miercoles</option>
+    <option>Miércoles</option>
     <option>Jueves</option>
     <option>Viernes</option>`;
 
@@ -197,6 +267,14 @@ $(document).on('click', '.eliminar-grupo', function() {
     fila.remove();
 });
 
+$('#datepickerProfesorInput').datepicker({
+    multidate: true,
+    format: 'dd-mm-yy',
+    language: 'es',
+    weekStart: 1,
+    startDate: new Date(),
+})
+
 //Creamos el POST del formulario
 $(document).on('click', '.crear-profesor', function() {
     const profesor = [];
@@ -205,8 +283,9 @@ $(document).on('click', '.crear-profesor', function() {
     const segundoapellido = $('#sapellidoProf').val();
     const despacho = $('#aula').val();
     const correo = $('#correo').val();
+    const comienzoDeClases = $('#datepickerProfesorInput').val();
 
-    profesor.push({nombre,primerapellido,segundoapellido,despacho,correo});
+    profesor.push({nombre,primerapellido,segundoapellido,despacho,correo,comienzoDeClases});
 
     const grupo = [];
     // Obtener los valores de las filas de la tabla

@@ -39,6 +39,21 @@ class ProfesorRepository extends ServiceEntityRepository
         }
     }
 
+    public function findGruposByProfesor($nombre, $apellido)
+    {
+        return $this->createQueryBuilder('p')
+            ->select('g')
+            ->join('App\Entity\ProfesorGrupo','pg','WITH','p.id = pg.profesor')
+            ->join('App\Entity\Grupo','g','WITH','pg.grupo = g.id')
+            ->where('p.nombre = :nombre')
+            ->andWhere('p.primerApellido = :apellido')
+            ->setParameter('nombre', $nombre)
+            ->setParameter('apellido', $apellido)
+            ->getQuery()
+            ->getResult();
+    }
+
+
 //    /**
 //     * @return Profesor[] Returns an array of Profesor objects
 //     */

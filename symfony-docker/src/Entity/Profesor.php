@@ -28,6 +28,9 @@ class Profesor
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $despacho = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $comienzoDeClases = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -89,6 +92,18 @@ class Profesor
     public function setDespacho(?string $despacho): self
     {
         $this->despacho = $despacho;
+
+        return $this;
+    }
+
+    public function getComienzoDeClases(): ?string
+    {
+        return $this->comienzoDeClases;
+    }
+
+    public function setComienzoDeClases(string $comienzoDeClases): self
+    {
+        $this->comienzoDeClases = $comienzoDeClases;
 
         return $this;
     }
