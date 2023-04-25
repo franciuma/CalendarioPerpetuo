@@ -74,7 +74,7 @@ class CalendarioController extends AbstractController
      */
     public function index(): Response
     {
-        $calendario = new Calendario($this->nombreCalendario, $this->provincia);
+        $calendario = new Calendario($this->nombreCalendario, $this->provincia);//Pasar por POST o como sea el calendario actual
 
         if (
             !$this->calendarioRepository->findOneByNombre($this->nombreCalendario)

@@ -14,6 +14,7 @@ class ManejarPostsController extends AbstractController
     #[Route('/manejar/posts/docente', name: 'profesorGrupo')]
     #[Route('/manejar/posts/asignatura', name: 'asignaturas')]
     #[Route('/manejar/posts/clase', name: 'clases')]
+    #[Route('/manejar/posts/centro', name: 'centro')]
     public function index(Request $request)
     {
         $entidad = $request->attributes->get('_route');

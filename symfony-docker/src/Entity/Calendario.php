@@ -8,8 +8,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CalendarioRepository::class)]
-#[ORM\Index(name: "nombre_idx" , fields: ["nombre"])]
-#[ORM\Index(name: "provincia_idx" , fields: ["provincia"])]
 class Calendario
 {
     public $meses = array(
@@ -45,17 +43,13 @@ class Calendario
     #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: Anio::class)]
     private Collection $anios;
 
-    #[ORM\Column(length: 255)]
-    private ?string $nombre = null;
+    #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: Centro::class)]
+    private Collection $centro;
 
-    #[ORM\Column(length: 255)]
-    private ?string $provincia = null;
-
-    public function __construct($nombre, $provincia)
+    public function __construct()
     {
         $this->anios = new ArrayCollection();
-        $this->nombre = $nombre;
-        $this->provincia = $provincia;
+        $this->centro = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -103,26 +97,32 @@ class Calendario
         return $this;
     }
 
-    public function getNombre(): ?string
+    /**
+     * @return Collection<int, Centro>
+     */
+    public function getCentro(): Collection
     {
-        return $this->nombre;
+        return $this->centro;
     }
 
-    public function setNombre(string $nombre): self
+    public function addCentro(Centro $centro): self
     {
-        $this->nombre = $nombre;
+        if (!$this->centro->contains($centro)) {
+            $this->centro->add($centro);
+            $centro->setCalendario($this);
+        }
 
         return $this;
     }
 
-    public function getProvincia(): ?string
+    public function removeCentro(Centro $centro): self
     {
-        return $this->provincia;
-    }
-
-    public function setProvincia(string $provincia): self
-    {
-        $this->provincia = $provincia;
+        if ($this->centro->removeElement($centro)) {
+            // set the owning side to null (unless already changed)
+            if ($centro->getCalendario() === $this) {
+                $centro->setCalendario(null);
+            }
+        }
 
         return $this;
     }

@@ -54,6 +54,7 @@ class CalendarioRepository extends ServiceEntityRepository
 //        ;
 //    }
 
+//BORRAR ESTOS DOS *///////////////////////////////////////////////////////////////
     public function findOneByNombre($nombre): ?Calendario
     {
         return $this->createQueryBuilder('c')

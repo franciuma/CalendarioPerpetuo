@@ -175,7 +175,6 @@ function crearFilaCalendario(fechaStringFormato) {
 function obtenerGrupoSelect(){
     //Obtenemos las asignaturas del template de formulario/calendario
     const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
-    console.log(grupos);
     let options = "";
     //Los recorremos y agregamos las opciones
     for (var i = 0; i < grupos.length; i++) {
@@ -324,14 +323,6 @@ $(document).on('click', '.eliminar-grupo', function() {
     fila.remove();
 });
 
-$('#datepickerProfesorInput').datepicker({
-    multidate: true,
-    format: 'dd-mm-yy',
-    language: 'es',
-    weekStart: 1,
-    startDate: new Date(),
-})
-
 //Creamos el POST del formulario
 $(document).on('click', '.crear-profesor', function() {
     const profesor = [];
@@ -340,9 +331,8 @@ $(document).on('click', '.crear-profesor', function() {
     const segundoapellido = $('#sapellidoProf').val();
     const despacho = $('#aula').val();
     const correo = $('#correo').val();
-    const comienzoDeClases = $('#datepickerProfesorInput').val();
 
-    profesor.push({nombre,primerapellido,segundoapellido,despacho,correo,comienzoDeClases});
+    profesor.push({nombre,primerapellido,segundoapellido,despacho,correo});
 
     const grupo = [];
     // Obtener los valores de las filas de la tabla
@@ -481,6 +471,27 @@ $(document).on('click', '.crear-asignatura', function() {
     // Enviar el objeto JSON a través de una petición AJAX
     enviarPost('/manejar/posts/asignatura',{asignaturasJSON: asignaturasJSON},'http://localhost:8000/post/asignatura');
 
+});
+
+//Formulario centro
+$('#datepickerInicio').datepicker({
+    format: 'dd-mm-yy',
+    language: 'es',
+    weekStart: 1,
+    startDate: new Date(),
+})
+
+$(document).on('click', '.previsualizar-calendario', function() {
+    const centro = [];
+    const nombre = $('#nombreDelCentro').val();
+    const provincia = $('#nombreDeProvincia').val();
+    const inicioDeClases = $('#datepickerInicio').val();
+
+    centro.push({nombre, provincia, inicioDeClases});
+
+    const centroJSON = JSON.stringify({centro});
+
+    enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, 'http://localhost:8000/post/centro');
 });
 
 function enviarPost(url, data, href) {
