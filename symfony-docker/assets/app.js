@@ -132,12 +132,15 @@ function formatearFecha(fecha) {
 
 function crearFilaCalendario(fechaStringFormato) {
     const asignaturas = obtenerAsignaturasSelect();
+    const grupos = obtenerGrupoSelect();
     let esPractica = "";
     let asignatura = "";
     let inactivo = "";
+    let grupo = "";
     if (mapFechaGrupo.has(fechaStringFormato)) {
         esPractica = mapFechaGrupo.get(fechaStringFormato).esPractica;
         asignatura = mapFechaGrupo.get(fechaStringFormato).asignatura;
+        grupo = mapFechaGrupo.get(fechaStringFormato).letra;
         // Si las fechas tienen un map asociado, ya estarán colocadas en el calendario. Estas serán inamovibles.
         inactivo = "disabled";
     }
@@ -147,10 +150,16 @@ function crearFilaCalendario(fechaStringFormato) {
             <td><input type="text" class="fecha" name="fecha" value="${fechaStringFormato}" disabled></td>
             <td><input type="text" class="form-control nombre" name="nombre" id="nombre${fechaStringFormato}" placeholder="Tema 0: Introducción de la asignatura"></td>
             <td>
-            <select ${inactivo} type="text" class="form-control asignaturaCalendario" name="asignaturaCalendario" id="asignatura${fechaStringFormato}">
-            <option selected>${asignatura}</option>
-            ${asignaturas}
-            </select>
+                <select ${inactivo} type="text" class="form-control asignaturaCalendario" name="asignaturaCalendario" id="asignatura${fechaStringFormato}">
+                    <option selected>${asignatura}</option>
+                    ${asignaturas}
+                </select>
+            </td>
+            <td>
+                <select ${inactivo} type="text" class="form-control grupoCalendario" name="grupoCalendario" id="grupo${fechaStringFormato}">
+                    <option selected>${grupo}</option>
+                    ${grupos}
+                </select>
             </td>
             <td>
                 <select ${inactivo} class="form-control modalidad" name="modalidad" id="modalidad${fechaStringFormato}">
@@ -161,6 +170,19 @@ function crearFilaCalendario(fechaStringFormato) {
             <td><button class="btn btn-danger eliminar-fecha">Eliminar</button></td>
         </tr>
     `);
+}
+
+function obtenerGrupoSelect(){
+    //Obtenemos las asignaturas del template de formulario/calendario
+    const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
+    console.log(grupos);
+    let options = "";
+    //Los recorremos y agregamos las opciones
+    for (var i = 0; i < grupos.length; i++) {
+        options += `<option>${grupos[i].letra}</option>`;
+    }
+
+    return options;
 }
 
 $(document).on('click', '.eliminar-fecha', function() {

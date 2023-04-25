@@ -24,6 +24,8 @@
 							<tr>
 								<th>Fecha</th>
 								<th>Titulo</th>
+								<th>Asignatura</th>
+								<th>Grupo</th>
 								<th>Modalidad</th>
 								<th>Eliminar</th>
 							</tr>
@@ -35,5 +37,6 @@
 			</div>
 		</div>
 	</div>
-
+	<div id="grupos" data-grupos="{{ grupos }}" style="display: none;"></div>
+	<div id="asignaturas" data-asignaturas="{{ asignaturas|json_encode|url_encode }}" style="display: none;"></div>
 {% endblock %}
