@@ -14,10 +14,12 @@ class FormularioCalendarioController extends AbstractController
     private ProfesorRepository $profesorRepository;
     private AsignaturaRepository $asignaturaRepository;
 
-    public function __construct(ProfesorRepository $profesorRepository, AsignaturaRepository $asignaturaRepository){
+    public function __construct(
+        ProfesorRepository $profesorRepository,
+        AsignaturaRepository $asignaturaRepository
+        ){
         $this->profesorRepository = $profesorRepository;
         $this->asignaturaRepository = $asignaturaRepository;
-
     }
 
     #[Route('/formulario/calendario', name: 'app_formulario_calendario')]
@@ -30,8 +32,18 @@ class FormularioCalendarioController extends AbstractController
             return $asignatura->getNombre();
         }, $asignaturas);
 
+        //Obtenemos el ultimo profesor introducido en la base de datos
+        $ultimoProfesor = $this->profesorRepository->findOneBy([],['id' => 'DESC']);
+        if (!$ultimoProfesor) {
+            throw new \Exception('No se encontró ningún profesor');
+        }
+
         //Obtener los grupos pertenecientes dado un profesor
-        $grupos = $this->profesorRepository->findGruposByProfesor("Francisco","López");
+        $grupos = $this->profesorRepository->findGruposByProfesor(
+            $ultimoProfesor->getNombre(),
+            $ultimoProfesor->getPrimerApellido(),
+            $ultimoProfesor->getSegundoApellido()
+        );
 
         $gruposArray = array_map(function($grupo) {
             return [

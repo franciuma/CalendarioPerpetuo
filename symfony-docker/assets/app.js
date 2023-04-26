@@ -22,104 +22,104 @@ import 'bootstrap-multiselect/dist/css/bootstrap-multiselect.css';
 let contadorFechas = 0;
 //variable que contendrá las fechas
 let fechasDatepicker = [];
-let fechasPractica = [];
 const mapFechaGrupo = new Map();
-$(function() {
-    //Obtenemos las asignaturas del template de formulario/calendario
-    const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
-    //Fecha en la que comienzan las clases
-    const fechaInicio = new Date("2023-11-12"); // RECOGER FECHA INICIO DEL FORMULARIO
-    //Fecha en la que finalizan las clases (+9 meses)
-    const fechaFin = new Date(fechaInicio);
-    fechaFin.setMonth(fechaFin.getMonth() + 2);
+//Si se encuentra en la vista /formulario/calendario carga la función
+if(window.location.href == "http://localhost:8000/formulario/calendario"){
+    $(function() {
+        //Obtenemos las asignaturas del template de formulario/calendario
+        const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
+        //Fecha en la que comienzan las clases (recogemos la variable local del formulario centro)
+        const inicioClase = localStorage.getItem('inicioClase');
+        const fechaInicio = crearFecha(inicioClase);
+        //Fecha en la que finalizan las clases (+9 meses)
+        const fechaFin = new Date(fechaInicio);
+        fechaFin.setMonth(fechaFin.getMonth() + 2);
 
-    //Creamos un array de días de la semana
-    const diasSemana = {
-        0: "Domingo",
-        1: "Lunes",
-        2: "Martes",
-        3: "Miércoles",
-        4: "Jueves",
-        5: "Viernes",
-        6: "Sábado"
-    };    
-
-    //Recorrer los grupo
-    grupos.forEach(function(grupo) {
-        let diasTeoria = grupo.diasTeoria;
-        let diasPractica = grupo.diasPractica;
-        let fechaActual = new Date(fechaInicio);
-        
-        // Recorrer de la fecha actual a la fecha fin
-        while (fechaActual < fechaFin) {
-            // Si se incluyen dias teoria, se añaden al array
-            if (diasTeoria.includes(diasSemana[fechaActual.getDay()])) {
-                //Se incluye la fecha actual en formato Date para el setDates de datepicker
-                fechasDatepicker.push(new Date(fechaActual));
-                //Formateamos la fecha para incluirla en el map
-                let fechaFormateada = formatearFecha(new Date(fechaActual));
-                // Incluimos en el map la entidad grupo y un valor esPractica: true
-                mapFechaGrupo.set(fechaFormateada, {
-                    ...grupo,
-                    esPractica: false,
-                });
-            }
-            // Si se incluyen dias practica, se añaden al array
-            if (diasPractica.includes(diasSemana[fechaActual.getDay()])) {
-                //Se incluye la fecha actual en formato Date para el setDates de datepicker
-                fechasDatepicker.push(new Date(fechaActual));
-                //Formateamos la fecha para incluirla en el map
-                let fechaFormateada = formatearFecha(new Date(fechaActual));
-                // Incluimos en el map la entidad grupo y un valor esPractica: true
-                mapFechaGrupo.set(fechaFormateada, {
-                    ...grupo,
-                    esPractica: true,
-                });
-            }
-            // Se actualiza la fecha actual
-            fechaActual.setDate(fechaActual.getDate() + 1);
-        }
-
-        //Formatear fechasPractica para poder comparar luego
-        fechasPractica = fechasPractica.map(function(fecha){
-            return formatearFecha(fecha);
-        })
-    });
-
-    $('.datepicker').datepicker({
-        multidate: true,
-        format: 'dd-mm-yy',
-        language: 'es',
-        weekStart: 1,
-        startDate: new Date(),
-    }).datepicker(
-        //Establecemos las fechas de los grupos
-        'setDate', fechasDatepicker
-        );
+        //Creamos un array de días de la semana
+        const diasSemana = {
+            0: "Domingo",
+            1: "Lunes",
+            2: "Martes",
+            3: "Miércoles",
+            4: "Jueves",
+            5: "Viernes",
+            6: "Sábado"
+        };    
     
-    // Creamos una fila por cada fecha
-    fechasDatepicker.forEach(function(fecha) {
-        const fechaStringFormato = formatearFecha(fecha); 
-        contadorFechas++;
-        const fila = crearFilaCalendario(fechaStringFormato);
-        $('#fechasTable tbody').append(fila);
-    });
+        //Recorrer los grupo
+        grupos.forEach(function(grupo) {
+            let diasTeoria = grupo.diasTeoria;
+            let diasPractica = grupo.diasPractica;
+            let fechaActual = new Date(fechaInicio);
+            
+            // Recorrer de la fecha actual a la fecha fin
+            while (fechaActual < fechaFin) {
+                // Si se incluyen dias teoria, se añaden al array
+                if (diasTeoria.includes(diasSemana[fechaActual.getDay()])) {
+                    //Se incluye la fecha actual en formato Date para el setDates de datepicker
+                    fechasDatepicker.push(new Date(fechaActual));
+                    //Formateamos la fecha para incluirla en el map
+                    let fechaFormateada = formatearFecha(new Date(fechaActual));
+                    // Incluimos en el map la entidad grupo y un valor esPractica: true
+                    mapFechaGrupo.set(fechaFormateada, {
+                        ...grupo,
+                        esPractica: false,
+                    });
+                }
+                // Si se incluyen dias practica, se añaden al array
+                if (diasPractica.includes(diasSemana[fechaActual.getDay()])) {
+                    //Se incluye la fecha actual en formato Date para el setDates de datepicker
+                    fechasDatepicker.push(new Date(fechaActual));
+                    //Formateamos la fecha para incluirla en el map
+                    let fechaFormateada = formatearFecha(new Date(fechaActual));
+                    // Incluimos en el map la entidad grupo y un valor esPractica: true
+                    mapFechaGrupo.set(fechaFormateada, {
+                        ...grupo,
+                        esPractica: true,
+                    });
+                }
+                // Se actualiza la fecha actual
+                fechaActual.setDate(fechaActual.getDate() + 1);
+            }
+        });
 
-    $('.datepicker').on('changeDate', function(e) {
-    const fechasTotales = e.dates.length;
-        if (fechasTotales > contadorFechas) {
+        //Manejamos el datepicker 
+        $('.datepicker').datepicker({
+            multidate: true,
+            format: 'dd-mm-yy',
+            language: 'es',
+            weekStart: 1,
+            startDate: new Date(),
+        }).datepicker(
+            //Establecemos las fechas de los grupos
+            'setDate', fechasDatepicker
+            );
+        
+        // Creamos una fila por cada fecha
+        fechasDatepicker.forEach(function(fecha) {
+            const fechaStringFormato = formatearFecha(fecha); 
             contadorFechas++;
-            // Obtener la fecha seleccionada
-            const fecha = e.date;
-            // Formatear la fecha como una cadena
-            const fechaStringFormato = formatearFecha(fecha);
-            // Crear una nueva fila
             const fila = crearFilaCalendario(fechaStringFormato);
             $('#fechasTable tbody').append(fila);
-        } 
+        });
+    
+        $('.datepicker').on('changeDate', function(e) {
+        const fechasTotales = e.dates.length;
+            if (fechasTotales > contadorFechas) {
+                contadorFechas++;
+                // Obtener la fecha seleccionada
+                const fecha = e.date;
+                // Formatear la fecha como una cadena
+                const fechaStringFormato = formatearFecha(fecha);
+                // Crear una nueva fila
+                const fila = crearFilaCalendario(fechaStringFormato);
+                $('#fechasTable tbody').append(fila);
+            }
+        });
     });
-});
+}
 
+//Pasa la fecha a formato "normal", como 12-11-23
 function formatearFecha(fecha) {
     const fechaString = fecha.toLocaleDateString('es-ES');
     //Dividir la fecha por /
@@ -218,6 +218,7 @@ $(document).on('click', '.eliminar-fecha', function() {
     fila.remove();
 });
 
+//Pasa una fecha a tipo Date
 function crearFecha(fechaStringFormato) {
     const [dia, mes, anio] = fechaStringFormato.split('-').map(Number);
     return new Date(anio + 2000, mes - 1, dia);
@@ -486,6 +487,8 @@ $(document).on('click', '.previsualizar-calendario', function() {
     const nombre = $('#nombreDelCentro').val();
     const provincia = $('#nombreDeProvincia').val();
     const inicioDeClases = $('#datepickerInicio').val();
+    //Guardamos la variable en localStorage
+    localStorage.setItem('inicioClase', inicioDeClases);
 
     centro.push({nombre, provincia, inicioDeClases});
 

@@ -39,16 +39,18 @@ class ProfesorRepository extends ServiceEntityRepository
         }
     }
 
-    public function findGruposByProfesor($nombre, $apellido)
+    public function findGruposByProfesor($nombre, $apellidoPr, $apellidoSeg)
     {
         return $this->createQueryBuilder('p')
             ->select('g')
             ->join('App\Entity\ProfesorGrupo','pg','WITH','p.id = pg.profesor')
             ->join('App\Entity\Grupo','g','WITH','pg.grupo = g.id')
             ->where('p.nombre = :nombre')
-            ->andWhere('p.primerApellido = :apellido')
+            ->andWhere('p.primerApellido = :apellidoPr')
+            ->andWhere('p.segundoApellido = :apellidoSeg')
             ->setParameter('nombre', $nombre)
-            ->setParameter('apellido', $apellido)
+            ->setParameter('apellidoPr', $apellidoPr)
+            ->setParameter('apellidoSeg', $apellidoSeg)
             ->getQuery()
             ->getResult();
     }
