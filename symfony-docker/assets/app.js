@@ -22,6 +22,8 @@ import 'bootstrap-multiselect/dist/css/bootstrap-multiselect.css';
 let contadorFechas = 0;
 //variable que contendrá las fechas
 let fechasDatepicker = [];
+//Array clave: valor con fecha: asignaturaId
+const arrayFechaAsignatura = [];
 const mapFechaGrupo = new Map();
 //Si se encuentra en la vista /formulario/calendario carga la función
 if(window.location.href == "http://localhost:8000/formulario/calendario"){
@@ -31,7 +33,7 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
         //Fecha en la que comienzan las clases (recogemos la variable local del formulario centro)
         const inicioClase = localStorage.getItem('inicioClase');
         const fechaInicio = crearFecha(inicioClase);
-        //Fecha en la que finalizan las clases (+9 meses)
+        //Fecha en la que finalizan las clases (cuando finalicen examenes finales, deberia ser festivos centro)
         const fechaFin = new Date(fechaInicio);
         fechaFin.setMonth(fechaFin.getMonth() + 2);
 
@@ -54,14 +56,16 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
             
             // Recorrer de la fecha actual a la fecha fin
             while (fechaActual < fechaFin) {
+                let grupoAsignaturaId = grupo.asignaturaId;
                 // Si se incluyen dias teoria, se añaden al array
                 if (diasTeoria.includes(diasSemana[fechaActual.getDay()])) {
                     //Se incluye la fecha actual en formato Date para el setDates de datepicker
-                    fechasDatepicker.push(new Date(fechaActual));
+                    //fechasDatepicker.push(new Date(fechaActual));
+                    arrayFechaAsignatura.push({fecha: new Date(fechaActual), asignaturaId: grupoAsignaturaId});
                     //Formateamos la fecha para incluirla en el map
                     let fechaFormateada = formatearFecha(new Date(fechaActual));
-                    // Incluimos en el map la entidad grupo y un valor esPractica: true
-                    mapFechaGrupo.set(fechaFormateada, {
+                    // Incluimos en el map la entidad grupo y un valor esPractica: false
+                    mapFechaGrupo.set(fechaFormateada+grupoAsignaturaId, {
                         ...grupo,
                         esPractica: false,
                     });
@@ -69,11 +73,12 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
                 // Si se incluyen dias practica, se añaden al array
                 if (diasPractica.includes(diasSemana[fechaActual.getDay()])) {
                     //Se incluye la fecha actual en formato Date para el setDates de datepicker
-                    fechasDatepicker.push(new Date(fechaActual));
+                    //fechasDatepicker.push(new Date(fechaActual));
+                    arrayFechaAsignatura.push({fecha: new Date(fechaActual), asignaturaId: grupoAsignaturaId});
                     //Formateamos la fecha para incluirla en el map
                     let fechaFormateada = formatearFecha(new Date(fechaActual));
                     // Incluimos en el map la entidad grupo y un valor esPractica: true
-                    mapFechaGrupo.set(fechaFormateada, {
+                    mapFechaGrupo.set(fechaFormateada+grupoAsignaturaId, {
                         ...grupo,
                         esPractica: true,
                     });
@@ -92,17 +97,20 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
             startDate: new Date(),
         }).datepicker(
             //Establecemos las fechas de los grupos
-            'setDate', fechasDatepicker
+            'setDate', Object.keys(arrayFechaAsignatura)
             );
-        
-        // Creamos una fila por cada fecha
-        fechasDatepicker.forEach(function(fecha) {
+
+        //Creamos una fila por cada fecha
+        Object.keys(arrayFechaAsignatura).forEach(function(indice) {
+            const fechaAsignatura = arrayFechaAsignatura[indice];
+            const fecha = fechaAsignatura.fecha;
+            const asignaturaId = fechaAsignatura.asignaturaId;
             const fechaStringFormato = formatearFecha(fecha); 
             contadorFechas++;
-            const fila = crearFilaCalendario(fechaStringFormato);
+            const fila = crearFilaCalendario(fechaStringFormato, asignaturaId);
             $('#fechasTable tbody').append(fila);
         });
-    
+
         $('.datepicker').on('changeDate', function(e) {
         const fechasTotales = e.dates.length;
             if (fechasTotales > contadorFechas) {
@@ -130,17 +138,18 @@ function formatearFecha(fecha) {
     return fechasPartes.join('-');
 }
 
-function crearFilaCalendario(fechaStringFormato) {
+function crearFilaCalendario(fechaStringFormato, asignaturaId) {
+    const clave = fechaStringFormato+asignaturaId;
     const asignaturas = obtenerAsignaturasSelect();
     const grupos = obtenerGrupoSelect();
     let esPractica = "";
     let asignatura = "";
     let inactivo = "";
     let grupo = "";
-    if (mapFechaGrupo.has(fechaStringFormato)) {
-        esPractica = mapFechaGrupo.get(fechaStringFormato).esPractica;
-        asignatura = mapFechaGrupo.get(fechaStringFormato).asignatura;
-        grupo = mapFechaGrupo.get(fechaStringFormato).letra;
+    if (mapFechaGrupo.has(clave)) {
+        esPractica = mapFechaGrupo.get(clave).esPractica;
+        asignatura = mapFechaGrupo.get(clave).asignatura;
+        grupo = mapFechaGrupo.get(clave).letra;
         // Si las fechas tienen un map asociado, ya estarán colocadas en el calendario. Estas serán inamovibles.
         inactivo = "disabled";
     }
@@ -164,7 +173,7 @@ function crearFilaCalendario(fechaStringFormato) {
             <td>
                 <select ${inactivo} class="form-control modalidad" name="modalidad" id="modalidad${fechaStringFormato}">
                     <option>Teorica</option>
-                    <option ${esPractica ? "selected" : ""}>Practica</option>
+                    <option ${esPractica ? "selected" : "Teoria"}>Practica</option>
                 </select>
             </td>
             <td><button class="btn btn-danger eliminar-fecha">Eliminar</button></td>
@@ -173,7 +182,7 @@ function crearFilaCalendario(fechaStringFormato) {
 }
 
 function obtenerGrupoSelect(){
-    //Obtenemos las asignaturas del template de formulario/calendario
+    //Obtenemos las letras de los grupos del template de formulario/calendario
     const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
     let options = "";
     //Los recorremos y agregamos las opciones

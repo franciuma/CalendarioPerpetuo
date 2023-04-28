@@ -52,7 +52,8 @@ class FormularioCalendarioController extends AbstractController
                 'horario' => $grupo->getHorario(),
                 'diasTeoria' => $grupo->getDiasTeoria(),
                 'diasPractica' => $grupo->getDiasPractica(),
-                'asignatura' => $grupo->getAsignatura()->getNombre()
+                'asignatura' => $grupo->getAsignatura()->getNombre(),
+                'asignaturaId' => $grupo->getAsignatura()->getId()
             ];
         }, $grupos);
         //creamos un json de los grupos para pasar al javascript
