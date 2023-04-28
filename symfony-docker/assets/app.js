@@ -97,8 +97,10 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
             startDate: new Date(),
         }).datepicker(
             //Establecemos las fechas de los grupos
-            'setDate', Object.keys(arrayFechaAsignatura)
+            'setDate', arrayFechaAsignatura.map(objeto => objeto.fecha)
             );
+
+        console.log(arrayFechaAsignatura);
 
         //Creamos una fila por cada fecha
         Object.keys(arrayFechaAsignatura).forEach(function(indice) {
