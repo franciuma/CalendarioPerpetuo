@@ -386,6 +386,7 @@ function crearFilaAsignatura() {
             <td><input type="text" class="form-control nombreAsig" name="nombreAsig" id="nombreAsignatura${idAsignatura}"></td>
             <td><button class="btn btn-primary aniadir-lecciones" data-id="${idAsignatura}">Añadir lecciones</button></td>
             <td><input type="number" class="form-control numLecciones" name="numLecc" id="numLecciones${idAsignatura}" value="1"></td>
+            <td><input type="text" class="form-control ntitulacion" name="ntitulacion" id="ntitulacion${idAsignatura}"></td>
             <td><button class="btn btn-danger eliminar-asignatura">Eliminar</button></td>
         </tr>
     `);
@@ -459,11 +460,12 @@ $(document).on('click', '.crear-asignatura', function() {
     let lecciones = [];
     $('#asignaturasTable tbody tr[id^="asignatura"]').each(function() {
         const nombre = $(this).find('.nombreAsig').val();
+        const nombreTitulacion = $(this).find('.ntitulacion').val();
         $(this).next('div').find('.fila-leccion').each(function() {
             const titulo = $(this).find('.tituloLecc').val();
             lecciones.push({ titulo })
         });
-        asignaturas.push({ nombre , lecciones });
+        asignaturas.push({ nombre, nombreTitulacion, lecciones });
         lecciones = [];
     });
 

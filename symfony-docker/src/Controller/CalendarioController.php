@@ -188,8 +188,6 @@ class CalendarioController extends AbstractController
     public function colocarEventosBd(Calendario $calendario)
     {
         if($this->persistirBd){
-            $this->festivoNacionalService->getFestivosNacionales();
-            $this->festivoLocalService->getFestivosLocales($calendario);
             $this->claseService->getClases($calendario);
         }
     }
