@@ -53,14 +53,29 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
             let diasTeoria = grupo.diasTeoria;
             let diasPractica = grupo.diasPractica;
             let fechaActual = new Date(fechaInicio);
-            
-            // Recorrer de la fecha actual a la fecha fin
+            let grupoAsignaturaId = grupo.asignaturaId;
+            //Filtramos lecciones por asignaturaId
+            const leccionesFiltradas = lecciones.filter(function(leccion) {
+                return leccion.asignaturaId === grupoAsignaturaId;
+            });
+
+            //Filtramos lecciones por teoria y practica
+            const leccionesFiltradasTeoria = leccionesFiltradas.filter(function(leccion) {
+                return leccion.modalidad === "Teorica";
+            });
+
+            const leccionesFiltradasPractica = leccionesFiltradas.filter(function(leccion) {
+                return leccion.modalidad === "Practica";
+            });
+
+            let contLeccTeoria = 0;
+            let contLeccPractica = 0;
+            let contLecciones = 0;
+
             while (fechaActual < fechaFin) {
-                let grupoAsignaturaId = grupo.asignaturaId;
                 // Si se incluyen dias teoria, se añaden al array
-                if (diasTeoria.includes(diasSemana[fechaActual.getDay()])) {
+                if (diasTeoria.includes(diasSemana[fechaActual.getDay()]) && contLeccTeoria != leccionesFiltradasTeoria.length) {
                     //Se incluye la fecha actual en formato Date para el setDates de datepicker
-                    //fechasDatepicker.push(new Date(fechaActual));
                     arrayFechaAsignatura.push({fecha: new Date(fechaActual), asignaturaId: grupoAsignaturaId});
                     //Formateamos la fecha para incluirla en el map
                     let fechaFormateada = formatearFecha(new Date(fechaActual));
@@ -68,12 +83,14 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
                     mapFechaGrupo.set(fechaFormateada+grupoAsignaturaId, {
                         ...grupo,
                         esPractica: false,
+                        tituloSesion: leccionesFiltradasTeoria[contLeccTeoria].titulo
                     });
+                    contLeccTeoria++;
+                    contLecciones++;
                 }
                 // Si se incluyen dias practica, se añaden al array
-                if (diasPractica.includes(diasSemana[fechaActual.getDay()])) {
+                if (diasPractica.includes(diasSemana[fechaActual.getDay()]) && contLeccPractica != leccionesFiltradasPractica.length) {
                     //Se incluye la fecha actual en formato Date para el setDates de datepicker
-                    //fechasDatepicker.push(new Date(fechaActual));
                     arrayFechaAsignatura.push({fecha: new Date(fechaActual), asignaturaId: grupoAsignaturaId});
                     //Formateamos la fecha para incluirla en el map
                     let fechaFormateada = formatearFecha(new Date(fechaActual));
@@ -81,7 +98,10 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
                     mapFechaGrupo.set(fechaFormateada+grupoAsignaturaId, {
                         ...grupo,
                         esPractica: true,
+                        tituloSesion: leccionesFiltradasPractica[contLeccPractica].titulo
                     });
+                    contLeccPractica++;
+                    contLecciones++;
                 }
                 // Se actualiza la fecha actual
                 fechaActual.setDate(fechaActual.getDate() + 1);
@@ -146,10 +166,12 @@ function crearFilaCalendario(fechaStringFormato, asignaturaId) {
     let asignatura = "";
     let inactivo = "";
     let grupo = "";
+    let tituloSesion = "";
     if (mapFechaGrupo.has(clave)) {
         esPractica = mapFechaGrupo.get(clave).esPractica;
         asignatura = mapFechaGrupo.get(clave).asignatura;
         grupo = mapFechaGrupo.get(clave).letra;
+        tituloSesion = mapFechaGrupo.get(clave).tituloSesion;
         // Si las fechas tienen un map asociado, ya estarán colocadas en el calendario. Estas serán inamovibles.
         inactivo = "disabled";
     }
@@ -157,7 +179,7 @@ function crearFilaCalendario(fechaStringFormato, asignaturaId) {
     return $(`
         <tr id="fecha${fechaStringFormato}">
             <td><input type="text" class="fecha" name="fecha" value="${fechaStringFormato}" disabled></td>
-            <td><input type="text" class="form-control nombre" name="nombre" id="nombre${fechaStringFormato}" placeholder="Tema 0: Introducción de la asignatura"></td>
+            <td><input ${inactivo} type="text" class="form-control nombre" name="nombre" id="nombre${fechaStringFormato}" value="${tituloSesion}"></td>
             <td>
                 <select ${inactivo} type="text" class="form-control asignaturaCalendario" name="asignaturaCalendario" id="asignatura${fechaStringFormato}">
                     <option selected>${asignatura}</option>

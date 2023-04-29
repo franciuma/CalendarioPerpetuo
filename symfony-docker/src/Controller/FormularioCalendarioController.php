@@ -71,7 +71,8 @@ class FormularioCalendarioController extends AbstractController
             return [
                 'id' => $leccion->getId(),
                 'titulo' => $leccion->getTitulo(),
-                'asignaturaId' => $leccion->getAsignatura()->getId()
+                'asignaturaId' => $leccion->getAsignatura()->getId(),
+                'modalidad' => $leccion->getModalidad()
             ];
         }, $lecciones);
 
