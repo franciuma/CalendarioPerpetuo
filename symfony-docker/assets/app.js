@@ -358,7 +358,7 @@ $(document).on('click', '.crear-profesor', function() {
     const nombre = $('#nombreProf').val();
     const primerapellido = $('#papellidoProf').val();
     const segundoapellido = $('#sapellidoProf').val();
-    const despacho = $('#aula').val();
+    const despacho = $('#despacho').val();
     const correo = $('#correo').val();
 
     profesor.push({nombre,primerapellido,segundoapellido,despacho,correo});
