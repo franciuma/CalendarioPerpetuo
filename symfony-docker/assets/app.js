@@ -70,7 +70,6 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
 
             let contLeccTeoria = 0;
             let contLeccPractica = 0;
-            let contLecciones = 0;
 
             while (fechaActual < fechaFin) {
                 // Si se incluyen dias teoria, se añaden al array
@@ -86,7 +85,6 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
                         tituloSesion: leccionesFiltradasTeoria[contLeccTeoria].titulo
                     });
                     contLeccTeoria++;
-                    contLecciones++;
                 }
                 // Si se incluyen dias practica, se añaden al array
                 if (diasPractica.includes(diasSemana[fechaActual.getDay()]) && contLeccPractica != leccionesFiltradasPractica.length) {
@@ -101,7 +99,6 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
                         tituloSesion: leccionesFiltradasPractica[contLeccPractica].titulo
                     });
                     contLeccPractica++;
-                    contLecciones++;
                 }
                 // Se actualiza la fecha actual
                 fechaActual.setDate(fechaActual.getDate() + 1);
