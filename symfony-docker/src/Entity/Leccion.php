@@ -20,6 +20,9 @@ class Leccion
     #[ORM\JoinColumn(nullable: false)]
     private ?Asignatura $asignatura = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $modalidad = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -45,6 +48,18 @@ class Leccion
     public function setAsignatura(?Asignatura $asignatura): self
     {
         $this->asignatura = $asignatura;
+
+        return $this;
+    }
+
+    public function getModalidad(): ?string
+    {
+        return $this->modalidad;
+    }
+
+    public function setModalidad(string $modalidad): self
+    {
+        $this->modalidad = $modalidad;
 
         return $this;
     }

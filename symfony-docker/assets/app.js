@@ -20,14 +20,14 @@ import 'bootstrap-multiselect/dist/css/bootstrap-multiselect.css';
 
 // Formulario de Calendario
 let contadorFechas = 0;
-//variable que contendrá las fechas
-let fechasDatepicker = [];
 //Array clave: valor con fecha: asignaturaId
 const arrayFechaAsignatura = [];
 const mapFechaGrupo = new Map();
 //Si se encuentra en la vista /formulario/calendario carga la función
 if(window.location.href == "http://localhost:8000/formulario/calendario"){
     $(function() {
+        //Obtenemos las lecciones del template formulario/calendario
+        const lecciones = JSON.parse(document.getElementById('lecciones').dataset.lecciones);
         //Obtenemos las asignaturas del template de formulario/calendario
         const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
         //Fecha en la que comienzan las clases (recogemos la variable local del formulario centro)
@@ -99,8 +99,6 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
             //Establecemos las fechas de los grupos
             'setDate', arrayFechaAsignatura.map(objeto => objeto.fecha)
             );
-
-        console.log(arrayFechaAsignatura);
 
         //Creamos una fila por cada fecha
         Object.keys(arrayFechaAsignatura).forEach(function(indice) {
@@ -396,7 +394,8 @@ function crearFilaAsignatura() {
         <tr class="fila-asignatura" id="asignatura${idAsignatura}">
             <td><input type="text" class="form-control nombreAsig" name="nombreAsig" id="nombreAsignatura${idAsignatura}"></td>
             <td><button class="btn btn-primary aniadir-lecciones" data-id="${idAsignatura}">Añadir lecciones</button></td>
-            <td><input type="number" class="form-control numLecciones" name="numLecc" id="numLecciones${idAsignatura}" value="1"></td>
+            <td><input type="number" class="form-control numLecciones" name="numLeccTeor" id="numLeccionesTeor${idAsignatura}" value="1"></td>
+            <td><input type="number" class="form-control numLecciones" name="numLeccPrac" id="numLeccionesPrac${idAsignatura}" value="1"></td>
             <td><input type="text" class="form-control ntitulacion" name="ntitulacion" id="ntitulacion${idAsignatura}"></td>
             <td><button class="btn btn-danger eliminar-asignatura">Eliminar</button></td>
         </tr>
@@ -413,13 +412,35 @@ $(document).on('click', '.aniadir-lecciones', function(event) {
 
 function crearTablaLeccion(asignaturaId) {
     var filas = '';
-    let tema = 0;
-    //Agregamos el numero de filas
-    for (var i = 0; i < $($(`#numLecciones${asignaturaId}`)).val(); i++) {
-        tema++;
+    let sesionTeoria = 0;
+    let sesionPractica = 0;
+    // Obtenemos los valores de leccionesPracticas y teoricas
+    const numLeccionesTeoricas = $($(`#numLeccionesTeor${asignaturaId}`)).val();
+    const numLeccionesPracticas = $($(`#numLeccionesPrac${asignaturaId}`)).val();
+    //Agregamos el numero de filas sesion teorica
+    for (var i = 0; i < numLeccionesTeoricas; i++) {
+        sesionTeoria++;
         idLeccion++;
         filas += `<tr id="tabla${asignaturaId}leccion${idLeccion}" class="fila-leccion">
-        <td><input type="text" class="form-control tituloLecc" name="tituloLecc" id="tituloLeccion${idLeccion}" value="Tema ${tema}"</td>
+        <td><input type="text" class="form-control tituloLecc" name="tituloLecc" id="tituloLeccion${idLeccion}" value="Sesión teórica ${sesionTeoria}"></td>
+        <td><select class="form-control modalidad" name="modalidad" id="modalidad${idLeccion}">
+            <option>Teorica</option>
+        </select></td>
+        <td><button class="btn btn-danger eliminar-leccion">Eliminar</button></td>
+        </tr>`;
+    }
+
+    //Agregamos el numero de filas sesionPractica
+    for (var i = 0; i < numLeccionesPracticas; i++) {
+        sesionPractica++;
+        idLeccion++;
+        filas += `<tr id="tabla${asignaturaId}leccion${idLeccion}" class="fila-leccion">
+        <td><input type="text" class="form-control tituloLecc" name="tituloLecc" id="tituloLeccion${idLeccion}" value="Sesión práctica ${sesionPractica}"></td>
+        <td>
+        <select class="form-control modalidad" name="modalidad" id="modalidad${idLeccion}">
+            <option>Practica</option>
+        </select>
+        </td>
         <td><button class="btn btn-danger eliminar-leccion">Eliminar</button></td>
         </tr>`;
     }
@@ -432,6 +453,7 @@ function crearTablaLeccion(asignaturaId) {
                 <thead>
                     <tr>
                         <th>Título de lección</th>
+                        <th>Modalidad</th>
                         <th>Eliminar</th>
                     </tr>
                 </thead>
@@ -474,7 +496,8 @@ $(document).on('click', '.crear-asignatura', function() {
         const nombreTitulacion = $(this).find('.ntitulacion').val();
         $(this).next('div').find('.fila-leccion').each(function() {
             const titulo = $(this).find('.tituloLecc').val();
-            lecciones.push({ titulo })
+            const modalidad = $(this).find('.modalidad').val();
+            lecciones.push({ titulo, modalidad })
         });
         asignaturas.push({ nombre, nombreTitulacion, lecciones });
         lecciones = [];
