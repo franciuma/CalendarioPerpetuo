@@ -26,11 +26,12 @@ const mapFechaGrupo = new Map();
 //Si se encuentra en la vista /formulario/calendario carga la función
 if(window.location.href == "http://localhost:8000/formulario/calendario"){
     $(function() {
-        //Obtenemos las lecciones del template formulario/calendario
+        //Obtenemos del formulario de calendario las entidades
         const lecciones = JSON.parse(document.getElementById('lecciones').dataset.lecciones);
-        //Obtenemos las asignaturas del template de formulario/calendario
         const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
-        //Fecha en la que comienzan las clases (recogemos la variable local del formulario centro)
+        //Devuelve un array con todos los festivos
+        const arrayFestivos = calcularFestivos();
+        //Recogemos las variables locales del formulario centro
         const inicioClase = localStorage.getItem('inicioClase');
         const fechaInicio = crearFecha(inicioClase);
         //Fecha en la que finalizan las clases (cuando finalicen examenes finales, deberia ser festivos centro)
@@ -72,8 +73,11 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
             let contLeccPractica = 0;
 
             while (fechaActual < fechaFin) {
-                // Si se incluyen dias teoria, se añaden al array
-                if (diasTeoria.includes(diasSemana[fechaActual.getDay()]) && contLeccTeoria != leccionesFiltradasTeoria.length) {
+                // Si coinciden los dias teoria, además no están completas y no es festivo, se incluye.
+                if (diasTeoria.includes(diasSemana[fechaActual.getDay()]) 
+                    && contLeccTeoria != leccionesFiltradasTeoria.length
+                    && !esFestivo(fechaActual, arrayFestivos)
+                    ) {
                     //Se incluye la fecha actual en formato Date para el setDates de datepicker
                     arrayFechaAsignatura.push({fecha: new Date(fechaActual), asignaturaId: grupoAsignaturaId});
                     //Formateamos la fecha para incluirla en el map
@@ -87,7 +91,10 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
                     contLeccTeoria++;
                 }
                 // Si se incluyen dias practica, se añaden al array
-                if (diasPractica.includes(diasSemana[fechaActual.getDay()]) && contLeccPractica != leccionesFiltradasPractica.length) {
+                if (diasPractica.includes(diasSemana[fechaActual.getDay()])
+                    && contLeccPractica != leccionesFiltradasPractica.length
+                    && !esFestivo(fechaActual, arrayFestivos)
+                    ) {
                     //Se incluye la fecha actual en formato Date para el setDates de datepicker
                     arrayFechaAsignatura.push({fecha: new Date(fechaActual), asignaturaId: grupoAsignaturaId});
                     //Formateamos la fecha para incluirla en el map
@@ -142,6 +149,55 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
             }
         });
     });
+
+    function esFestivo(fechaActual, festivos) {
+        return festivos.some(fecha => (
+            fechaActual.getFullYear() === fecha.getFullYear() &&
+            fechaActual.getMonth() === fecha.getMonth() &&
+            fechaActual.getDate() === fecha.getDate()
+        ));
+    }
+}
+
+function calcularFestivos() {
+    //Obtenemos los festivos
+    const festivosNacionales = JSON.parse(document.getElementById('festivosNacionales').dataset.festivosnacionales);
+    const festivosLocales = JSON.parse(document.getElementById('festivosLocales').dataset.festivoslocales);
+    const provincia = localStorage.getItem('provincia');
+
+    //Declaramos el array a devolver, el cual tendrá simplemente un array de todas las fechas festivas
+    const festivos = [];
+
+    //Obtenemos los festivosLocales en base a la provincia
+    const festivosLocalesFiltrado = festivosLocales.filter(function(festivoLocal) {
+        return festivoLocal.provincia == provincia;
+    });
+
+    completaArrayFestivos(festivosNacionales, festivos);
+    completaArrayFestivos(festivosLocalesFiltrado, festivos);
+
+    return festivos;
+}
+
+function completaArrayFestivos(arrayFestivo, festivos) {
+    //Recorremos los festivos nacionales
+    arrayFestivo.forEach(function(festivo) {
+        if(festivo.inicio == festivo.final) {
+            festivos.push(crearFecha(festivo.inicio));
+        } else {
+            creaFestivosIntermedios(festivo.inicio, festivo.final, festivos);
+        }
+    });
+}
+
+function creaFestivosIntermedios(inicio, final, festivos) {
+    let fechaActual = crearFecha(inicio);
+    let fechaFin = crearFecha(final);
+    
+    while (fechaActual <= fechaFin) {
+        festivos.push(new Date(fechaActual));
+        fechaActual.setDate(fechaActual.getDate() + 1);
+    }
 }
 
 //Pasa la fecha a formato "normal", como 12-11-23
@@ -544,6 +600,7 @@ $(document).on('click', '.previsualizar-calendario', function() {
     const inicioDeClases = $('#datepickerInicio').val();
     //Guardamos la variable en localStorage
     localStorage.setItem('inicioClase', inicioDeClases);
+    localStorage.setItem('provincia', provincia);
 
     centro.push({nombre, provincia, inicioDeClases});
 
