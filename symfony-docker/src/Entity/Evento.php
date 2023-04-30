@@ -30,6 +30,9 @@ class Evento
     #[ORM\ManyToOne]
     private ?Clase $clase = null;
 
+    #[ORM\ManyToOne]
+    private ?FestivoCentro $festivoCentro = null;
+
     public function __construct(?EventoInterface $evento = null)
     {
         if ($evento instanceof FestivoNacional) {
@@ -111,6 +114,18 @@ class Evento
     public function setClase(?Clase $clase): self
     {
         $this->clase = $clase;
+
+        return $this;
+    }
+
+    public function getFestivoCentro(): ?FestivoCentro
+    {
+        return $this->festivoCentro;
+    }
+
+    public function setFestivoCentro(?FestivoCentro $festivoCentro): self
+    {
+        $this->festivoCentro = $festivoCentro;
 
         return $this;
     }

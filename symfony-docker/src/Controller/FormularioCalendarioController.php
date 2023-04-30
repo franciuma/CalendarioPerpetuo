@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ProfesorRepository;
 use App\Repository\AsignaturaRepository;
+use App\Repository\FestivoCentroRepository;
 use App\Repository\FestivoLocalRepository;
 use App\Repository\FestivoNacionalRepository;
 use App\Repository\LeccionRepository;
@@ -19,19 +20,22 @@ class FormularioCalendarioController extends AbstractController
     private LeccionRepository $leccionRepository;
     private FestivoLocalRepository $festivoLocalRepository;
     private FestivoNacionalRepository $festivoNacionalRepository;
+    private FestivoCentroRepository $festivoCentroRepository;
 
     public function __construct(
         ProfesorRepository $profesorRepository,
         AsignaturaRepository $asignaturaRepository,
         LeccionRepository $leccionRepository,
         FestivoLocalRepository $festivoLocalRepository,
-        FestivoNacionalRepository $festivoNacionalRepository
+        FestivoNacionalRepository $festivoNacionalRepository,
+        FestivoCentroRepository $festivoCentroRepository
         ){
         $this->profesorRepository = $profesorRepository;
         $this->asignaturaRepository = $asignaturaRepository;
         $this->leccionRepository = $leccionRepository;
         $this->festivoLocalRepository = $festivoLocalRepository;
         $this->festivoNacionalRepository = $festivoNacionalRepository;
+        $this->festivoCentroRepository = $festivoCentroRepository;
     }
 
     #[Route('/formulario/calendario', name: 'app_formulario_calendario')]
@@ -86,9 +90,10 @@ class FormularioCalendarioController extends AbstractController
 
         $leccionesJson = json_encode($leccionesArray);
 
-        //Obtenemos los festivos nacionales y festivos locales
+        //Obtenemos los festivos nacionales, festivos locales y festivos centro
         $festivosLocales = $this->festivoLocalRepository->findAll();
         $festivosNacionales = $this->festivoNacionalRepository->findAll();
+        $festivosCentro = $this->festivoCentroRepository->findAll();
 
         $festivosLocalesArray = array_map(function($festivoLocal) {
             return [
@@ -107,8 +112,19 @@ class FormularioCalendarioController extends AbstractController
             ];
         }, $festivosNacionales);
 
+        $festivosCentroArray = array_map(function($festivoCentro) {
+            return [
+                'id' => $festivoCentro->getId(),
+                'inicio' => $festivoCentro->getInicio(),
+                'final' => $festivoCentro->getFinal(),
+                'nombreCentro' => $festivoCentro->getCentro()->getNombre(),
+                'nombreFestivo' => $festivoCentro->getNombre()
+            ];
+        }, $festivosCentro);
+
         $festivosLocalesJson = json_encode($festivosLocalesArray);
         $festivosNacionalesJson = json_encode($festivosNacionalesArray);
+        $festivosCentroJson = json_encode($festivosCentroArray);
 
         return $this->render('formularios/calendario.html.twig', [
             'controller_name' => 'FormularioCalendarioController',
@@ -116,7 +132,8 @@ class FormularioCalendarioController extends AbstractController
             'asignaturas' => $titulosAsignaturas,
             'lecciones' => $leccionesJson,
             'festivosLocales' => $festivosLocalesJson,
-            'festivosNacionales' => $festivosNacionalesJson
+            'festivosNacionales' => $festivosNacionalesJson,
+            'festivosCentro' => $festivosCentroJson
         ]);
     }
 }

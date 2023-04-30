@@ -31,6 +31,10 @@ services:
         autowire: true
         autoconfigure: true
 
+    App\Service\FestivoCentroService:
+        autowire: true
+        autoconfigure: true
+
     App\Entity\ProfesorGrupo:
         autowire: true
         autoconfigure: true

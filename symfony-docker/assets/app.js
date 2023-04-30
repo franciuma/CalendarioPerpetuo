@@ -34,10 +34,8 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
         //Recogemos las variables locales del formulario centro
         const inicioClase = localStorage.getItem('inicioClase');
         const fechaInicio = crearFecha(inicioClase);
-        //Fecha en la que finalizan las clases (cuando finalicen examenes finales, deberia ser festivos centro)
-        const fechaFin = new Date(fechaInicio);
-        fechaFin.setMonth(fechaFin.getMonth() + 2);
-
+        //Fecha en la que finalizan las clases
+        const fechaFin = calcularFechaFinCalendario();
         //Creamos un array de días de la semana
         const diasSemana = {
             0: "Domingo",
@@ -72,7 +70,7 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
             let contLeccTeoria = 0;
             let contLeccPractica = 0;
 
-            while (fechaActual < fechaFin) {
+            while (fechaActual <= fechaFin) {
                 // Si coinciden los dias teoria, además no están completas y no es festivo, se incluye.
                 if (diasTeoria.includes(diasSemana[fechaActual.getDay()]) 
                     && contLeccTeoria != leccionesFiltradasTeoria.length
@@ -159,22 +157,46 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
     }
 }
 
+function calcularFechaFinCalendario() {
+    const festivosCentro = JSON.parse(document.getElementById('festivosCentro').dataset.festivoscentro);
+    const centro = localStorage.getItem('centro');
+
+    //Filtramos para buscar el periodo de fin de examenes, que marcará el fin del año académico
+    const festivosCentroFiltrado = festivosCentro.filter(function(festivoCentro) {
+        return festivoCentro.nombreFestivo == "Periodo fin de exámenes"
+                && festivoCentro.nombreCentro == centro;
+    });
+
+    //Convertimos en fecha Date el ultimo dia de clase
+    const claseUltimoDia = crearFecha(festivosCentroFiltrado[0].final);
+
+    return claseUltimoDia;
+}
+
 function calcularFestivos() {
     //Obtenemos los festivos
     const festivosNacionales = JSON.parse(document.getElementById('festivosNacionales').dataset.festivosnacionales);
     const festivosLocales = JSON.parse(document.getElementById('festivosLocales').dataset.festivoslocales);
+    const festivosCentro = JSON.parse(document.getElementById('festivosCentro').dataset.festivoscentro);
+    const centro = localStorage.getItem('centro');
     const provincia = localStorage.getItem('provincia');
 
     //Declaramos el array a devolver, el cual tendrá simplemente un array de todas las fechas festivas
     const festivos = [];
 
-    //Obtenemos los festivosLocales en base a la provincia
+    //Obtenemos los festivosLocales en base a la provincia proporcionada
     const festivosLocalesFiltrado = festivosLocales.filter(function(festivoLocal) {
         return festivoLocal.provincia == provincia;
     });
 
+    //Obtenemos los festivosCentro en base al centro proporcionado
+    const festivosCentroFiltrado = festivosCentro.filter(function(festivoCentro) {
+        return festivoCentro.centro == centro;
+    });
+
     completaArrayFestivos(festivosNacionales, festivos);
     completaArrayFestivos(festivosLocalesFiltrado, festivos);
+    completaArrayFestivos(festivosCentroFiltrado, festivos);
 
     return festivos;
 }
@@ -600,6 +622,7 @@ $(document).on('click', '.previsualizar-calendario', function() {
     const inicioDeClases = $('#datepickerInicio').val();
     //Guardamos la variable en localStorage
     localStorage.setItem('inicioClase', inicioDeClases);
+    localStorage.setItem('centro', nombre);
     localStorage.setItem('provincia', provincia);
 
     centro.push({nombre, provincia, inicioDeClases});

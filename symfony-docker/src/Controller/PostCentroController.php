@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Service\CentroService;
 use App\Service\CalendarioService;
+use App\Service\FestivoCentroService;
 use App\Service\FestivoNacionalService;
 use App\Service\FestivoLocalService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,24 +17,26 @@ class PostCentroController extends AbstractController
     private CalendarioService $calendarioService;
     private FestivoNacionalService $festivoNacionalService;
     private FestivoLocalService $festivoLocalService;
+    private FestivoCentroService $festivoCentroService;
 
     public function __construct(
         CentroService $centroService,
         CalendarioService $calendarioService,
         FestivoNacionalService $festivoNacionalService,
-        FestivoLocalService $festivoLocalService
+        FestivoLocalService $festivoLocalService,
+        FestivoCentroService $festivoCentroService
     )
     {
         $this->centroService = $centroService;
         $this->calendarioService = $calendarioService;
         $this->festivoNacionalService = $festivoNacionalService;
         $this->festivoLocalService = $festivoLocalService;
+        $this->festivoCentroService = $festivoCentroService;
     }
 
     #[Route('/post/centro', name: 'app_post_centro')]
     public function index(): Response
     {
-
         //Creamos el calendario y lo obtenemos
         $calendario = $this->calendarioService->getCalendario();
         //Creamos el centro y agregamos el calendario
@@ -42,6 +45,8 @@ class PostCentroController extends AbstractController
         $this->festivoNacionalService->getFestivosNacionales();
         //Creamos los festivos locales
         $this->festivoLocalService->getFestivosLocales($centro);
+        //Creamos los festivos de centro
+        $this->festivoCentroService->getFestivosCentro($centro);
 
         return $this->render('posts/centro.html.twig', [
             'controller_name' => 'PostCentroController',
