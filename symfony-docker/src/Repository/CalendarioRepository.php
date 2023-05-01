@@ -54,23 +54,11 @@ class CalendarioRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//BORRAR ESTOS DOS *///////////////////////////////////////////////////////////////
-    public function findOneByNombre($nombre): ?Calendario
+    public function findOneByProfesor($profesorId): ?Calendario
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.nombre = :val')
-            ->setParameter('val', $nombre)
-            ->getQuery()
-            ->setMaxResults(1)
-            ->getOneOrNullResult()
-        ;
-    }
-
-    public function findOneByProvincia($provincia): ?Calendario
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.provincia = :val')
-            ->setParameter('val', $provincia)
+            ->andWhere('c.profesor = :val')
+            ->setParameter('val', $profesorId)
             ->getQuery()
             ->setMaxResults(1)
             ->getOneOrNullResult()

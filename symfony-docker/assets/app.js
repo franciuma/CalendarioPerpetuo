@@ -341,14 +341,18 @@ $(document).on('click', '.crear-calendario', function() {
         const fecha = $(this).find('.fecha').val();
         const nombre = $(this).find('.nombre').val();
         const modalidad = $(this).find('.modalidad').val();
-        clases.push({ fecha, nombre, modalidad });
+        const asignaturaNombre = $(this).find('.asignaturaCalendario').val();
+        clases.push({ fecha, nombre, modalidad, asignaturaNombre });
     });
 
     // Convertir el objeto a JSON
     const clasesJSON = JSON.stringify(clases);
 
+    //Obtenemos el nombre del profesor via localStorage
+    const nombreProfesor = localStorage.getItem('nombreProfesor');
+
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/manejar/posts/clase',{clasesJSON: clasesJSON},'http://localhost:8000/calendario?provincia=' + provincia + '&centro=' + centro); //parametros de URL');
+    enviarPost('/manejar/posts/clase',{clasesJSON: clasesJSON},'http://localhost:8000/calendario?provincia='+'&profesor='+ nombreProfesor); //parametros de URL
 });
 
 //Formulario profesor
@@ -440,6 +444,8 @@ $(document).on('click', '.crear-profesor', function() {
     const correo = $('#correo').val();
 
     profesor.push({nombre,primerapellido,segundoapellido,despacho,correo});
+    //Guardamos el nombre del profesor para el calendario
+    localStorage.setItem('nombreProfesor', nombre);
 
     const grupo = [];
     // Obtener los valores de las filas de la tabla
@@ -490,7 +496,7 @@ function crearFilaAsignatura() {
     return $(`
         <tr class="fila-asignatura" id="asignatura${idAsignatura}">
             <td><input type="text" class="form-control nombreAsig" name="nombreAsig" id="nombreAsignatura${idAsignatura}"></td>
-            <td><button class="btn btn-primary aniadir-lecciones" data-id="${idAsignatura}">Añadir lecciones</button></td>
+            <td><button class="btn btn-primary aniadir-lecciones" data-id="${idAsignatura}">Añadir sesiones</button></td>
             <td><input type="number" class="form-control numLecciones" name="numLeccTeor" id="numLeccionesTeor${idAsignatura}" value="1"></td>
             <td><input type="number" class="form-control numLecciones" name="numLeccPrac" id="numLeccionesPrac${idAsignatura}" value="1"></td>
             <td><input type="text" class="form-control ntitulacion" name="ntitulacion" id="ntitulacion${idAsignatura}"></td>

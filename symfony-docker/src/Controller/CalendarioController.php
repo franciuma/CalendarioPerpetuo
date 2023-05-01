@@ -17,6 +17,7 @@ use App\Service\FestivoLocalService;
 use App\Service\FestivoNacionalService;
 use App\Repository\ClaseRepository;
 use App\Service\ClaseService;
+use App\Repository\ProfesorRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,7 +31,7 @@ class CalendarioController extends AbstractController
 
     private $nombreCalendario;
     private $provincia;
-    private $persistirBd = false;
+    private $nombreProfesor;
     private AnioRepository $anioRepository;
     private CalendarioRepository $calendarioRepository;
     private ClaseService $claseService;
@@ -41,6 +42,7 @@ class CalendarioController extends AbstractController
     private FestivoNacionalService $festivoNacionalService;
     private MesRepository $mesRepository;
     private ClaseRepository $claseRepository;
+    private ProfesorRepository $profesorRepository;
 
     public function __construct(
         AnioRepository $anioRepository,
@@ -52,10 +54,12 @@ class CalendarioController extends AbstractController
         FestivoLocalService $festivoLocalService,
         FestivoNacionalRepository $festivoNacionalRepository,
         FestivoNacionalService $festivoNacionalService,
-        MesRepository $mesRepository
+        MesRepository $mesRepository,
+        ProfesorRepository $profesorRepository
     ) {
         $this->provincia = $_GET['provincia'];
         $this->nombreCalendario = $_GET['centro'];
+        $this->nombreProfesor = $_GET['profesor'];
 
         $this->anioRepository = $anioRepository;
         $this->calendarioRepository = $calendarioRepository;
@@ -67,6 +71,7 @@ class CalendarioController extends AbstractController
         $this->festivoNacionalRepository = $festivoNacionalRepository;
         $this->festivoNacionalService = $festivoNacionalService;
         $this->mesRepository = $mesRepository;
+        $this->profesorRepository = $profesorRepository;
     }
 
     /**
@@ -74,19 +79,11 @@ class CalendarioController extends AbstractController
      */
     public function index(): Response
     {
-        $calendario = new Calendario($this->nombreCalendario, $this->provincia);//Pasar por POST o como sea el calendario actual
+        $profesor = $this->profesorRepository->findOneByNombre($this->nombreProfesor);
+        $calendario = $this->calendarioRepository->findOneByProfesor($profesor->getId());
 
-        if (
-            !$this->calendarioRepository->findOneByNombre($this->nombreCalendario)
-            || !$this->calendarioRepository->findOneByProvincia($this->provincia)
-            || !$this->anioRepository->findOneByNumAnio(self::ANIO) &&
-            !$this->anioRepository->findOneByNumAnio(self::ANIO_SIGUIENTE)
-        ) {
-            $this->persistirBd = true;
-            $this->calendarioRepository->save($calendario, $this->persistirBd);
-        }
-
-        self::colocarEventosBd($calendario);
+        //Persistimos las clases en bd
+        $this->claseService->getClases($calendario);
 
         $anio = new Anio(self::ANIO);
         $anioSig = new Anio(self::ANIO_SIGUIENTE);
@@ -94,8 +91,8 @@ class CalendarioController extends AbstractController
         $anio->setCalendario($calendario);
         $anioSig->setCalendario($calendario);
 
-        $this->anioRepository->save($anio, $this->persistirBd);
-        $this->anioRepository->save($anioSig, $this->persistirBd);
+        $this->anioRepository->save($anio, true);
+        $this->anioRepository->save($anioSig, true);
 
         for ($numMes = self::NUM_MES_INICIAL; $numMes <= self::NMESES + self::NUM_MES_INICIAL; $numMes++) {
 
@@ -114,7 +111,7 @@ class CalendarioController extends AbstractController
             $ultimoDiaDeMes = intval(self::ultimoDiaMes($mesActual, $anio->getNumAnio()));
             $mes->setPrimerDia($primerDiaDeMes);
             $mes->setAnio($anio);
-            $this->mesRepository->save($mes, $this->persistirBd);
+            $this->mesRepository->save($mes, true);
 
             for ($numDia = 1; $numDia <= $ultimoDiaDeMes; $numDia++) {
                 $dia = new Dia($numDia);
@@ -128,7 +125,7 @@ class CalendarioController extends AbstractController
                 self::colocarEventos($dia, $nombreDiaDeLaSemana, $calendario);
 
                 $dia->setMes($mes);
-                $this->diaRepository->save($dia, $this->persistirBd);
+                $this->diaRepository->save($dia, true);
             }
         }
         $calendario->addAnio($anio);
@@ -179,16 +176,6 @@ class CalendarioController extends AbstractController
             $dia->setEvento($evento);
         } else if ($nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
             $dia->setEsNoLectivo(true);
-        }
-    }
-
-    /**
-     * Función dedicada a colocar los eventos en la base de datos (festivos y clases).
-     */
-    public function colocarEventosBd(Calendario $calendario)
-    {
-        if($this->persistirBd){
-            $this->claseService->getClases($calendario);
         }
     }
 }

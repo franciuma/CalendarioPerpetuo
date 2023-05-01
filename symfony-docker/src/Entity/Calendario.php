@@ -46,6 +46,9 @@ class Calendario
     #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: Centro::class)]
     private Collection $centro;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Profesor $profesor = null;
+
     public function __construct()
     {
         $this->anios = new ArrayCollection();
@@ -123,6 +126,18 @@ class Calendario
                 $centro->setCalendario(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getProfesor(): ?Profesor
+    {
+        return $this->profesor;
+    }
+
+    public function setProfesor(?Profesor $profesor): self
+    {
+        $this->profesor = $profesor;
 
         return $this;
     }

@@ -71,13 +71,13 @@ class ProfesorRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Profesor
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findOneByNombre($nombreProfesor): ?Profesor
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.nombre = :val')
+            ->setParameter('val', $nombreProfesor)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }
