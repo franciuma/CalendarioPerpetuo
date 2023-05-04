@@ -19,9 +19,6 @@ class Centro
     #[ORM\Column(length: 255)]
     private ?string $provincia = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $inicioDeClases = null;
-
     #[ORM\ManyToOne(inversedBy: 'centro')]
     private ?Calendario $calendario = null;
 
@@ -50,18 +47,6 @@ class Centro
     public function setProvincia(string $provincia): self
     {
         $this->provincia = $provincia;
-
-        return $this;
-    }
-
-    public function getInicioDeClases(): ?string
-    {
-        return $this->inicioDeClases;
-    }
-
-    public function setInicioDeClases(string $inicioDeClases): self
-    {
-        $this->inicioDeClases = $inicioDeClases;
 
         return $this;
     }

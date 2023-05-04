@@ -514,7 +514,6 @@ function crearFilaAsignatura() {
     return $(`
         <tr class="fila-asignatura" id="asignatura${idAsignatura}">
             <td><input type="text" class="form-control nombreAsig" name="nombreAsig" id="nombreAsignatura${idAsignatura}"></td>
-            <td><button class="btn btn-primary aniadir-lecciones" data-id="${idAsignatura}">Añadir sesiones</button></td>
             <td><input type="number" class="form-control numLecciones" name="numLeccTeor" id="numLeccionesTeor${idAsignatura}" value="1"></td>
             <td><input type="number" class="form-control numLecciones" name="numLeccPrac" id="numLeccionesPrac${idAsignatura}" value="1"></td>
             <td><select class="form-control cuatrimestre" name="cuatrimestre" id="cuatrimestre${idAsignatura}">
@@ -523,6 +522,7 @@ function crearFilaAsignatura() {
             </select>
             </td>
             <td><input type="text" class="form-control ntitulacion" name="ntitulacion" id="ntitulacion${idAsignatura}"></td>
+            <td><button class="btn btn-primary aniadir-lecciones" data-id="${idAsignatura}">Añadir sesiones</button></td>
             <td><button class="btn btn-danger eliminar-asignatura">Eliminar</button></td>
         </tr>
     `);
@@ -643,13 +643,11 @@ $(document).on('click', '.previsualizar-calendario', function() {
     const centro = [];
     const nombre = $('#nombreDelCentro').val();
     const provincia = $('#nombreDeProvincia').val();
-    const inicioDeClases = $('#datepickerInicio').val();
     //Guardamos la variable en localStorage
-    localStorage.setItem('inicioClase', inicioDeClases);
     localStorage.setItem('provincia', provincia);
     localStorage.setItem('centro',nombre);
 
-    centro.push({nombre, provincia, inicioDeClases});
+    centro.push({nombre, provincia});
 
     const centroJSON = JSON.stringify({centro});
 
