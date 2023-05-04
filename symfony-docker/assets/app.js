@@ -367,9 +367,10 @@ $(document).on('click', '.crear-calendario', function() {
     //Obtenemos el nombre del profesor via localStorage
     const nombreProfesor = localStorage.getItem('nombreProfesor');
     const provincia = localStorage.getItem('provincia');
+    const centro = localStorage.getItem('centro');
 
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/manejar/posts/clase',{clasesJSON: clasesJSON},'http://localhost:8000/calendario?provincia='+ provincia + '&profesor='+ nombreProfesor); //parametros de URL
+    enviarPost('/manejar/posts/clase',{clasesJSON: clasesJSON},'http://localhost:8000/calendario?provincia='+ provincia + '&profesor='+ nombreProfesor + '&centro=' + centro); //parametros de URL
 });
 
 //Formulario profesor
@@ -637,12 +638,6 @@ $(document).on('click', '.crear-asignatura', function() {
 });
 
 //Formulario centro
-$('#datepickerInicio').datepicker({
-    format: 'dd-mm-yy',
-    language: 'es',
-    weekStart: 1,
-    startDate: new Date(),
-})
 
 $(document).on('click', '.previsualizar-calendario', function() {
     const centro = [];

@@ -6,6 +6,7 @@ use App\Entity\Anio;
 use App\Entity\Calendario;
 use App\Entity\Dia;
 use App\Entity\Evento;
+use App\Entity\FestivoCentro;
 use App\Entity\Mes;
 use App\Repository\AnioRepository;
 use App\Repository\CalendarioRepository;
@@ -13,8 +14,7 @@ use App\Repository\DiaRepository;
 use App\Repository\FestivoLocalRepository;
 use App\Repository\FestivoNacionalRepository;
 use App\Repository\MesRepository;
-use App\Service\FestivoLocalService;
-use App\Service\FestivoNacionalService;
+use App\Repository\FestivoCentroRepository;
 use App\Repository\ClaseRepository;
 use App\Service\ClaseService;
 use App\Repository\ProfesorRepository;
@@ -30,6 +30,7 @@ class CalendarioController extends AbstractController
     const NUM_MES_INICIAL = 9;
 
     private $provincia;
+    private $centro;
     private $nombreProfesor;
     private AnioRepository $anioRepository;
     private CalendarioRepository $calendarioRepository;
@@ -39,6 +40,7 @@ class CalendarioController extends AbstractController
     private FestivoNacionalRepository $festivoNacionalRepository;
     private MesRepository $mesRepository;
     private ClaseRepository $claseRepository;
+    private FestivoCentroRepository $festivoCentroRepository;
     private ProfesorRepository $profesorRepository;
 
     public function __construct(
@@ -50,10 +52,12 @@ class CalendarioController extends AbstractController
         FestivoLocalRepository $festivoLocalRepository,
         FestivoNacionalRepository $festivoNacionalRepository,
         MesRepository $mesRepository,
-        ProfesorRepository $profesorRepository
+        ProfesorRepository $profesorRepository,
+        FestivoCentroRepository $festivoCentroRepository
     ) {
         $this->provincia = $_GET['provincia'];
         $this->nombreProfesor = $_GET['profesor'];
+        $this->centro = $_GET['centro'];
 
         $this->anioRepository = $anioRepository;
         $this->calendarioRepository = $calendarioRepository;
@@ -64,6 +68,7 @@ class CalendarioController extends AbstractController
         $this->festivoNacionalRepository = $festivoNacionalRepository;
         $this->mesRepository = $mesRepository;
         $this->profesorRepository = $profesorRepository;
+        $this->festivoCentroRepository = $festivoCentroRepository;
     }
 
     /**
@@ -155,15 +160,22 @@ class CalendarioController extends AbstractController
         $clase = $this->claseRepository->findOneFecha($dia->getFecha(), $calendario->getId());
         $festivoNacional = $this->festivoNacionalRepository->findOneFecha($dia->getFecha());
         $festivoLocal = $this->festivoLocalRepository->findOneFecha($dia->getFecha());
-        $provinciaEventoLocal = $festivoLocal ? $festivoLocal->getProvincia() : null;
+        $provinciafestivoLocal = $festivoLocal ? $festivoLocal->getProvincia() : null;
+        $festivoCentro = $this->festivoCentroRepository->findOneFecha($dia->getFecha());
+        $centroFestivo = $festivoCentro ? $festivoCentro->getNombre() : null;
 
         //Si es clase y pertenece al mismo calendario.
         if($clase && ($calendario->getId() == $clase->getCalendarioId())) {
             $evento = new Evento($clase);
             $dia->setHayClase(true);
             $dia->setEvento($evento);
-        } else if ($festivoNacional || ($festivoLocal && $this->provincia == $provinciaEventoLocal)) {
-            $evento = new Evento($festivoLocal ?? $festivoNacional);
+        } else if (
+            $festivoNacional
+            || ($festivoLocal && $this->provincia == $provinciafestivoLocal)
+            || ($festivoCentro && $this->centro == $centroFestivo)
+        ) {
+            //Verificamos cual de los festivos no es nulo
+            $evento = new Evento($festivoLocal ?? $festivoNacional ?? $festivoCentro);
             $dia->setEsNoLectivo(true);
             $dia->setEvento($evento);
         } else if ($nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
