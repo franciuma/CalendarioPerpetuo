@@ -52,4 +52,20 @@ class FestivoCentroService
 
         return $festivos;
     }
+
+    public function getNombreCentros(): array
+    {
+        $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosCentro.json');
+        $festivosArray = json_decode($festivosJson, true);
+        $centrosArray = array_keys($festivosArray);
+
+        $centroFiltrado = [];
+        foreach ($centrosArray as $centroNombre) {
+            preg_match('/festivosCentro(.+)-(.+)/', $centroNombre, $coincidencias);
+            //Cogemos la segunda de las coincidencias (la primera es la cadena completa)
+            $centroFiltrado[] = $coincidencias[1];
+        }
+
+        return $centroFiltrado;
+    }
 }

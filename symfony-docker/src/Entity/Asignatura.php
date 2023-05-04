@@ -19,6 +19,9 @@ class Asignatura
     #[ORM\ManyToOne(inversedBy: 'asignatura')]
     private ?Titulacion $titulacion = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $cuatrimestre = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +47,18 @@ class Asignatura
     public function setTitulacion(?Titulacion $titulacion): self
     {
         $this->titulacion = $titulacion;
+
+        return $this;
+    }
+
+    public function getCuatrimestre(): ?string
+    {
+        return $this->cuatrimestre;
+    }
+
+    public function setCuatrimestre(string $cuatrimestre): self
+    {
+        $this->cuatrimestre = $cuatrimestre;
 
         return $this;
     }

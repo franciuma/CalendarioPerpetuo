@@ -51,4 +51,20 @@ class FestivoLocalService
 
         return $festivos;
     }
+
+    public function getProvincias(): array
+    {
+        $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosLocales.json');
+        $festivosArray = json_decode($festivosJson, true);
+        $provinciasArray = array_keys($festivosArray);
+
+        $provinciasFiltrado = [];
+        foreach ($provinciasArray as $provincia) {
+            preg_match('/festivosLocales(.+)/', $provincia, $coincidencias);
+            //Cogemos la segunda de las coincidencias (la primera es la cadena completa)
+            $provinciasFiltrado[] = $coincidencias[1];
+        }
+
+        return $provinciasFiltrado;
+    }
 }

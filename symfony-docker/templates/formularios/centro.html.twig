@@ -12,10 +12,22 @@
 				<h1 class="font-weight-bold">Creación de centro</h1>
 				<form>
 					<div class="form-group">
-						<label for="nombreDelCentro">Nombre del centro</label>
-						<input type="text" class="form-control" id="nombreDelCentro" placeholder="ETSII Informatica">
 						<label for="nombreDeProvincia">Provincia</label>
-						<input type="text" class="form-control" id="nombreDeProvincia" placeholder="Málaga">
+						<select class="form-control" id="nombreDeProvincia">
+							<option value=""></option>
+							{% for provincia in provincias %}
+								<option>{{ provincia }}</option>
+							{% endfor %}
+						</select>
+
+						<label for="nombreDelCentro">Nombre del centro</label>
+						<select class="form-control" id="nombreDelCentro">
+							<option value=""></option>
+							{% for nombreCentro in nombreCentros %}
+								<option>{{ nombreCentro }}</option>
+							{% endfor %}
+						</select>
+
 						<label for="profesorDatepicker">Indique el dia en el que comenzarán las clases:</label>
 						<input type="text" class="form-control datepickerInicio" id="datepickerInicio" placeholder="Selecciona una fecha">
 					</div>

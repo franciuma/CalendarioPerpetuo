@@ -29,7 +29,6 @@ class CalendarioController extends AbstractController
     const NMESES = 9;
     const NUM_MES_INICIAL = 9;
 
-    private $nombreCalendario;
     private $provincia;
     private $nombreProfesor;
     private AnioRepository $anioRepository;
@@ -37,9 +36,7 @@ class CalendarioController extends AbstractController
     private ClaseService $claseService;
     private DiaRepository $diaRepository;
     private FestivoLocalRepository $festivoLocalRepository;
-    private FestivoLocalService $festivoLocalService;
     private FestivoNacionalRepository $festivoNacionalRepository;
-    private FestivoNacionalService $festivoNacionalService;
     private MesRepository $mesRepository;
     private ClaseRepository $claseRepository;
     private ProfesorRepository $profesorRepository;
@@ -51,14 +48,11 @@ class CalendarioController extends AbstractController
         ClaseRepository $claseRepository,
         DiaRepository $diaRepository,
         FestivoLocalRepository $festivoLocalRepository,
-        FestivoLocalService $festivoLocalService,
         FestivoNacionalRepository $festivoNacionalRepository,
-        FestivoNacionalService $festivoNacionalService,
         MesRepository $mesRepository,
         ProfesorRepository $profesorRepository
     ) {
         $this->provincia = $_GET['provincia'];
-        $this->nombreCalendario = $_GET['centro'];
         $this->nombreProfesor = $_GET['profesor'];
 
         $this->anioRepository = $anioRepository;
@@ -67,9 +61,7 @@ class CalendarioController extends AbstractController
         $this->claseRepository = $claseRepository;
         $this->diaRepository = $diaRepository;
         $this->festivoLocalRepository = $festivoLocalRepository;
-        $this->festivoLocalService = $festivoLocalService;
         $this->festivoNacionalRepository = $festivoNacionalRepository;
-        $this->festivoNacionalService = $festivoNacionalService;
         $this->mesRepository = $mesRepository;
         $this->profesorRepository = $profesorRepository;
     }

@@ -332,8 +332,7 @@ function crearFecha(fechaStringFormato) {
 
 //Creamos el POST del formulario
 $(document).on('click', '.crear-calendario', function() {
-    const provincia = $('#nombreDeProvincia').val();
-    const centro = $('#nombreDelCentro').val();
+    const nombre = $('#nombreDelCentro').val();
 
     // Obtener los valores de las filas de la tabla
     const clases = [];
@@ -350,9 +349,10 @@ $(document).on('click', '.crear-calendario', function() {
 
     //Obtenemos el nombre del profesor via localStorage
     const nombreProfesor = localStorage.getItem('nombreProfesor');
+    const provincia = localStorage.getItem('provincia');
 
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/manejar/posts/clase',{clasesJSON: clasesJSON},'http://localhost:8000/calendario?provincia='+'&profesor='+ nombreProfesor); //parametros de URL
+    enviarPost('/manejar/posts/clase',{clasesJSON: clasesJSON},'http://localhost:8000/calendario?provincia='+ provincia + '&profesor='+ nombreProfesor); //parametros de URL
 });
 
 //Formulario profesor
@@ -499,6 +499,11 @@ function crearFilaAsignatura() {
             <td><button class="btn btn-primary aniadir-lecciones" data-id="${idAsignatura}">Añadir sesiones</button></td>
             <td><input type="number" class="form-control numLecciones" name="numLeccTeor" id="numLeccionesTeor${idAsignatura}" value="1"></td>
             <td><input type="number" class="form-control numLecciones" name="numLeccPrac" id="numLeccionesPrac${idAsignatura}" value="1"></td>
+            <td><select class="form-control cuatrimestre" name="cuatrimestre" id="cuatrimestre${idAsignatura}">
+            <option>Primero</option>
+            <option>Segundo</option>
+            </select>
+            </td>
             <td><input type="text" class="form-control ntitulacion" name="ntitulacion" id="ntitulacion${idAsignatura}"></td>
             <td><button class="btn btn-danger eliminar-asignatura">Eliminar</button></td>
         </tr>
@@ -597,12 +602,13 @@ $(document).on('click', '.crear-asignatura', function() {
     $('#asignaturasTable tbody tr[id^="asignatura"]').each(function() {
         const nombre = $(this).find('.nombreAsig').val();
         const nombreTitulacion = $(this).find('.ntitulacion').val();
+        const cuatrimestre = $(this).find('.cuatrimestre').val();
         $(this).next('div').find('.fila-leccion').each(function() {
             const titulo = $(this).find('.tituloLecc').val();
             const modalidad = $(this).find('.modalidad').val();
             lecciones.push({ titulo, modalidad })
         });
-        asignaturas.push({ nombre, nombreTitulacion, lecciones });
+        asignaturas.push({ nombre, nombreTitulacion, cuatrimestre, lecciones });
         lecciones = [];
     });
 
@@ -628,8 +634,8 @@ $(document).on('click', '.previsualizar-calendario', function() {
     const inicioDeClases = $('#datepickerInicio').val();
     //Guardamos la variable en localStorage
     localStorage.setItem('inicioClase', inicioDeClases);
-    localStorage.setItem('centro', nombre);
     localStorage.setItem('provincia', provincia);
+    localStorage.setItem('centro',nombre);
 
     centro.push({nombre, provincia, inicioDeClases});
 
