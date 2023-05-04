@@ -12,6 +12,16 @@
 				<h1 class="font-weight-bold">Creación de docente</h1>
 				<form>
 					<div class="form-group">
+						<label for="labelAsignaturas">Lista de asignaturas creadas: </label>
+							<select class="form-control" id="nombreAsignaturas">
+								<option value=""></option>
+								{% for asignatura in asignaturas %}
+									<option>{{ asignatura }}</option>
+								{% endfor %}
+							</select>
+						<label for="labelnombreGrupos">En caso de que no aparezca su asignatura: </label>
+						<a href="{{ path('app_formulario_asignatura') }}">Crear asignatura</a>
+						<br></br>
 						<label for="labelnombreProf">Nombre</label>
                         <input type="text" class="form-control" id="nombreProf">
 
@@ -26,9 +36,8 @@
 
                         <label for="labelCorreo">Correo</label>
 						<input type="text" class="form-control" id="correo">
+
 					</div>
-					<label for="labelnombreGrupos">En caso de que necesite crear una asignatura: </label>
-					<a href="{{ path('app_formulario_asignatura') }}">Crear asignatura</a>
 					<label for="labelnombreGrupos">Rellene los grupos a los que da clase:</label>
 					<table id="gruposTable" class="table">
 						<thead>
@@ -43,7 +52,7 @@
 						</thead>
 						<tbody></tbody>
 					</table>
-                    <button type="button" class="btn btn-primary aniadir-fila-prof">Añadir fila</button>
+                    <button type="button" class="btn btn-primary aniadir-fila-prof">Añadir grupo</button>
 					<button type="button" class="btn btn-primary crear-profesor">Crear docente</button>
 				</form>
 			</div>
