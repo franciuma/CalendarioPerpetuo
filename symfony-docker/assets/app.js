@@ -31,24 +31,25 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
         const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
         //Devuelve un array con todos los festivos
         const arrayFestivos = calcularFestivos();
-        //Recogemos las variables locales del formulario centro
-        const inicioClase = localStorage.getItem('inicioClase');
-        const fechaInicio = crearFecha(inicioClase);
-        //Fecha en la que finalizan las clases
-        const fechaFin = calcularFechaFinCalendario();
-        //Creamos un array de días de la semana
-        const diasSemana = {
-            0: "Domingo",
-            1: "Lunes",
-            2: "Martes",
-            3: "Miércoles",
-            4: "Jueves",
-            5: "Viernes",
-            6: "Sábado"
-        };    
-    
+
+        //Fechas del primer cuatrimestre
+        const inicioPrimerCuatri = calcularFechaCalendario("primer cuatrimestre");
+        const fechaFinPrimerCuatri = calcularFechaCalendario("exámenes finales primer cuatrimestre"); 
+
+        //Fechas del segundo cuatrimestre
+        const inicioSegundoCuatri = calcularFechaCalendario("segundo cuatrimestre");
+        const fechaFinSegundoCuatri = calcularFechaCalendario("exámenes finales segundo cuatrimestre");
+
         //Recorrer los grupo
         grupos.forEach(function(grupo) {
+            if(grupo.cuatrimestre == "Primero"){
+                completaCuatrimestre(inicioPrimerCuatri, fechaFinPrimerCuatri, grupo);
+            } else {
+                completaCuatrimestre(inicioSegundoCuatri, fechaFinSegundoCuatri, grupo);
+            }
+        });
+
+        function completaCuatrimestre(fechaInicio, fechaFin, grupo) {
             let diasTeoria = grupo.diasTeoria;
             let diasPractica = grupo.diasPractica;
             let fechaActual = new Date(fechaInicio);
@@ -66,6 +67,17 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
             const leccionesFiltradasPractica = leccionesFiltradas.filter(function(leccion) {
                 return leccion.modalidad === "Practica";
             });
+
+            //Creamos un array de días de la semana
+            const diasSemana = {
+                0: "Domingo",
+                1: "Lunes",
+                2: "Martes",
+                3: "Miércoles",
+                4: "Jueves",
+                5: "Viernes",
+                6: "Sábado"
+            };
 
             let contLeccTeoria = 0;
             let contLeccPractica = 0;
@@ -108,7 +120,7 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
                 // Se actualiza la fecha actual
                 fechaActual.setDate(fechaActual.getDate() + 1);
             }
-        });
+        }
 
         //Manejamos el datepicker 
         $('.datepicker').datepicker({
@@ -119,7 +131,7 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
             startDate: new Date(),
         }).datepicker(
             //Establecemos las fechas de los grupos
-            'setDate', arrayFechaAsignatura.map(objeto => objeto.fecha)
+            'setDate', arrayFechaAsignatura.map(indice => indice.fecha)
             );
 
         //Creamos una fila por cada fecha
@@ -157,20 +169,25 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
     }
 }
 
-function calcularFechaFinCalendario() {
+function calcularFechaCalendario(nombreFestivo) {
     const festivosCentro = JSON.parse(document.getElementById('festivosCentro').dataset.festivoscentro);
     const centro = localStorage.getItem('centro');
 
     //Filtramos para buscar el periodo de fin de examenes, que marcará el fin del año académico
     const festivosCentroFiltrado = festivosCentro.filter(function(festivoCentro) {
-        return festivoCentro.nombreFestivo == "Periodo fin de exámenes"
+        return festivoCentro.nombreFestivo == nombreFestivo
                 && festivoCentro.nombreCentro == centro;
     });
 
-    //Convertimos en fecha Date el ultimo dia de clase
-    const claseUltimoDia = crearFecha(festivosCentroFiltrado[0].final);
+    let claseDia;
+    if(nombreFestivo.includes("finales")) {
+        claseDia = crearFecha(festivosCentroFiltrado[0].final);
+    } else {
+        claseDia = crearFecha(festivosCentroFiltrado[0].inicio);
+    }
+    
 
-    return claseUltimoDia;
+    return claseDia;
 }
 
 function calcularFestivos() {
