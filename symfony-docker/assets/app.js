@@ -122,6 +122,14 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
             }
         }
 
+        function fechas_deshabilitadas(fecha) {
+            if( esFestivo(fecha, arrayFestivos) ) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
         //Manejamos el datepicker 
         $('.datepicker').datepicker({
             multidate: true,
@@ -129,6 +137,7 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
             language: 'es',
             weekStart: 1,
             startDate: new Date(),
+            beforeShowDay: fechas_deshabilitadas,
         }).datepicker(
             //Establecemos las fechas de los grupos
             'setDate', arrayFechaAsignatura.map(indice => indice.fecha)
@@ -208,7 +217,8 @@ function calcularFestivos() {
 
     //Obtenemos los festivosCentro en base al centro proporcionado
     const festivosCentroFiltrado = festivosCentro.filter(function(festivoCentro) {
-        return festivoCentro.centro == centro;
+        return festivoCentro.nombreCentro == centro
+        && !(festivoCentro.nombreFestivo).includes("cuatrimestre");
     });
 
     completaArrayFestivos(festivosNacionales, festivos);
