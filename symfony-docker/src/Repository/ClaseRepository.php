@@ -76,4 +76,15 @@ class ClaseRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+
+    public function findOneByCalendario($calendarioId): ?Clase
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.calendario = :val')
+            ->setParameter('val', $calendarioId)
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult()
+        ;
+    }
 }

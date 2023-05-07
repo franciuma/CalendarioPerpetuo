@@ -41,6 +41,8 @@ class Evento
             $this->setFestivoLocal($evento);
         } elseif ($evento instanceof Clase){
             $this->setClase($evento);
+        } else {
+            $this->setFestivoCentro($evento);
         }
     }
 

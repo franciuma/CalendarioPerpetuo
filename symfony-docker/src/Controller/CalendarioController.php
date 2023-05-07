@@ -79,8 +79,27 @@ class CalendarioController extends AbstractController
         $profesor = $this->profesorRepository->findOneByNombre($this->nombreProfesor);
         $calendario = $this->calendarioRepository->findOneByProfesor($profesor->getId());
 
-        //Persistimos las clases en bd
-        $this->claseService->getClases($calendario);
+        // Si no hay clases metidas en ese calendario, el calendario no ha sido creado aún
+        if (!$this->claseRepository->findOneByCalendario($calendario->getId())) {
+            $this->claseService->getClases($calendario);
+            //Crea los años del calendario
+            $anios = self::creacionAnios($calendario);
+            //Crea todo el calendario
+            self::creacionCalendario($anios, $calendario);
+        }
+
+        return $this->render('calendario/index.html.twig', [
+            'calendario' => $calendario,
+            'dias_semana' => $calendario->getdiasSemana(),
+        ]);
+    }
+
+    /**
+     * Crea los años anterior y siguiente del calendario en base al año actual.
+     */
+    public function creacionAnios(Calendario $calendario): array
+    {
+        $anios = [];
 
         $anio = new Anio(self::ANIO);
         $anioSig = new Anio(self::ANIO_SIGUIENTE);
@@ -90,6 +109,20 @@ class CalendarioController extends AbstractController
 
         $this->anioRepository->save($anio, true);
         $this->anioRepository->save($anioSig, true);
+
+        array_push($anios, $anio);
+        array_push($anios, $anioSig);
+
+        return $anios;
+    }
+
+    /**
+     * Crea los meses, años y días del calendario y los persiste a la bd.
+     */
+    public function creacionCalendario($anios, Calendario $calendario): void
+    {
+        $anio = $anios[0];
+        $anioSig = $anios[1];
 
         for ($numMes = self::NUM_MES_INICIAL; $numMes <= self::NMESES + self::NUM_MES_INICIAL; $numMes++) {
 
@@ -126,11 +159,6 @@ class CalendarioController extends AbstractController
             }
         }
         $calendario->addAnio($anio);
-
-        return $this->render('calendario/index.html.twig', [
-            'calendario' => $calendario,
-            'dias_semana' => $calendario->getdiasSemana(),
-        ]);
     }
 
     /**
@@ -162,7 +190,7 @@ class CalendarioController extends AbstractController
         $festivoLocal = $this->festivoLocalRepository->findOneFecha($dia->getFecha());
         $provinciafestivoLocal = $festivoLocal ? $festivoLocal->getProvincia() : null;
         $festivoCentro = $this->festivoCentroRepository->findOneFecha($dia->getFecha());
-        $centroFestivo = $festivoCentro ? $festivoCentro->getNombre() : null;
+        $centroNombre = $festivoCentro ? $festivoCentro->getCentro()->getNombre() : null;
 
         //Si es clase y pertenece al mismo calendario.
         if($clase && ($calendario->getId() == $clase->getCalendarioId())) {
@@ -172,7 +200,7 @@ class CalendarioController extends AbstractController
         } else if (
             $festivoNacional
             || ($festivoLocal && $this->provincia == $provinciafestivoLocal)
-            || ($festivoCentro && $this->centro == $centroFestivo)
+            || ($festivoCentro && $this->centro == $centroNombre)
         ) {
             //Verificamos cual de los festivos no es nulo
             $evento = new Evento($festivoLocal ?? $festivoNacional ?? $festivoCentro);
