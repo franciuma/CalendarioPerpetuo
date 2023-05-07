@@ -1,0 +1,79 @@
+{
+    "festivosCentroInformaticaETSII-Malaga": [
+      {
+        "nombre":"HackersWeek",
+        "abreviatura":"HackersWeek",
+        "inicio":"4-4-%AC%",
+        "final":"7-4-%AC%"
+      },
+      {
+        "nombre":"primer cuatrimestre",
+        "abreviatura":"primer cuat",
+        "inicio":"1-9-%AN%",
+        "final":"5-1-%AC%"
+      },
+      {
+        "nombre":"exámenes finales primer cuatrimestre",
+        "abreviatura":"examenes finales",
+        "inicio":"10-1-%AC%",
+        "final":"10-1-%AC%"
+      },
+      {
+        "nombre":"segundo cuatrimestre",
+        "abreviatura":"segundo cuat ",
+        "inicio":"10-2-%AC%",
+        "final":"1-6-%AC%"
+      },
+      {
+        "nombre":"exámenes finales segundo cuatrimestre",
+        "abreviatura":"examenes finales",
+        "inicio":"1-6-%AC%",
+        "final":"1-6-%AC%"
+      },
+      {
+        "nombre":"Festivo etsii malaga",
+        "abreviatura":"inaug.",
+        "inicio":"14-9-%AN%",
+        "final":"14-9-%AN%"
+      }
+    ]
+    ,
+    "festivosCentroIndustriales-Malaga": [
+      {
+        "nombre":"Dia industriales",
+        "abreviatura":"DIndustriales",
+        "inicio":"25-1-%AC%",
+        "final":"25-1-%AC%"
+      },
+      {
+        "nombre":"Inauguración del curso académico",
+        "abreviatura":"inaug.",
+        "inicio":"23-9-%AN%",
+        "final":"23-9-%AN%"
+      },
+      {
+        "nombre":"primer cuatrimestre",
+        "abreviatura":"primer cuat",
+        "inicio":"1-9-%AN%",
+        "final":"5-1-%AC%"
+      },
+      {
+        "nombre":"exámenes finales primer cuatrimestre",
+        "abreviatura":"examenes finales",
+        "inicio":"5-1-%AC%",
+        "final":"5-1-%AC%"
+      },
+      {
+        "nombre":"segundo cuatrimestre",
+        "abreviatura":"segundo cuat ",
+        "inicio":"10-2-%AC%",
+        "final":"1-6-%AC%"
+      },
+      {
+        "nombre":"exámenes finales segundo cuatrimestre",
+        "abreviatura":"examenes finales",
+        "inicio":"1-6-%AC%",
+        "final":"1-6-%AC%"
+      }
+    ]
+}
