@@ -281,7 +281,7 @@ function crearFilaCalendario(fechaStringFormato, asignaturaId) {
     return $(`
         <tr id="fecha${fechaStringFormato}">
             <td><input type="text" class="fecha" name="fecha" value="${fechaStringFormato}" disabled></td>
-            <td><input ${inactivo} type="text" class="form-control nombre" name="nombre" id="nombre${fechaStringFormato}" value="${tituloSesion}"></td>
+            <td><input type="text" class="form-control nombre" name="nombre" id="nombre${fechaStringFormato}" value="${tituloSesion}"></td>
             <td>
                 <select ${inactivo} type="text" class="form-control asignaturaCalendario" name="asignaturaCalendario" id="asignatura${fechaStringFormato}">
                     <option selected>${asignatura}</option>
