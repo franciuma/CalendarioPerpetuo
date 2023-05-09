@@ -31,8 +31,7 @@ class CentroService
 
         $centro = $this->serializer->denormalize($centroArray['centro'][0], 'App\Entity\Centro');
 
-        if(!$this->centroRepository->findOneByNombre($centro->getNombre())
-            || !$this->centroRepository->findOneByProvincia($centro->getProvincia())){
+        if(!$this->centroRepository->findByProvinciaCentro($centro->getNombre(), $centro->getProvincia())){
             $centro->setCalendario($calendario);
             $this->centroRepository->save($centro,true);
         }
