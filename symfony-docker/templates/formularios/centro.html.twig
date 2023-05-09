@@ -9,7 +9,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6">
-				<h1 class="font-weight-bold">Creación de centro</h1>
+				<h1 class="font-weight-bold">Creación de calendario</h1>
 				<form>
 					<div class="form-group">
 						<label for="nombreDeProvincia">Provincia</label>
@@ -25,6 +25,14 @@
 							<option selected>-- Selecciona el nombre del centro --</option>
 							{% for nombreCentro in nombreCentros %}
 								<option>{{ nombreCentro }}</option>
+							{% endfor %}
+						</select>
+
+						<label for="nombreDelProfesor">Selecciona el docente</label>
+						<select class="form-control" id="nombreDelProfesor">
+							<option selected>-- Selecciona el nombre del docente --</option>
+							{% for profesor in profesores %}
+								<option>{{ profesor }}</option>
 							{% endfor %}
 						</select>
 					</div>

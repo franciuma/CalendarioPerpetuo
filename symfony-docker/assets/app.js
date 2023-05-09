@@ -653,11 +653,12 @@ $(document).on('click', '.previsualizar-calendario', function() {
     const centro = [];
     const nombre = $('#nombreDelCentro').val();
     const provincia = $('#nombreDeProvincia').val();
+    const profesor = $('#nombreDelProfesor').val();
     //Guardamos la variable en localStorage
     localStorage.setItem('provincia', provincia);
     localStorage.setItem('centro',nombre);
 
-    centro.push({nombre, provincia});
+    centro.push({nombre, provincia, profesor});
 
     const centroJSON = JSON.stringify({centro});
 

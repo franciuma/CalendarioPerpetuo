@@ -25,14 +25,25 @@ class CalendarioService
 
     public function getCalendario(): Calendario
     {
-        $calendario = new Calendario();
+        $centroJson = file_get_contents(__DIR__ . '/../resources/centro.json');
+        $centroArray = json_decode($centroJson, true);
 
-        //Obtenemos el ultimo profesor introducido en la base de datos
-        $ultimoProfesor = $this->profesorRepository->findOneBy([],['id' => 'DESC']);
-        if (!$ultimoProfesor) {
+        $calendario = new Calendario();
+        //Dividimos el docente en nombre y apellidos
+        $nombreProfesor = $centroArray['centro'][0]['profesor'];
+
+        $nombreCompleto = explode(" ", $nombreProfesor);
+        //Asignamos el nombre y apellidos
+        $nombre = $nombreCompleto[0];
+        $apellidoPr = $nombreCompleto[1];
+        $apellidoSeg = $nombreCompleto[2];
+
+        $profesorSeleccionado = $this->profesorRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
+        if(!$profesorSeleccionado) {
             throw new \Exception('No se encontró ningún profesor');
         }
-        $calendario->setProfesor($ultimoProfesor);
+
+        $calendario->setProfesor($profesorSeleccionado);
         $this->calendarioRepository->save($calendario,true);
 
         return $calendario;

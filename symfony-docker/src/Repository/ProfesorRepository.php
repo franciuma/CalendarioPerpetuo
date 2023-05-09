@@ -80,4 +80,18 @@ class ProfesorRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+
+    public function findOneByNombreApellidos($nombreProfesor, $apellidoPr, $apellidoSeg): ?Profesor
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.nombre = :nombre')
+            ->andWhere('p.primerApellido = :apellidoPr')
+            ->andWhere('p.segundoApellido = :apellidoSeg')
+            ->setParameter('nombre', $nombreProfesor)
+            ->setParameter('apellidoPr', $apellidoPr)
+            ->setParameter('apellidoSeg', $apellidoSeg)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }
