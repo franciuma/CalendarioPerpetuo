@@ -182,7 +182,7 @@ function calcularFechaCalendario(nombreFestivo) {
     const festivosCentro = JSON.parse(document.getElementById('festivosCentro').dataset.festivoscentro);
     const centro = localStorage.getItem('centro');
 
-    //Filtramos para buscar el periodo de fin de examenes, que marcará el fin del año académico
+    //Filtramos para buscar el nombreFestivo que se requiere
     const festivosCentroFiltrado = festivosCentro.filter(function(festivoCentro) {
         return festivoCentro.nombreFestivo == nombreFestivo
                 && festivoCentro.nombreCentro == centro;
@@ -194,7 +194,6 @@ function calcularFechaCalendario(nombreFestivo) {
     } else {
         claseDia = crearFecha(festivosCentroFiltrado[0].inicio);
     }
-    
 
     return claseDia;
 }
@@ -375,7 +374,7 @@ $(document).on('click', '.crear-calendario', function() {
     const clasesJSON = JSON.stringify(clases);
 
     //Obtenemos el nombre del profesor via localStorage
-    const nombreProfesor = localStorage.getItem('nombreProfesor');
+    const nombreProfesor = localStorage.getItem('profesor');
     const provincia = localStorage.getItem('provincia');
     const centro = localStorage.getItem('centro');
 
@@ -472,8 +471,6 @@ $(document).on('click', '.crear-profesor', function() {
     const correo = $('#correo').val();
 
     profesor.push({nombre,primerapellido,segundoapellido,despacho,correo});
-    //Guardamos el nombre del profesor para el calendario
-    localStorage.setItem('nombreProfesor', nombre);
 
     const grupo = [];
     // Obtener los valores de las filas de la tabla
@@ -657,6 +654,7 @@ $(document).on('click', '.previsualizar-calendario', function() {
     //Guardamos la variable en localStorage
     localStorage.setItem('provincia', provincia);
     localStorage.setItem('centro',nombre);
+    localStorage.setItem('profesor',profesor);
 
     centro.push({nombre, provincia, profesor});
 

@@ -21,6 +21,9 @@ class Titulacion
     #[ORM\OneToMany(mappedBy: 'titulacion', targetEntity: Asignatura::class)]
     private Collection $asignatura;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Centro $centro = null;
+
     public function __construct()
     {
         $this->asignatura = new ArrayCollection();
@@ -69,6 +72,18 @@ class Titulacion
                 $asignatura->setTitulacion(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCentro(): ?Centro
+    {
+        return $this->centro;
+    }
+
+    public function setCentro(?Centro $centro): self
+    {
+        $this->centro = $centro;
 
         return $this;
     }

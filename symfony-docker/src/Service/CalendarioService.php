@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Calendario;
+use App\Entity\Profesor;
 use App\Repository\CalendarioRepository;
 use App\Repository\ProfesorRepository;
 
@@ -29,6 +30,17 @@ class CalendarioService
         $centroArray = json_decode($centroJson, true);
 
         $calendario = new Calendario();
+        
+        $profesorSeleccionado = self::getProfesorSeleccionado($centroArray);
+
+        $calendario->setProfesor($profesorSeleccionado);
+        $this->calendarioRepository->save($calendario,true);
+
+        return $calendario;
+    }
+
+    public function getProfesorSeleccionado($centroArray): Profesor
+    {
         //Dividimos el docente en nombre y apellidos
         $nombreProfesor = $centroArray['centro'][0]['profesor'];
 
@@ -43,9 +55,6 @@ class CalendarioService
             throw new \Exception('No se encontró ningún profesor');
         }
 
-        $calendario->setProfesor($profesorSeleccionado);
-        $this->calendarioRepository->save($calendario,true);
-
-        return $calendario;
+        return $profesorSeleccionado;
     }
 }

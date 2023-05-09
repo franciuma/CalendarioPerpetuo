@@ -60,6 +60,7 @@ class FestivoLocalRepository extends ServiceEntityRepository
             ->andWhere('f.inicio = :val')
             ->setParameter('val', $fecha)
             ->getQuery()
+            ->setMaxResults(1)
             ->getOneOrNullResult()
         ;
     }

@@ -47,17 +47,18 @@ class FestivoLocalService
             if(!$this->festivoLocalRepository->findOneFecha($festivoLocal->getInicio())) {
                 $festivoLocal->setProvincia($provincia);
                 $this->festivoLocalRepository->save($festivoLocal,true);
-            }
-            //Buscamos los festivos que tengan dias intermedios y no sean acerca de cuatrimestres (inicios y finales de cuatrimestres)
-            if($festivoLocal->getInicio() != $festivoLocal->getFinal()) {
-                self::completaFestivosCentroIntermedios($festivoLocal);
+
+                //Buscamos los festivos que tengan dias intermedios y no sean acerca de cuatrimestres (inicios y finales de cuatrimestres)
+                if($festivoLocal->getInicio() != $festivoLocal->getFinal()) {
+                    self::completaFestivosCentroIntermedios($festivoLocal, $provincia);
+                }
             }
         }
 
         return $festivos;
     }
 
-    public function completaFestivosCentroIntermedios($festivoLocal): void
+    public function completaFestivosCentroIntermedios($festivoLocal, $provincia): void
     {
         $inicio = \DateTime::createFromFormat('d-m-y', $festivoLocal->getInicio());
         $final = \DateTime::createFromFormat('d-m-y', $festivoLocal->getFinal());
@@ -68,15 +69,13 @@ class FestivoLocalService
             $festivoIntermedio->setNombre($festivoLocal->getNombre());
             $festivoIntermedio->setAbreviatura($festivoLocal->getAbreviatura());
             $festivoIntermedio->setFinal($festivoLocal->getFinal());
-            $festivoIntermedio->setProvincia($festivoLocal->getProvincia());
+            $festivoIntermedio->setProvincia($provincia);
             //Añadimos un día al inicio
             $inicio->add(new \DateInterval('P1D')); 
             $festivoIntermedio->setInicio($inicio->format('j-n-y'));
             $this->festivoLocalRepository->save($festivoIntermedio,true);
         }
     }
-
-
 
     public function getProvincias(): array
     {

@@ -45,7 +45,7 @@ class FestivoCentroService
         $festivos = $this->serializer->denormalize($festivosArray['festivosCentro'.$nombreCentro.'-'.$provincia], 'App\Entity\FestivoCentro[]');
 
         foreach ($festivos as $festivoCentro) {
-            if(!$this->festivoCentroRepository->findOneFecha($festivoCentro->getInicio())) {
+            if(!$this->festivoCentroRepository->findOneFechaCentro($festivoCentro->getInicio(), $nombreCentro)) {
                 $festivoCentro->setCentro($centro);
                 $this->festivoCentroRepository->save($festivoCentro,true);
             }

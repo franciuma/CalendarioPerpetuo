@@ -76,7 +76,14 @@ class CalendarioController extends AbstractController
      */
     public function index(): Response
     {
-        $profesor = $this->profesorRepository->findOneByNombre($this->nombreProfesor);
+        //Obtenemos el profesor
+        $nombreCompleto = explode(" ", $this->nombreProfesor);
+        //Asignamos el nombre y apellidos
+        $nombre = $nombreCompleto[0];
+        $apellidoPr = $nombreCompleto[1];
+        $apellidoSeg = $nombreCompleto[2];
+
+        $profesor = $this->profesorRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
         $calendario = $this->calendarioRepository->findOneByProfesor($profesor->getId());
 
         // Si no hay clases metidas en ese calendario, el calendario no ha sido creado aún
@@ -189,7 +196,7 @@ class CalendarioController extends AbstractController
         $festivoNacional = $this->festivoNacionalRepository->findOneFecha($dia->getFecha());
         $festivoLocal = $this->festivoLocalRepository->findOneFecha($dia->getFecha());
         $provinciafestivoLocal = $festivoLocal ? $festivoLocal->getProvincia() : null;
-        $festivoCentro = $this->festivoCentroRepository->findOneFecha($dia->getFecha());
+        $festivoCentro = $this->festivoCentroRepository->findOneFechaCentro($dia->getFecha(), $this->centro);
         $centroNombre = $festivoCentro ? $festivoCentro->getCentro()->getNombre() : null;
 
         //Si es clase y pertenece al mismo calendario.

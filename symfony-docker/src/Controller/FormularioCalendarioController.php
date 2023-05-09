@@ -11,6 +11,7 @@ use App\Repository\FestivoCentroRepository;
 use App\Repository\FestivoLocalRepository;
 use App\Repository\FestivoNacionalRepository;
 use App\Repository\LeccionRepository;
+use App\Service\CalendarioService;
 
 class FormularioCalendarioController extends AbstractController
 {
@@ -21,6 +22,7 @@ class FormularioCalendarioController extends AbstractController
     private FestivoLocalRepository $festivoLocalRepository;
     private FestivoNacionalRepository $festivoNacionalRepository;
     private FestivoCentroRepository $festivoCentroRepository;
+    private CalendarioService $calendarioService;
 
     public function __construct(
         ProfesorRepository $profesorRepository,
@@ -28,7 +30,8 @@ class FormularioCalendarioController extends AbstractController
         LeccionRepository $leccionRepository,
         FestivoLocalRepository $festivoLocalRepository,
         FestivoNacionalRepository $festivoNacionalRepository,
-        FestivoCentroRepository $festivoCentroRepository
+        FestivoCentroRepository $festivoCentroRepository,
+        CalendarioService $calendarioService
         ){
         $this->profesorRepository = $profesorRepository;
         $this->asignaturaRepository = $asignaturaRepository;
@@ -36,6 +39,7 @@ class FormularioCalendarioController extends AbstractController
         $this->festivoLocalRepository = $festivoLocalRepository;
         $this->festivoNacionalRepository = $festivoNacionalRepository;
         $this->festivoCentroRepository = $festivoCentroRepository;
+        $this->calendarioService = $calendarioService;
     }
 
     #[Route('/formulario/calendario', name: 'app_formulario_calendario')]
@@ -48,17 +52,17 @@ class FormularioCalendarioController extends AbstractController
             return $asignatura->getNombre();
         }, $asignaturas);
 
-        //Obtenemos el ultimo profesor introducido en la base de datos
-        $ultimoProfesor = $this->profesorRepository->findOneBy([],['id' => 'DESC']);
-        if (!$ultimoProfesor) {
-            throw new \Exception('No se encontró ningún profesor');
-        }
+        $centroJson = file_get_contents(__DIR__ . '/../resources/centro.json');
+        $centroArray = json_decode($centroJson, true);
+
+        //Obtenemos profesor introducido en la base de datos
+        $profesor = $this->calendarioService->getProfesorSeleccionado($centroArray);
 
         //Obtener los grupos pertenecientes dado un profesor
         $grupos = $this->profesorRepository->findGruposByProfesor(
-            $ultimoProfesor->getNombre(),
-            $ultimoProfesor->getPrimerApellido(),
-            $ultimoProfesor->getSegundoApellido()
+            $profesor->getNombre(),
+            $profesor->getPrimerApellido(),
+            $profesor->getSegundoApellido()
         );
 
         //Mandamos los atributos que vamos a utilizar para grupo
