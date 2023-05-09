@@ -14,7 +14,7 @@
 					<div class="form-group">
 						<label for="labelAsignaturas">Lista de asignaturas creadas: </label>
 							<select class="form-control" id="nombreAsignaturas">
-								<option value=""></option>
+								<option selected>-- Clicka para consultar las asignaturas ya creadas --</option>
 								{% for asignatura in asignaturas %}
 									<option>{{ asignatura }}</option>
 								{% endfor %}

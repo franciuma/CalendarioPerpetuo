@@ -14,7 +14,7 @@
 					<div class="form-group">
 						<label for="nombreDeProvincia">Provincia</label>
 						<select class="form-control" id="nombreDeProvincia">
-							<option value=""></option>
+							<option selected>-- Selecciona el nombre de la provincia --</option>
 							{% for provincia in provincias %}
 								<option>{{ provincia }}</option>
 							{% endfor %}
@@ -22,7 +22,7 @@
 
 						<label for="nombreDelCentro">Nombre del centro</label>
 						<select class="form-control" id="nombreDelCentro">
-							<option value=""></option>
+							<option selected>-- Selecciona el nombre del centro --</option>
 							{% for nombreCentro in nombreCentros %}
 								<option>{{ nombreCentro }}</option>
 							{% endfor %}

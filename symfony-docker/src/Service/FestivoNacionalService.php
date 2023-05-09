@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Repository\FestivoNacionalRepository;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Controller\CalendarioController;
+use App\Entity\FestivoNacional;
 
 /**
  * Clase utilizada para traducir JSON festivoNacional y persistirlo en la base de datos.
@@ -41,8 +42,30 @@ class FestivoNacionalService
             if(!$this->festivoNacionalRepository->findOneFecha($festivoNacional->getInicio())) {
                 $this->festivoNacionalRepository->save($festivoNacional,true);
             }
+            //Buscamos los festivos que tengan dias intermedios y no sean acerca de cuatrimestres (inicios y finales de cuatrimestres)
+            if($festivoNacional->getInicio() != $festivoNacional->getFinal()) {
+                self::completaFestivosCentroIntermedios($festivoNacional);
+            }
         }
 
         return $festivos;
+    }
+
+    public function completaFestivosCentroIntermedios($festivoNacional): void
+    {
+        $inicio = \DateTime::createFromFormat('d-m-y', $festivoNacional->getInicio());
+        $final = \DateTime::createFromFormat('d-m-y', $festivoNacional->getFinal());
+
+        while ($inicio < $final) {
+            //Creamos nuestro festivoIntermedio
+            $festivoIntermedio = new FestivoNacional();
+            $festivoIntermedio->setNombre($festivoNacional->getNombre());
+            $festivoIntermedio->setAbreviatura($festivoNacional->getAbreviatura());
+            $festivoIntermedio->setFinal($festivoNacional->getFinal());
+            //Añadimos un día al inicio
+            $inicio->add(new \DateInterval('P1D')); 
+            $festivoIntermedio->setInicio($inicio->format('j-n-y'));
+            $this->festivoNacionalRepository->save($festivoIntermedio,true);
+        }
     }
 }

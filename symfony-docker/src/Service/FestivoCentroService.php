@@ -6,6 +6,7 @@ use App\Repository\FestivoCentroRepository;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Controller\CalendarioController;
 use App\Entity\Centro;
+use App\Entity\FestivoCentro;
 
 /**
  * Clase utilizada para traducir JSON festivoLocales y persistirlo en la base de datos.
@@ -48,9 +49,32 @@ class FestivoCentroService
                 $festivoCentro->setCentro($centro);
                 $this->festivoCentroRepository->save($festivoCentro,true);
             }
+            //Buscamos los festivos que tengan dias intermedios y no sean acerca de cuatrimestres (inicios y finales de cuatrimestres)
+            if($festivoCentro->getInicio() != $festivoCentro->getFinal() && !strstr($festivoCentro->getNombre(), 'cuatrimestre')) {
+                self::completaFestivosCentroIntermedios($festivoCentro);
+            }
         }
 
         return $festivos;
+    }
+
+    public function completaFestivosCentroIntermedios($festivoCentro): void
+    {
+        $inicio = \DateTime::createFromFormat('d-m-y', $festivoCentro->getInicio());
+        $final = \DateTime::createFromFormat('d-m-y', $festivoCentro->getFinal());
+
+        while ($inicio < $final) {
+            //Creamos nuestro festivoIntermedio
+            $festivoIntermedio = new FestivoCentro();
+            $festivoIntermedio->setNombre($festivoCentro->getNombre());
+            $festivoIntermedio->setAbreviatura($festivoCentro->getAbreviatura());
+            $festivoIntermedio->setFinal($festivoCentro->getFinal());
+            $festivoIntermedio->setCentro($festivoCentro->getCentro());
+            //Añadimos un día al inicio
+            $inicio->add(new \DateInterval('P1D')); 
+            $festivoIntermedio->setInicio($inicio->format('j-n-y'));
+            $this->festivoCentroRepository->save($festivoIntermedio,true);
+        }
     }
 
     public function getNombreCentros(): array

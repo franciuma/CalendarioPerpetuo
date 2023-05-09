@@ -41,6 +41,12 @@
       "abreviatura":"díaTr",
       "inicio":"2-5-%AC%",
       "final":"2-5-%AC%"
+      },
+      {
+      "nombre":"Semana Santa",
+      "abreviatura":"sem.santa",
+      "inicio":"24-3-%AC%",
+      "final":"31-3-%AC%"
       }
     ] 
 }

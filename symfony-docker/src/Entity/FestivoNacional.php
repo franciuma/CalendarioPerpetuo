@@ -30,14 +30,6 @@ class FestivoNacional implements EventoInterface
     #[ORM\Column(length: 255)]
     private ?string $final = null;
 
-    public function __construct($nombre, $abreviatura, $inicio, $final)
-    {
-        $this->nombre = $nombre;
-        $this->abreviatura = $abreviatura;
-        $this->inicio = $inicio;
-        $this->final = $final;
-    }
-
     public function getId(): ?int
     {
         return $this->id;

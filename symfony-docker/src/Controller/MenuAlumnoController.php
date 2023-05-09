@@ -6,13 +6,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class MenuPrincipalController extends AbstractController
+class MenuAlumnoController extends AbstractController
 {
-    #[Route('/menu', name: 'app_menu_principal')]
+    #[Route('/menu/alumno', name: 'app_menu_alumno')]
     public function index(): Response
     {
-        return $this->render('menus/principal.html.twig', [
-            'controller_name' => 'MenuPrincipalController',
+        return $this->render('menus/alumno.html.twig', [
+            'controller_name' => 'MenuAlumnoController',
         ]);
     }
 }
