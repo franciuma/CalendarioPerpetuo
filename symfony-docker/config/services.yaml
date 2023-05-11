@@ -23,11 +23,7 @@ services:
         autowire: true
         autoconfigure: true
 
-    App\Service\ProfesorGrupoService:
-        autowire: true
-        autoconfigure: true
-
-    App\Service\ProfesorService:
+    App\Service\UsuarioGrupoService:
         autowire: true
         autoconfigure: true
 
@@ -35,7 +31,7 @@ services:
         autowire: true
         autoconfigure: true
 
-    App\Entity\ProfesorGrupo:
+    App\Entity\UsuarioGrupo:
         autowire: true
         autoconfigure: true
 

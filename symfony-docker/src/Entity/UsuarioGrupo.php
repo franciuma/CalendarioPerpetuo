@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\ProfesorGrupoRepository;
+use App\Repository\UsuarioGrupoRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ProfesorGrupoRepository::class)]
-class ProfesorGrupo
+#[ORM\Entity(repositoryClass: UsuarioGrupoRepository::class)]
+class UsuarioGrupo
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -17,7 +17,7 @@ class ProfesorGrupo
     private ?Grupo $grupo = null;
 
     #[ORM\ManyToOne]
-    private ?Profesor $profesor = null;
+    private ?Usuario $usuario = null;
 
     public function getId(): ?int
     {
@@ -36,14 +36,14 @@ class ProfesorGrupo
         return $this;
     }
 
-    public function getProfesor(): ?Profesor
+    public function getUsuario(): ?Usuario
     {
-        return $this->profesor;
+        return $this->usuario;
     }
 
-    public function setProfesor(?Profesor $profesor): self
+    public function setUsuario(?Usuario $usuario): self
     {
-        $this->profesor = $profesor;
+        $this->usuario = $usuario;
 
         return $this;
     }

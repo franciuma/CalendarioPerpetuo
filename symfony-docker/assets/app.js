@@ -379,7 +379,7 @@ $(document).on('click', '.crear-calendario', function() {
     const centro = localStorage.getItem('centro');
 
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/manejar/posts/clase',{clasesJSON: clasesJSON},'http://localhost:8000/calendario?provincia='+ provincia + '&profesor='+ nombreProfesor + '&centro=' + centro); //parametros de URL
+    enviarPost('/manejar/posts/clase',{clasesJSON: clasesJSON},'http://localhost:8000/calendario?provincia='+ provincia + '&usuario='+ nombreProfesor + '&centro=' + centro); //parametros de URL
 });
 
 //Formulario profesor
@@ -469,8 +469,9 @@ $(document).on('click', '.crear-profesor', function() {
     const segundoapellido = $('#sapellidoProf').val();
     const despacho = $('#despacho').val();
     const correo = $('#correo').val();
+    const tipo = 'Profesor';
 
-    profesor.push({nombre,primerapellido,segundoapellido,despacho,correo});
+    profesor.push({nombre, primerapellido, segundoapellido, despacho, correo, tipo});
 
     const grupo = [];
     // Obtener los valores de las filas de la tabla

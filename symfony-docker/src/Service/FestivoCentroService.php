@@ -48,10 +48,11 @@ class FestivoCentroService
             if(!$this->festivoCentroRepository->findOneFechaCentro($festivoCentro->getInicio(), $nombreCentro)) {
                 $festivoCentro->setCentro($centro);
                 $this->festivoCentroRepository->save($festivoCentro,true);
-            }
-            //Buscamos los festivos que tengan dias intermedios y no sean acerca de cuatrimestres (inicios y finales de cuatrimestres)
-            if($festivoCentro->getInicio() != $festivoCentro->getFinal() && !strstr($festivoCentro->getNombre(), 'cuatrimestre')) {
-                self::completaFestivosCentroIntermedios($festivoCentro);
+
+                //Buscamos los festivos que tengan dias intermedios y no sean acerca de cuatrimestres (inicios y finales de cuatrimestres)
+                if($festivoCentro->getInicio() != $festivoCentro->getFinal() && !strstr($festivoCentro->getNombre(), 'cuatrimestre')) {
+                    self::completaFestivosCentroIntermedios($festivoCentro);
+                }
             }
         }
 

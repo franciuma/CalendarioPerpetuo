@@ -47,7 +47,7 @@ class Calendario
     private Collection $centro;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Profesor $profesor = null;
+    private ?Usuario $usuario = null;
 
     public function __construct()
     {
@@ -130,14 +130,14 @@ class Calendario
         return $this;
     }
 
-    public function getProfesor(): ?Profesor
+    public function getUsuario(): ?Usuario
     {
-        return $this->profesor;
+        return $this->usuario;
     }
 
-    public function setProfesor(?Profesor $profesor): self
+    public function setUsuario(?Usuario $usuario): self
     {
-        $this->profesor = $profesor;
+        $this->usuario = $usuario;
 
         return $this;
     }

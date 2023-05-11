@@ -17,7 +17,7 @@ use App\Repository\MesRepository;
 use App\Repository\FestivoCentroRepository;
 use App\Repository\ClaseRepository;
 use App\Service\ClaseService;
-use App\Repository\ProfesorRepository;
+use App\Repository\UsuarioRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -31,7 +31,7 @@ class CalendarioController extends AbstractController
 
     private $provincia;
     private $centro;
-    private $nombreProfesor;
+    private $usuario;
     private AnioRepository $anioRepository;
     private CalendarioRepository $calendarioRepository;
     private ClaseService $claseService;
@@ -41,7 +41,7 @@ class CalendarioController extends AbstractController
     private MesRepository $mesRepository;
     private ClaseRepository $claseRepository;
     private FestivoCentroRepository $festivoCentroRepository;
-    private ProfesorRepository $profesorRepository;
+    private UsuarioRepository $usuarioRepository;
 
     public function __construct(
         AnioRepository $anioRepository,
@@ -52,11 +52,11 @@ class CalendarioController extends AbstractController
         FestivoLocalRepository $festivoLocalRepository,
         FestivoNacionalRepository $festivoNacionalRepository,
         MesRepository $mesRepository,
-        ProfesorRepository $profesorRepository,
+        UsuarioRepository $usuarioRepository,
         FestivoCentroRepository $festivoCentroRepository
     ) {
         $this->provincia = $_GET['provincia'];
-        $this->nombreProfesor = $_GET['profesor'];
+        $this->usuario = $_GET['usuario'];
         $this->centro = $_GET['centro'];
 
         $this->anioRepository = $anioRepository;
@@ -67,7 +67,7 @@ class CalendarioController extends AbstractController
         $this->festivoLocalRepository = $festivoLocalRepository;
         $this->festivoNacionalRepository = $festivoNacionalRepository;
         $this->mesRepository = $mesRepository;
-        $this->profesorRepository = $profesorRepository;
+        $this->usuarioRepository = $usuarioRepository;
         $this->festivoCentroRepository = $festivoCentroRepository;
     }
 
@@ -76,15 +76,15 @@ class CalendarioController extends AbstractController
      */
     public function index(): Response
     {
-        //Obtenemos el profesor
-        $nombreCompleto = explode(" ", $this->nombreProfesor);
+        //Obtenemos el usuario
+        $nombreCompleto = explode(" ", $this->usuario);
         //Asignamos el nombre y apellidos
         $nombre = $nombreCompleto[0];
         $apellidoPr = $nombreCompleto[1];
         $apellidoSeg = $nombreCompleto[2];
 
-        $profesor = $this->profesorRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
-        $calendario = $this->calendarioRepository->findOneByProfesor($profesor->getId());
+        $usuario = $this->usuarioRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
+        $calendario = $this->calendarioRepository->findOneByUsuario($usuario->getId());
 
         // Si no hay clases metidas en ese calendario, el calendario no ha sido creado aún
         if (!$this->claseRepository->findOneByCalendario($calendario->getId())) {

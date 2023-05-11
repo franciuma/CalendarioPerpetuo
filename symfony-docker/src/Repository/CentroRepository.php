@@ -64,11 +64,13 @@ class CentroRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findOneByProvincia($provincia): ?Centro
+    public function findByProvinciaCentro($provincia, $centro): ?Centro
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.provincia = :provincia')
+            ->andWhere('c.nombre = :centro')
             ->setParameter('provincia', $provincia)
+            ->setParameter('centro', $centro)
             ->getQuery()
             ->getOneOrNullResult()
         ;

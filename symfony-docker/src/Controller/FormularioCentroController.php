@@ -7,23 +7,23 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\FestivoCentroService;
 use App\Service\FestivoLocalService;
-use App\Repository\ProfesorRepository;
+use App\Repository\UsuarioRepository;
 
 class FormularioCentroController extends AbstractController
 {
     private FestivoCentroService $festivoCentroService;
     private FestivoLocalService $festivoLocalService;
-    private ProfesorRepository $profesorRepository;
+    private UsuarioRepository $usuarioRepository;
 
     public function __construct(
         FestivoCentroService $festivoCentroService,
         FestivoLocalService $festivoLocalService,
-        ProfesorRepository $profesorRepository
+        UsuarioRepository $usuarioRepository
     )
     {
         $this->festivoCentroService = $festivoCentroService;
         $this->festivoLocalService = $festivoLocalService;
-        $this->profesorRepository = $profesorRepository;
+        $this->usuarioRepository = $usuarioRepository;
     }
 
     #[Route('/formulario/centro', name: 'app_formulario_centro')]
@@ -31,7 +31,7 @@ class FormularioCentroController extends AbstractController
     {
         $nombreCentros = $this->festivoCentroService->getNombreCentros();
         $provincias = $this->festivoLocalService->getProvincias();
-        $profesores = $this->profesorRepository->findAll();
+        $profesores = $this->usuarioRepository->findAllProfesores();
 
         $nombreProfesores = array_map(function($profesor) {
             $nombre = $profesor->getNombre();

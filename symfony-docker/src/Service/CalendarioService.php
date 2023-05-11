@@ -3,9 +3,8 @@
 namespace App\Service;
 
 use App\Entity\Calendario;
-use App\Entity\Profesor;
 use App\Repository\CalendarioRepository;
-use App\Repository\ProfesorRepository;
+use App\Repository\UsuarioRepository;
 
 /**
  * Clase utilizada para crear el calendario y persistirlo en la base de datos.
@@ -13,15 +12,15 @@ use App\Repository\ProfesorRepository;
 class CalendarioService
 {
     private CalendarioRepository $calendarioRepository;
-    private ProfesorRepository $profesorRepository;
+    private UsuarioRepository $usuarioRepository;
 
     public function __construct(
         CalendarioRepository $calendarioRepository,
-        ProfesorRepository $profesorRepository
+        UsuarioRepository $usuarioRepository,
     )
     {
         $this->calendarioRepository = $calendarioRepository;
-        $this->profesorRepository = $profesorRepository;
+        $this->usuarioRepository = $usuarioRepository;
     }
 
     public function getCalendario(): Calendario
@@ -33,13 +32,13 @@ class CalendarioService
         
         $profesorSeleccionado = self::getProfesorSeleccionado($centroArray);
 
-        $calendario->setProfesor($profesorSeleccionado);
+        $calendario->setUsuario($profesorSeleccionado);
         $this->calendarioRepository->save($calendario,true);
 
         return $calendario;
     }
 
-    public function getProfesorSeleccionado($centroArray): Profesor
+    public function getProfesorSeleccionado($centroArray)
     {
         //Dividimos el docente en nombre y apellidos
         $nombreProfesor = $centroArray['centro'][0]['profesor'];
@@ -50,7 +49,9 @@ class CalendarioService
         $apellidoPr = $nombreCompleto[1];
         $apellidoSeg = $nombreCompleto[2];
 
-        $profesorSeleccionado = $this->profesorRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
+        //Obtenemos el usuario
+        $profesorSeleccionado = $this->usuarioRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg, 'Profesor');
+
         if(!$profesorSeleccionado) {
             throw new \Exception('No se encontró ningún profesor');
         }

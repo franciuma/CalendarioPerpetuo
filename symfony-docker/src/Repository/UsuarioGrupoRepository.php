@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\ProfesorGrupo;
+use App\Entity\UsuarioGrupo;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ProfesorGrupo>
+ * @extends ServiceEntityRepository<UsuarioGrupo>
  *
- * @method ProfesorGrupo|null find($id, $lockMode = null, $lockVersion = null)
- * @method ProfesorGrupo|null findOneBy(array $criteria, array $orderBy = null)
- * @method ProfesorGrupo[]    findAll()
- * @method ProfesorGrupo[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method UsuarioGrupo|null find($id, $lockMode = null, $lockVersion = null)
+ * @method UsuarioGrupo|null findOneBy(array $criteria, array $orderBy = null)
+ * @method UsuarioGrupo[]    findAll()
+ * @method UsuarioGrupo[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ProfesorGrupoRepository extends ServiceEntityRepository
+class UsuarioGrupoRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ProfesorGrupo::class);
+        parent::__construct($registry, UsuarioGrupo::class);
     }
 
-    public function save(ProfesorGrupo $entity, bool $flush = false): void
+    public function save(UsuarioGrupo $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class ProfesorGrupoRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(ProfesorGrupo $entity, bool $flush = false): void
+    public function remove(UsuarioGrupo $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class ProfesorGrupoRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return ProfesorGrupo[] Returns an array of ProfesorGrupo objects
+//     * @return UsuarioGrupo[] Returns an array of UsuarioGrupo objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class ProfesorGrupoRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?ProfesorGrupo
+//    public function findOneBySomeField($value): ?UsuarioGrupo
 //    {
 //        return $this->createQueryBuilder('p')
 //            ->andWhere('p.exampleField = :val')

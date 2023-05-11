@@ -5,41 +5,41 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\ProfesorRepository;
 use App\Repository\AsignaturaRepository;
 use App\Repository\FestivoCentroRepository;
 use App\Repository\FestivoLocalRepository;
 use App\Repository\FestivoNacionalRepository;
 use App\Repository\LeccionRepository;
 use App\Service\CalendarioService;
+use App\Repository\UsuarioRepository;
 
 class FormularioCalendarioController extends AbstractController
 {
 
-    private ProfesorRepository $profesorRepository;
     private AsignaturaRepository $asignaturaRepository;
     private LeccionRepository $leccionRepository;
     private FestivoLocalRepository $festivoLocalRepository;
     private FestivoNacionalRepository $festivoNacionalRepository;
     private FestivoCentroRepository $festivoCentroRepository;
     private CalendarioService $calendarioService;
+    private UsuarioRepository $usuarioRepository;
 
     public function __construct(
-        ProfesorRepository $profesorRepository,
         AsignaturaRepository $asignaturaRepository,
         LeccionRepository $leccionRepository,
         FestivoLocalRepository $festivoLocalRepository,
         FestivoNacionalRepository $festivoNacionalRepository,
         FestivoCentroRepository $festivoCentroRepository,
-        CalendarioService $calendarioService
+        CalendarioService $calendarioService,
+        UsuarioRepository $usuarioRepository
         ){
-        $this->profesorRepository = $profesorRepository;
         $this->asignaturaRepository = $asignaturaRepository;
         $this->leccionRepository = $leccionRepository;
         $this->festivoLocalRepository = $festivoLocalRepository;
         $this->festivoNacionalRepository = $festivoNacionalRepository;
         $this->festivoCentroRepository = $festivoCentroRepository;
         $this->calendarioService = $calendarioService;
+        $this->usuarioRepository = $usuarioRepository;
     }
 
     #[Route('/formulario/calendario', name: 'app_formulario_calendario')]
@@ -59,7 +59,7 @@ class FormularioCalendarioController extends AbstractController
         $profesor = $this->calendarioService->getProfesorSeleccionado($centroArray);
 
         //Obtener los grupos pertenecientes dado un profesor
-        $grupos = $this->profesorRepository->findGruposByProfesor(
+        $grupos = $this->usuarioRepository->findGruposByUsuario(
             $profesor->getNombre(),
             $profesor->getPrimerApellido(),
             $profesor->getSegundoApellido()
