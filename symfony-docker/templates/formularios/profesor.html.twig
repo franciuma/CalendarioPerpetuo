@@ -12,15 +12,10 @@
 				<h1 class="font-weight-bold">Creación de docente</h1>
 				<form>
 					<div class="form-group">
-						<label for="labelAsignaturas">Lista de asignaturas creadas: </label>
-							<select class="form-control" id="nombreAsignaturas">
-								<option selected>-- Clicka para consultar las asignaturas ya creadas --</option>
-								{% for asignatura in asignaturas %}
-									<option>{{ asignatura }}</option>
-								{% endfor %}
-							</select>
-						<label for="labelnombreGrupos">En caso de que no aparezca su asignatura: </label>
-						<a href="{{ path('app_formulario_asignatura') }}">Crear asignatura</a>
+						<label for="labelnombreGrupos">Compruebe que su asignatura se encuentra en la lista: </label>
+						<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+							Lista de asignaturas
+						</button>
 						<br></br>
 						<label for="labelnombreProf">Nombre</label>
                         <input type="text" class="form-control" id="nombreProf">
@@ -59,4 +54,28 @@
 		</div>
 	</div>
 	<div id="asignaturas" data-asignaturas="{{ asignaturas|json_encode|url_encode }}" style="display: none;"></div>
+	
+	<!-- Modal -->
+	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+		<div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel">Lista de asignaturas</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+			<ul>
+			{% for asignatura in asignaturas %}
+				<li>{{ asignatura }}</li>
+			{% endfor %}
+    		</ul>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+			<button type="button" class="btn btn-primary" onclick="window.location.href='{{ path('app_formulario_asignatura') }}'">Crear asignatura</button>
+		</div>
+		</div>
+	</div>
+	</div>
+
 {% endblock %}
