@@ -55,9 +55,9 @@ class CalendarioController extends AbstractController
         UsuarioRepository $usuarioRepository,
         FestivoCentroRepository $festivoCentroRepository
     ) {
-        $this->provincia = $_GET['provincia'];
+        $this->provincia = isset($_GET['provincia']) ? $_GET['provincia'] : null;
         $this->usuario = $_GET['usuario'];
-        $this->centro = $_GET['centro'];
+        $this->centro = isset($_GET['centro']) ? $_GET['centro'] : null;
 
         $this->anioRepository = $anioRepository;
         $this->calendarioRepository = $calendarioRepository;
@@ -86,6 +86,7 @@ class CalendarioController extends AbstractController
         $usuario = $this->usuarioRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
         $calendario = $this->calendarioRepository->findOneByUsuario($usuario->getId());
 
+        // Si el usuario que se ha pasado no está relacionado con un calendario
         // Si no hay clases metidas en ese calendario, el calendario no ha sido creado aún
         if (!$this->claseRepository->findOneByCalendario($calendario->getId())) {
             $this->claseService->getClases($calendario);

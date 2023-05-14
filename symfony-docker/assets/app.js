@@ -382,6 +382,13 @@ $(document).on('click', '.crear-calendario', function() {
     enviarPost('/manejar/posts/clase',{clasesJSON: clasesJSON},'http://localhost:8000/calendario?provincia='+ provincia + '&usuario='+ nombreProfesor + '&centro=' + centro); //parametros de URL
 });
 
+//Creamos el POST de LEER un calendario
+$(document).on('click', '.ver-calendario', function() {
+    const nombreProfesor = $('#nombreleerProfesor').val();
+    // Enviar el objeto JSON a través de una petición AJAX
+    window.location.replace('http://localhost:8000/calendario?usuario=' + nombreProfesor);
+});
+
 //Formulario profesor
 let idGrupo = 0;
 $(document).on('click', '.aniadir-fila-prof', function() {
