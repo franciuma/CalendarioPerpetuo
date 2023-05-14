@@ -43,16 +43,15 @@ class Calendario
     #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: Anio::class)]
     private Collection $anios;
 
-    #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: Centro::class)]
-    private Collection $centro;
-
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Usuario $usuario = null;
+
+    #[ORM\ManyToOne(inversedBy: 'calendarios')]
+    private ?Centro $centro = null;
 
     public function __construct()
     {
         $this->anios = new ArrayCollection();
-        $this->centro = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -100,36 +99,6 @@ class Calendario
         return $this;
     }
 
-    /**
-     * @return Collection<int, Centro>
-     */
-    public function getCentro(): Collection
-    {
-        return $this->centro;
-    }
-
-    public function addCentro(Centro $centro): self
-    {
-        if (!$this->centro->contains($centro)) {
-            $this->centro->add($centro);
-            $centro->setCalendario($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCentro(Centro $centro): self
-    {
-        if ($this->centro->removeElement($centro)) {
-            // set the owning side to null (unless already changed)
-            if ($centro->getCalendario() === $this) {
-                $centro->setCalendario(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getUsuario(): ?Usuario
     {
         return $this->usuario;
@@ -138,6 +107,18 @@ class Calendario
     public function setUsuario(?Usuario $usuario): self
     {
         $this->usuario = $usuario;
+
+        return $this;
+    }
+
+    public function getCentro(): ?Centro
+    {
+        return $this->centro;
+    }
+
+    public function setCentro(?Centro $centro): self
+    {
+        $this->centro = $centro;
 
         return $this;
     }

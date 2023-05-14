@@ -6,10 +6,10 @@ use App\Entity\Anio;
 use App\Entity\Calendario;
 use App\Entity\Dia;
 use App\Entity\Evento;
-use App\Entity\FestivoCentro;
 use App\Entity\Mes;
 use App\Repository\AnioRepository;
 use App\Repository\CalendarioRepository;
+use App\Repository\CentroRepository;
 use App\Repository\DiaRepository;
 use App\Repository\FestivoLocalRepository;
 use App\Repository\FestivoNacionalRepository;
@@ -18,6 +18,7 @@ use App\Repository\FestivoCentroRepository;
 use App\Repository\ClaseRepository;
 use App\Service\ClaseService;
 use App\Repository\UsuarioRepository;
+use App\Service\CalendarioService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,6 +43,8 @@ class CalendarioController extends AbstractController
     private ClaseRepository $claseRepository;
     private FestivoCentroRepository $festivoCentroRepository;
     private UsuarioRepository $usuarioRepository;
+    private CalendarioService $calendarioService;
+    private CentroRepository $centroRepository;
 
     public function __construct(
         AnioRepository $anioRepository,
@@ -53,7 +56,9 @@ class CalendarioController extends AbstractController
         FestivoNacionalRepository $festivoNacionalRepository,
         MesRepository $mesRepository,
         UsuarioRepository $usuarioRepository,
-        FestivoCentroRepository $festivoCentroRepository
+        FestivoCentroRepository $festivoCentroRepository,
+        CalendarioService $calendarioService,
+        CentroRepository $centroRepository
     ) {
         $this->provincia = isset($_GET['provincia']) ? $_GET['provincia'] : null;
         $this->usuario = $_GET['usuario'];
@@ -69,6 +74,8 @@ class CalendarioController extends AbstractController
         $this->mesRepository = $mesRepository;
         $this->usuarioRepository = $usuarioRepository;
         $this->festivoCentroRepository = $festivoCentroRepository;
+        $this->calendarioService = $calendarioService;
+        $this->centroRepository = $centroRepository;
     }
 
     /**
@@ -84,11 +91,12 @@ class CalendarioController extends AbstractController
         $apellidoSeg = $nombreCompleto[2];
 
         $usuario = $this->usuarioRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
-        $calendario = $this->calendarioRepository->findOneByUsuario($usuario->getId());
+        $centro = $this->centroRepository->findOneByNombre($this->centro);
 
         // Si el usuario que se ha pasado no está relacionado con un calendario
-        // Si no hay clases metidas en ese calendario, el calendario no ha sido creado aún
-        if (!$this->claseRepository->findOneByCalendario($calendario->getId())) {
+        if (!$this->calendarioRepository->findOneByUsuario($usuario->getId())) {
+            //Creamos el calendario y lo obtenemos
+            $calendario = $this->calendarioService->getCalendario($this->usuario, $centro);
             $this->claseService->getClases($calendario);
             //Crea los años del calendario
             $anios = self::creacionAnios($calendario);

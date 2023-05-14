@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Entity\Calendario;
 use App\Entity\Centro;
 use App\Repository\CentroRepository;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -24,7 +23,7 @@ class CentroService
         $this->centroRepository = $centroRepository;
     }
 
-    public function getCentro(Calendario $calendario): Centro
+    public function getCentro(): Centro
     {
         $centroJson = file_get_contents(__DIR__ . '/../resources/centro.json');
         $centroArray = json_decode($centroJson, true);
@@ -32,7 +31,6 @@ class CentroService
         $centro = $this->serializer->denormalize($centroArray['centro'][0], 'App\Entity\Centro');
 
         if(!$this->centroRepository->findByProvinciaCentro($centro->getNombre(), $centro->getProvincia())){
-            $centro->setCalendario($calendario);
             $this->centroRepository->save($centro,true);
         }
         return $centro;

@@ -37,10 +37,8 @@ class PostCentroController extends AbstractController
     #[Route('/post/centro', name: 'app_post_centro')]
     public function index(): Response
     {
-        //Creamos el calendario y lo obtenemos
-        $calendario = $this->calendarioService->getCalendario();
-        //Creamos el centro y agregamos el calendario
-        $centro = $this->centroService->getCentro($calendario);
+        //Creamos el centro
+        $centro = $this->centroService->getCentro();
         //Creamos los festivos nacionales
         $this->festivoNacionalService->getFestivosNacionales();
         //Creamos los festivos locales

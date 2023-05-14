@@ -54,9 +54,10 @@ class FormularioCalendarioController extends AbstractController
 
         $centroJson = file_get_contents(__DIR__ . '/../resources/centro.json');
         $centroArray = json_decode($centroJson, true);
+        $nombreProfesor = $centroArray['centro'][0]['profesor'];
 
         //Obtenemos profesor introducido en la base de datos
-        $profesor = $this->calendarioService->getProfesorSeleccionado($centroArray);
+        $profesor = $this->calendarioService->getProfesorSeleccionado($nombreProfesor);
 
         //Obtener los grupos pertenecientes dado un profesor
         $grupos = $this->usuarioRepository->findGruposByUsuario(

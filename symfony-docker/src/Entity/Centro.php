@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CentroRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CentroRepository::class)]
@@ -19,8 +21,13 @@ class Centro
     #[ORM\Column(length: 255)]
     private ?string $provincia = null;
 
-    #[ORM\ManyToOne(inversedBy: 'centro')]
-    private ?Calendario $calendario = null;
+    #[ORM\OneToMany(mappedBy: 'centro', targetEntity: Calendario::class)]
+    private Collection $calendarios;
+
+    public function __construct()
+    {
+        $this->calendarios = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -51,14 +58,32 @@ class Centro
         return $this;
     }
 
-    public function getCalendario(): ?Calendario
+    /**
+     * @return Collection<int, Calendario>
+     */
+    public function getCalendarios(): Collection
     {
-        return $this->calendario;
+        return $this->calendarios;
     }
 
-    public function setCalendario(?Calendario $calendario): self
+    public function addCalendario(Calendario $calendario): self
     {
-        $this->calendario = $calendario;
+        if (!$this->calendarios->contains($calendario)) {
+            $this->calendarios->add($calendario);
+            $calendario->setCentro($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCalendario(Calendario $calendario): self
+    {
+        if ($this->calendarios->removeElement($calendario)) {
+            // set the owning side to null (unless already changed)
+            if ($calendario->getCentro() === $this) {
+                $calendario->setCentro(null);
+            }
+        }
 
         return $this;
     }

@@ -374,6 +374,7 @@ $(document).on('click', '.crear-calendario', function() {
     const clasesJSON = JSON.stringify(clases);
 
     //Obtenemos el nombre del profesor via localStorage
+    //Meter un if a nombreProfesor para que si no es profesor sea alumno.
     const nombreProfesor = localStorage.getItem('profesor');
     const provincia = localStorage.getItem('provincia');
     const centro = localStorage.getItem('centro');

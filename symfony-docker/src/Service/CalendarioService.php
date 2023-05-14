@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Calendario;
+use App\Entity\Centro;
 use App\Repository\CalendarioRepository;
 use App\Repository\UsuarioRepository;
 
@@ -23,27 +24,23 @@ class CalendarioService
         $this->usuarioRepository = $usuarioRepository;
     }
 
-    public function getCalendario(): Calendario
+    public function getCalendario($nombreUsuario, Centro $centro): Calendario
     {
-        $centroJson = file_get_contents(__DIR__ . '/../resources/centro.json');
-        $centroArray = json_decode($centroJson, true);
-
         $calendario = new Calendario();
-        
-        $profesorSeleccionado = self::getProfesorSeleccionado($centroArray);
+
+        //En caso de que venga por profesor
+        $profesorSeleccionado = self::getProfesorSeleccionado($nombreUsuario);
 
         $calendario->setUsuario($profesorSeleccionado);
+        $calendario->setCentro($centro);
         $this->calendarioRepository->save($calendario,true);
 
         return $calendario;
     }
 
-    public function getProfesorSeleccionado($centroArray)
+    public function getProfesorSeleccionado($nombreUsuario)
     {
-        //Dividimos el docente en nombre y apellidos
-        $nombreProfesor = $centroArray['centro'][0]['profesor'];
-
-        $nombreCompleto = explode(" ", $nombreProfesor);
+        $nombreCompleto = explode(" ", $nombreUsuario);
         //Asignamos el nombre y apellidos
         $nombre = $nombreCompleto[0];
         $apellidoPr = $nombreCompleto[1];

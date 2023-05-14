@@ -89,6 +89,16 @@ class UsuarioRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findAllProfesoresConCalendario(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->join('App\Entity\Calendario','c','WITH','u.id = c.usuario')
+            ->andWhere('u.tipo = :val')
+            ->setParameter('val', 'Profesor')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 //    /**
 //     * @return Usuario[] Returns an array of Usuario objects
 //     */
