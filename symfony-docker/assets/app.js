@@ -180,7 +180,7 @@ if(window.location.href == "http://localhost:8000/formulario/calendario"){
 
 function calcularFechaCalendario(nombreFestivo) {
     const festivosCentro = JSON.parse(document.getElementById('festivosCentro').dataset.festivoscentro);
-    const centro = localStorage.getItem('centro');
+    const centro = document.getElementById('centro').dataset.centro;
 
     //Filtramos para buscar el nombreFestivo que se requiere
     const festivosCentroFiltrado = festivosCentro.filter(function(festivoCentro) {
@@ -203,8 +203,8 @@ function calcularFestivos() {
     const festivosNacionales = JSON.parse(document.getElementById('festivosNacionales').dataset.festivosnacionales);
     const festivosLocales = JSON.parse(document.getElementById('festivosLocales').dataset.festivoslocales);
     const festivosCentro = JSON.parse(document.getElementById('festivosCentro').dataset.festivoscentro);
-    const centro = localStorage.getItem('centro');
-    const provincia = localStorage.getItem('provincia');
+    const centro = document.getElementById('centro').dataset.centro;
+    const provincia = document.getElementById('provincia').dataset.provincia;
 
     //Declaramos el array a devolver, el cual tendrá simplemente un array de todas las fechas festivas
     const festivos = [];
@@ -383,7 +383,7 @@ $(document).on('click', '.crear-calendario', function() {
     enviarPost('/manejar/posts/clase',{clasesJSON: clasesJSON},'http://localhost:8000/calendario?provincia='+ provincia + '&usuario='+ nombreProfesor + '&centro=' + centro); //parametros de URL
 });
 
-//Creamos el POST de LEER un calendario
+//LEER un calendario
 $(document).on('click', '.ver-calendario', function() {
     const nombreProfesor = $('#nombreleerProfesor').val();
     // Enviar el objeto JSON a través de una petición AJAX
@@ -655,7 +655,7 @@ $(document).on('click', '.crear-asignatura', function() {
 
 //Formulario centro
 
-$(document).on('click', '.previsualizar-calendario', function() {
+$(document).on('click', '.previsualizar-calendario, .editar-calendario', function() {
     const centro = [];
     const nombre = $('#nombreDelCentro').val();
     const provincia = $('#nombreDeProvincia').val();
@@ -669,7 +669,13 @@ $(document).on('click', '.previsualizar-calendario', function() {
 
     const centroJSON = JSON.stringify({centro});
 
-    enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, 'http://localhost:8000/post/centro');
+    if(provincia && nombre){
+        //Poner en un futuro que el centro se cree con el admin y no en el post de centro
+        enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, 'http://localhost:8000/post/centro');
+    } else {
+        //Si no existen provincia y nombre es que están editando un calendario.
+        enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, 'http://localhost:8000/formulario/calendario');
+    }
 });
 
 function enviarPost(url, data, href) {

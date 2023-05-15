@@ -75,4 +75,27 @@ class CentroRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+
+    public function findOneByUsuario($usuarioId): ?Centro
+    {
+        return $this->createQueryBuilder('c')
+        ->join('App\Entity\Calendario','ca','WITH','ca.centro = c.id')
+        ->andWhere('ca.usuario = :usuario')
+        ->setParameter('usuario', $usuarioId)
+        ->getQuery()
+        ->getOneOrNullResult()
+    ;
+    }
+
+    public function findOneProvinciaByUsuario($usuarioId)
+    {
+        return $this->createQueryBuilder('c')
+        ->join('App\Entity\Calendario','ca','WITH','ca.centro = c.id')
+        ->andWhere('ca.usuario = :usuario')
+        ->andWhere('c.nombre = :centro')
+        ->setParameter('usuario', $usuarioId)
+        ->getQuery()
+        ->getOneOrNullResult()
+    ;
+    }
 }

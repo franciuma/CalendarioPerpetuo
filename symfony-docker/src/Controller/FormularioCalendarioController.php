@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\AsignaturaRepository;
+use App\Repository\CentroRepository;
 use App\Repository\FestivoCentroRepository;
 use App\Repository\FestivoLocalRepository;
 use App\Repository\FestivoNacionalRepository;
@@ -23,6 +24,7 @@ class FormularioCalendarioController extends AbstractController
     private FestivoCentroRepository $festivoCentroRepository;
     private CalendarioService $calendarioService;
     private UsuarioRepository $usuarioRepository;
+    private CentroRepository $centroRepository;
 
     public function __construct(
         AsignaturaRepository $asignaturaRepository,
@@ -31,7 +33,8 @@ class FormularioCalendarioController extends AbstractController
         FestivoNacionalRepository $festivoNacionalRepository,
         FestivoCentroRepository $festivoCentroRepository,
         CalendarioService $calendarioService,
-        UsuarioRepository $usuarioRepository
+        UsuarioRepository $usuarioRepository,
+        CentroRepository $centroRepository
         ){
         $this->asignaturaRepository = $asignaturaRepository;
         $this->leccionRepository = $leccionRepository;
@@ -40,6 +43,7 @@ class FormularioCalendarioController extends AbstractController
         $this->festivoCentroRepository = $festivoCentroRepository;
         $this->calendarioService = $calendarioService;
         $this->usuarioRepository = $usuarioRepository;
+        $this->centroRepository = $centroRepository;
     }
 
     #[Route('/formulario/calendario', name: 'app_formulario_calendario')]
@@ -55,9 +59,17 @@ class FormularioCalendarioController extends AbstractController
         $centroJson = file_get_contents(__DIR__ . '/../resources/centro.json');
         $centroArray = json_decode($centroJson, true);
         $nombreProfesor = $centroArray['centro'][0]['profesor'];
-
         //Obtenemos profesor introducido en la base de datos
         $profesor = $this->calendarioService->getProfesorSeleccionado($nombreProfesor);
+
+        if(isset($centroArray['centro'][0]['nombre']) && isset($centroArray['centro'][0]['provincia'])) {
+            $centro = $centroArray['centro'][0]['nombre'];
+            $provincia = $centroArray['centro'][0]['provincia'];
+        } else {
+        // Si no esta ni centro ni provincia, es que estamos editando un calendario existente
+            $centro = $this->centroRepository->findOneByUsuario($profesor->getId());
+            $provincia = $centro->getProvincia();
+        }
 
         //Obtener los grupos pertenecientes dado un profesor
         $grupos = $this->usuarioRepository->findGruposByUsuario(
@@ -139,7 +151,9 @@ class FormularioCalendarioController extends AbstractController
             'lecciones' => $leccionesJson,
             'festivosLocales' => $festivosLocalesJson,
             'festivosNacionales' => $festivosNacionalesJson,
-            'festivosCentro' => $festivosCentroJson
+            'festivosCentro' => $festivosCentroJson,
+            'centro' => $centro->getNombre(),
+            'provincia' => $provincia
         ]);
     }
 }

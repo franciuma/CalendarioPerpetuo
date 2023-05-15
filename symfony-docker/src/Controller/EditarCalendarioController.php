@@ -2,13 +2,12 @@
 
 namespace App\Controller;
 
-use App\Repository\CalendarioRepository;
+use App\Repository\UsuarioRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\UsuarioRepository;
 
-class LeerCalendarioController extends AbstractController
+class EditarCalendarioController extends AbstractController
 {
     private UsuarioRepository $usuarioRepository;
 
@@ -19,7 +18,7 @@ class LeerCalendarioController extends AbstractController
         $this->usuarioRepository = $usuarioRepository;
     }
 
-    #[Route('/leer/calendario', name: 'app_leer_calendario')]
+    #[Route('/editar/calendario', name: 'app_editar_calendario')]
     public function index(): Response
     {
         //Filtramos los profesores que tengan un calendario creado.
@@ -33,8 +32,8 @@ class LeerCalendarioController extends AbstractController
             return $nombre." ".$apellidop." ".$apellidos;
         }, $profesores);
 
-        return $this->render('leer/calendario.html.twig', [
-            'controller_name' => 'LeerCalendarioController',
+        return $this->render('editar/calendario.html.twig', [
+            'controller_name' => 'EditarCalendarioController',
             'profesores' => $nombreProfesores
         ]);
     }

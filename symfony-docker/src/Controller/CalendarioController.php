@@ -92,9 +92,10 @@ class CalendarioController extends AbstractController
 
         $usuario = $this->usuarioRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
         $centro = $this->centroRepository->findOneByNombre($this->centro);
-
-        // Si el usuario que se ha pasado no está relacionado con un calendario
-        if (!$this->calendarioRepository->findOneByUsuario($usuario->getId())) {
+        $calendario = $this->calendarioRepository->findOneByUsuario($usuario->getId());
+        
+        // Si no se ha creado el calendario
+        if (!$calendario) {
             //Creamos el calendario y lo obtenemos
             $calendario = $this->calendarioService->getCalendario($this->usuario, $centro);
             $this->claseService->getClases($calendario);
