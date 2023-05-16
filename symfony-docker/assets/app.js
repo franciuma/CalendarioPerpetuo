@@ -299,6 +299,7 @@ function crearFilaCalendario(fechaStringFormato, asignaturaId) {
                     <option ${esPractica ? "selected" : "Teoria"}>Practica</option>
                 </select>
             </td>
+            <td><button data-asignatura-id="${asignaturaId}" class="btn btn-primary permutar-fecha">Permutar</button></td>
             <td><button class="btn btn-danger eliminar-fecha">Eliminar</button></td>
         </tr>
     `);
@@ -315,6 +316,64 @@ function obtenerGrupoSelect(){
 
     return options;
 }
+
+// Permutación de dos clases en previsualización de calendario
+$(document).on('click', '.permutar-fecha', function(event) {
+    event.preventDefault();
+    // Obtener la fila y la fecha seleccionada
+    const filaInicial = $(this).closest('tr');
+    const asignaturaIdInicial = $(this).data('asignatura-id');
+    const fechaInicial = filaInicial.find('input[name="fecha"]').val();
+    const claveInicial = fechaInicial+asignaturaIdInicial;
+    let valorInicialMap;
+    //Buscamos el mapa inicial asociado
+    if (mapFechaGrupo.has(claveInicial)) {
+        valorInicialMap = mapFechaGrupo.get(claveInicial);
+        mapFechaGrupo.delete(claveInicial);
+    }
+
+    $('.permutar-fecha').removeClass('permutar-fecha').addClass('destino-permutar-fecha').text('Destino permutación');
+    //Quitamos los datos que tengamos de destino-permutar-fecha
+    $(document).off('click', '.destino-permutar-fecha');
+
+    $(document).on('click', '.destino-permutar-fecha', function(event) {
+        event.preventDefault();
+        // Obtener la fila y la fecha seleccionada
+        const filaDestino = $(this).closest('tr');
+        const asignaturaIdDestino = $(this).data('asignatura-id');
+        const fechaDestino = filaDestino.find('input[name="fecha"]').val();
+        const claveDestino = fechaDestino+asignaturaIdDestino;
+        let valorDestinoMap;
+        //Buscamos el mapa asociado
+        if (mapFechaGrupo.has(claveDestino)) {
+            valorDestinoMap = mapFechaGrupo.get(claveDestino);
+            mapFechaGrupo.delete(claveDestino);
+        }
+        //Cambiamos los mapas inicial y destino
+        mapFechaGrupo.set(claveDestino,valorInicialMap);
+        mapFechaGrupo.set(claveInicial,valorDestinoMap);
+        //Creamos las filas con los datos cambiados
+        const fechaNuevaInicial = crearFilaCalendario(fechaInicial, asignaturaIdInicial);
+        const fechaNuevaFinal = crearFilaCalendario(fechaDestino, asignaturaIdDestino);
+        //Añadimos a la tabla las nuevas filas
+        $('#fechasTable tbody').append(fechaNuevaInicial);
+        $('#fechasTable tbody').append(fechaNuevaFinal);
+
+        //Borramos las filas antiguas
+        filaInicial.remove();
+        filaDestino.remove();
+        $('.destino-permutar-fecha').removeClass('destino-permutar-fecha').addClass('permutar-fecha').text('Permutar');
+
+        // Mostrar el popup de permutación exitosa
+        Swal.fire({
+            title: 'Permutación exitosa',
+            text: 'Las clases han sido agregadas al final de la página',
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#007BFF'
+        });
+    });
+});
 
 $(document).on('click', '.eliminar-fecha', function() {
     // Obtener la fila y la fecha seleccionada

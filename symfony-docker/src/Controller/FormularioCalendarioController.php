@@ -67,8 +67,9 @@ class FormularioCalendarioController extends AbstractController
             $provincia = $centroArray['centro'][0]['provincia'];
         } else {
         // Si no esta ni centro ni provincia, es que estamos editando un calendario existente
-            $centro = $this->centroRepository->findOneByUsuario($profesor->getId());
-            $provincia = $centro->getProvincia();
+            $centroObjeto = $this->centroRepository->findOneByUsuario($profesor->getId());
+            $centro = $centroObjeto->getNombre();
+            $provincia = $centroObjeto->getProvincia();
         }
 
         //Obtener los grupos pertenecientes dado un profesor
@@ -152,7 +153,7 @@ class FormularioCalendarioController extends AbstractController
             'festivosLocales' => $festivosLocalesJson,
             'festivosNacionales' => $festivosNacionalesJson,
             'festivosCentro' => $festivosCentroJson,
-            'centro' => $centro->getNombre(),
+            'centro' => $centro,
             'provincia' => $provincia
         ]);
     }
