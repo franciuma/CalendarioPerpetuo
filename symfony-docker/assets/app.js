@@ -737,6 +737,18 @@ $(document).on('click', '.previsualizar-calendario, .editar-calendario', functio
     }
 });
 
+//Festivos de centro (añadir festivo)
+$(document).on('click', '.confirmar-festivos-centro', function() {
+    // Mostrar el popup de permutación exitosa
+    Swal.fire({
+        title: 'Centro confirmado',
+        text: 'Ya puedes ver los festivos asociados al centro',
+        icon: 'success',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#007BFF'
+    });
+});
+
 function enviarPost(url, data, href) {
     $.ajax({
         url: url, // ruta donde enviar la petición POST

@@ -109,4 +109,14 @@ class FestivoCentroService
 
         return $centroFiltrado;
     }
+
+    public function getFestivosDeCentroSeleccionado($nombreCentro): array
+    {
+        $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosCentro.json');
+        $festivosArray = json_decode($festivosJson, true);
+        $festivosCentro = $festivosArray["festivosCentro".$nombreCentro];
+        $nombresFestivoCentro = array_column($festivosCentro, 'nombre');
+
+        return $nombresFestivoCentro;
+    }
 }
