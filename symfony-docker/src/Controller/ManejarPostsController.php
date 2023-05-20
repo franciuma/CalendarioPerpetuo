@@ -16,6 +16,7 @@ class ManejarPostsController extends AbstractController
     #[Route('/manejar/posts/clase', name: 'clases')]
     #[Route('/manejar/posts/centro', name: 'centro')]
     #[Route('/manejar/posts/festivoscentro', name: 'festivoscentro')]
+    #[Route('/manejar/posts/festivosnacionales', name: 'festivosnacionales')]
     public function index(Request $request)
     {
         $entidad = $request->attributes->get('_route');
@@ -33,10 +34,16 @@ class ManejarPostsController extends AbstractController
                 $datosDecode = array($entidad => $datosDecode);
             }
 
-            //Si es festivo se añade al JSON ya existente
+            //Si es festivo se añade al JSON ya existente, buscando el nodo donde colocarlo
             if(strpos($entidad, "festivo") !== false) {
-                $centro = "festivosCentro".$request->get('nombreCentro');
-                $datosDecode = self::aniadirFestivoJSON($entidad, $datosDecode, $centro);
+                if($request->get('nombreCentro')) {
+                    $nodo = "festivosCentro".$request->get('nombreCentro');
+                } else {
+                    // Si no es ninguno, es festivo nacional
+                    $nodo = "festivosNacionales-España";
+                }
+
+                $datosDecode = self::aniadirFestivoJSON($entidad, $datosDecode, $nodo);
             }
 
             // Convertir el array asociativo a JSON con formato "pretty"
@@ -57,14 +64,14 @@ class ManejarPostsController extends AbstractController
     /**
      * Acopla los festivos nuevos al json de festivos en el nodo correspondiente.
      */
-    public function aniadirFestivoJSON($entidad, $datosDecodeFestivo, $centro): array
+    public function aniadirFestivoJSON($entidad, $datosDecodeFestivo, $nodo): array
     {
         //Obtenemos el array de festivos
         $datosJSONfestivo = file_get_contents("/app/src/Resources/".$entidad.".json");
         //Lo pasamos a array
         $arrayFestivos = json_decode($datosJSONfestivo, true);
         //Cogemos el nodo y metemos los datos
-        $arrayFestivos[$centro] = array_merge($arrayFestivos[$centro], $datosDecodeFestivo);
+        $arrayFestivos[$nodo] = array_merge($arrayFestivos[$nodo], $datosDecodeFestivo);
         return $arrayFestivos;
     }
 }

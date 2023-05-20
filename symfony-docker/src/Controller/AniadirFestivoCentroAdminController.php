@@ -38,7 +38,7 @@ class AniadirFestivoCentroAdminController extends AbstractController
         }
 
         $festivosCentro = $this->festivoCentroService->getNombreCentroProvincia();
-        return $this->render('festivo_centro/aniadir.html.twig', [
+        return $this->render('crear/festivocentro.html.twig', [
             'controller_name' => 'AniadirFestivoCentroAdminController',
             'festivosCentro' => $festivosCentro,
             'centroSeleccionado' => $this->centroSeleccionado,

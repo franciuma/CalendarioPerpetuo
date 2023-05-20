@@ -737,7 +737,7 @@ $(document).on('click', '.previsualizar-calendario, .editar-calendario', functio
     }
 });
 
-//Festivos de centro (añadir festivo)
+//Formulario festivos de centro admin
 // Datepicker de festivosCentro
 $('#festivosCentroTable tbody').on('focus', '.datepicker-festivo-centro', function() {
     $(this).datepicker({
@@ -762,17 +762,17 @@ $(document).on('click', '.seleccionar-festivos-centro', function() {
 let idFestivoCentro = 0;
 $(document).on('click', '.aniadir-festivos-centro', function() {
     idFestivoCentro++;
-    const fila = crearFilaFestivo(idFestivoCentro);
+    const fila = crearFilaFestivo(idFestivoCentro, "centro");
     $('#festivosCentroTable tbody').append(fila);
 });
 
-function crearFilaFestivo(idFestivoCentro) {
+function crearFilaFestivo(idFestivo, tipoDeFestivo) {
     return $(`
-        <tr class="fila-festivo-centro" id="festivoCentro${idFestivoCentro}">
-            <td><input type="text" class="form-control nombreFestivoCentro" name="nombreFestivoCentro" id="nombreFestivoCentro${idFestivoCentro}"></td>
-            <td><input type="text" class="form-control inicioFestivoCentro datepicker-festivo-centro" name="inicioFestivoCentro" id="inicioFestivoCentro${idFestivoCentro}"></td>
-            <td><input type="text" class="form-control finalFestivoCentro datepicker-festivo-centro" name="finalFestivoCentro" id="finalFestivoCentro${idFestivoCentro}"></td>
-            <td><button class="btn btn-danger eliminar-festivo-centro">Eliminar</button></td>
+        <tr class="fila-festivo-${tipoDeFestivo}" id="festivoCentro${idFestivo}">
+            <td><input type="text" class="form-control nombreFestivo${tipoDeFestivo}" name="nombreFestivo${tipoDeFestivo}" id="nombreFestivo${tipoDeFestivo}${idFestivo}"></td>
+            <td><input type="text" class="form-control inicioFestivo${tipoDeFestivo} datepicker-festivo-${tipoDeFestivo}" name="inicioFestivo${tipoDeFestivo}" id="inicioFestivo${tipoDeFestivo}${idFestivo}"></td>
+            <td><input type="text" class="form-control finalFestivo${tipoDeFestivo} datepicker-festivo-${tipoDeFestivo}" name="finalFestivo${tipoDeFestivo}" id="finalFestivo${tipoDeFestivo}${idFestivo}"></td>
+            <td><button class="btn btn-danger eliminar-festivo-${tipoDeFestivo}">Eliminar</button></td>
         </tr>
     `);
 }
@@ -788,9 +788,9 @@ $(document).on('click', '.guardar-festivos-centro', function() {
     const nombreCentro = $('#nombreCentroFestivo').val();;
     const festivosCentro = [];
     $('#festivosCentroTable tbody tr').each(function() {
-        const nombre = $(this).find('.nombreFestivoCentro').val();
-        const inicio = $(this).find('.inicioFestivoCentro').val();
-        const final = $(this).find('.finalFestivoCentro').val();
+        const nombre = $(this).find('.nombreFestivocentro').val();
+        let inicio = $(this).find('.inicioFestivocentro').val();
+        let final = $(this).find('.finalFestivocentro').val();
         //Modificamos la fecha, para recibir el formato dd-mm-%AN% o dd-mm-%AC% siendo AN año anterior y AC año actual.
         inicio = modificarFecha(inicio);
         final = modificarFecha(final);
@@ -806,14 +806,8 @@ $(document).on('click', '.guardar-festivos-centro', function() {
     // Enviar el objeto JSON a través de una petición AJAX
     enviarPost('/manejar/posts/festivoscentro', datosPost,'/menu/administrador');
 
-    // Mostrar el popup de añadido centro correctamente
-    Swal.fire({
-        title: 'festivo/s añadido/s',
-        text: 'Todo ha salido correctamente',
-        icon: 'success',
-        showConfirmButton: false,
-        showCancelButton: false,
-      });
+    // Mostrar el popup de añadido festivo centro correctamente
+    mostrarPopUp("festivo/s añadido/s");
 });
 
 function modificarFecha(fecha) {
@@ -833,6 +827,66 @@ function modificarFecha(fecha) {
 
     return [dia, mes.toString(), anio].join("-");
 }
+
+$(document).on('click', '.crear-centro', function() {
+    mostrarPopUp("Centro añadido correctamente");
+});
+
+function mostrarPopUp(titulo) {
+    Swal.fire({
+        title: titulo,
+        text: 'Todo ha salido correctamente',
+        icon: 'success',
+        showConfirmButton: false,
+        showCancelButton: false,
+    });
+}
+
+// Formulario festivos nacionales admin
+// Datepicker de festivosNacionales
+$('#festivosNacionalesTable tbody').on('focus', '.datepicker-festivo-nacional', function() {
+    $(this).datepicker({
+        format: 'dd-mm-yyyy',
+        language: 'es',
+        weekStart: 1,
+        startDate: new Date()
+    });
+});
+
+let idFestivosNacionales = 0;
+$(document).on('click', '.aniadir-festivos-nacional', function() {
+    idFestivosNacionales++;
+    const fila = crearFilaFestivo(idFestivosNacionales, "nacional");
+    $('#festivosNacionalesTable tbody').append(fila);
+});
+
+$(document).on('click', '.eliminar-festivo-nacional', function() {
+    // Obtener la fila
+    const fila = $(this).closest('tr');
+    fila.remove();
+});
+
+$(document).on('click', '.guardar-festivos-nacional', function() {
+    // Obtener los valores de las filas de la tabla
+    const festivosNacionales = [];
+    $('#festivosNacionalesTable tbody tr').each(function() {
+        const nombre = $(this).find('.nombreFestivonacional').val();
+        let inicio = $(this).find('.inicioFestivonacional').val();
+        let final = $(this).find('.finalFestivonacional').val();
+        //Modificamos la fecha, para recibir el formato dd-mm-%AN% o dd-mm-%AC% siendo AN año anterior y AC año actual.
+        inicio = modificarFecha(inicio);
+        final = modificarFecha(final);
+        festivosNacionales.push({ nombre, inicio, final });
+    });
+    // Convertir el objeto a JSON
+    const festivosnacionalesJSON = JSON.stringify(festivosNacionales);
+
+    // Enviar el objeto JSON a través de una petición AJAX
+    enviarPost('/manejar/posts/festivosnacionales', {festivosnacionalesJSON: festivosnacionalesJSON},'/menu/administrador');
+
+    // Mostrar el popup de añadido festivo centro correctamente
+    mostrarPopUp("festivo/s nacional/es añadido/s");
+});
 
 function enviarPost(url, data, href) {
     $.ajax({

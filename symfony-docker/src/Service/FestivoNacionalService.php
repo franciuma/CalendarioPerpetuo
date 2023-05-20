@@ -28,15 +28,17 @@ class FestivoNacionalService
 
         $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosNacionales.json');
         $festivosArray = json_decode($festivosJson, true);
+        $arrayNombreFestivos = [];
 
-        foreach ($festivosArray['festivosGlobales'] as &$festivo) {
+        foreach ($festivosArray['festivosNacionales-España'] as &$festivo) {
             $festivo['inicio'] = str_replace('%AN%', $anio, $festivo['inicio']);
             $festivo['inicio'] = str_replace('%AC%', $anioSiguiente, $festivo['inicio']);
             $festivo['final'] = str_replace('%AN%', $anio, $festivo['final']);
             $festivo['final'] = str_replace('%AC%', $anioSiguiente, $festivo['final']);
+            array_push($arrayNombreFestivos, $festivo['nombre']);
         }
 
-        $festivos = $this->serializer->denormalize($festivosArray['festivosGlobales'], 'App\Entity\FestivoNacional[]');
+        $festivos = $this->serializer->denormalize($festivosArray['festivosNacionales-España'], 'App\Entity\FestivoNacional[]');
 
         foreach ($festivos as $festivoNacional) {
             if(!$this->festivoNacionalRepository->findOneFecha($festivoNacional->getInicio())) {
@@ -47,8 +49,7 @@ class FestivoNacionalService
                 self::completaFestivosCentroIntermedios($festivoNacional);
             }
         }
-
-        return $festivos;
+        return $arrayNombreFestivos;
     }
 
     public function completaFestivosCentroIntermedios($festivoNacional): void

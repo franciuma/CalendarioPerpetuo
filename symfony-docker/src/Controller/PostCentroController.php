@@ -40,6 +40,7 @@ class PostCentroController extends AbstractController
         //Creamos el centro
         $centro = $this->centroService->getCentro();
         //Creamos los festivos nacionales
+        //Puede ser opcional, que se creen por defecto y ya si se añaden más se metan en administrador.
         $this->festivoNacionalService->getFestivosNacionales();
         //Creamos los festivos locales
         $this->festivoLocalService->getFestivosLocales($centro);
