@@ -17,7 +17,7 @@ class FestivoCentro implements EventoInterface
     #[ORM\Column(length: 255)]
     private ?string $nombre = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $abreviatura = null;
 
     #[ORM\Column(length: 255)]

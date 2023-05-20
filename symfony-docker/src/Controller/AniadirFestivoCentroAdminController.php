@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 class AniadirFestivoCentroAdminController extends AbstractController
 {
     private FestivoCentroService $festivoCentroService;
+    private $centroSeleccionado = "";
 
     public function __construct(FestivoCentroService $festivoCentroService)
     {  
@@ -20,17 +21,16 @@ class AniadirFestivoCentroAdminController extends AbstractController
     #[Route('/aniadir/festivo/centro', name: 'app_aniadir_festivo_centro_admin')]
     public function index(Request $request): Response
     {
-        $centroSeleccionado = "";
         $verFestivosDisponible = "disabled";
         if ($request->isMethod('POST')) {
-            $centroSeleccionado = $request->request->get('centroFestivoSeleccionado');
+            $this->centroSeleccionado = $request->request->get('centroFestivoSeleccionado');
             $verFestivosDisponible = "enabled";
         }
 
         $festivosCentroSeleccionado = "";
         //Cogemos los festivos del centro
-        if($centroSeleccionado != "") {
-            $festivosCentroSeleccionado = $this->festivoCentroService->getFestivosDeCentroSeleccionado($centroSeleccionado);
+        if($this->centroSeleccionado != "") {
+            $festivosCentroSeleccionado = $this->festivoCentroService->getFestivosDeCentroSeleccionado($this->centroSeleccionado);
         }
 
         if(empty($festivosCentroSeleccionado)) {
@@ -41,7 +41,7 @@ class AniadirFestivoCentroAdminController extends AbstractController
         return $this->render('festivo_centro/aniadir.html.twig', [
             'controller_name' => 'AniadirFestivoCentroAdminController',
             'festivosCentro' => $festivosCentro,
-            'centroSeleccionado' => $centroSeleccionado,
+            'centroSeleccionado' => $this->centroSeleccionado,
             'disponible' => $verFestivosDisponible,
             'festivosCentroSeleccionado' => $festivosCentroSeleccionado
         ]);

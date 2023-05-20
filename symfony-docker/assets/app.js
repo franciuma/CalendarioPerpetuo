@@ -24,7 +24,7 @@ let contadorFechas = 0;
 const arrayFechaAsignatura = [];
 const mapFechaGrupo = new Map();
 //Si se encuentra en la vista /formulario/calendario carga la función
-if(window.location.href == "http://localhost:8000/formulario/calendario"){
+if(window.location.href == "/formulario/calendario"){
     $(function() {
         //Obtenemos del formulario de calendario las entidades
         const lecciones = JSON.parse(document.getElementById('lecciones').dataset.lecciones);
@@ -439,14 +439,14 @@ $(document).on('click', '.crear-calendario', function() {
     const centro = localStorage.getItem('centro');
 
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/manejar/posts/clase',{clasesJSON: clasesJSON},'http://localhost:8000/calendario?provincia='+ provincia + '&usuario='+ nombreProfesor + '&centro=' + centro); //parametros de URL
+    enviarPost('/manejar/posts/clase',{clasesJSON: clasesJSON},'/calendario?provincia='+ provincia + '&usuario='+ nombreProfesor + '&centro=' + centro); //parametros de URL
 });
 
 //LEER un calendario
 $(document).on('click', '.ver-calendario', function() {
     const nombreProfesor = $('#nombreleerProfesor').val();
     // Enviar el objeto JSON a través de una petición AJAX
-    window.location.replace('http://localhost:8000/calendario?usuario=' + nombreProfesor);
+    window.location.replace('/calendario?usuario=' + nombreProfesor);
 });
 
 //Formulario profesor
@@ -559,7 +559,7 @@ $(document).on('click', '.crear-profesor', function() {
     const profesorGrupoJSON = JSON.stringify(datos);
 
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/manejar/posts/docente',{profesorGrupoJSON: profesorGrupoJSON},'http://localhost:8000/post/docente');
+    enviarPost('/manejar/posts/docente',{profesorGrupoJSON: profesorGrupoJSON},'/post/docente');
 });
 
 //Formulario Asignatura
@@ -708,7 +708,7 @@ $(document).on('click', '.crear-asignatura', function() {
     // Convertir el objeto a JSON
     const asignaturasJSON = JSON.stringify(asignaturas);
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/manejar/posts/asignatura',{asignaturasJSON: asignaturasJSON},'http://localhost:8000/post/asignatura');
+    enviarPost('/manejar/posts/asignatura',{asignaturasJSON: asignaturasJSON},'/post/asignatura');
 
 });
 
@@ -730,24 +730,109 @@ $(document).on('click', '.previsualizar-calendario, .editar-calendario', functio
 
     if(provincia && nombre){
         //Poner en un futuro que el centro se cree con el admin y no en el post de centro
-        enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, 'http://localhost:8000/post/centro');
+        enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, '/post/centro');
     } else {
         //Si no existen provincia y nombre es que están editando un calendario.
-        enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, 'http://localhost:8000/formulario/calendario');
+        enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, '/formulario/calendario');
     }
 });
 
 //Festivos de centro (añadir festivo)
-$(document).on('click', '.confirmar-festivos-centro', function() {
-    // Mostrar el popup de permutación exitosa
+// Datepicker de festivosCentro
+$('#festivosCentroTable tbody').on('focus', '.datepicker-festivo-centro', function() {
+    $(this).datepicker({
+        format: 'dd-mm-yyyy',
+        language: 'es',
+        weekStart: 1,
+        startDate: new Date()
+    });
+});
+
+$(document).on('click', '.seleccionar-festivos-centro', function() {
+    // Mostrar el popup de centro seleccionado
     Swal.fire({
-        title: 'Centro confirmado',
+        title: 'Centro seleccionado',
         text: 'Ya puedes ver los festivos asociados al centro',
         icon: 'success',
         confirmButtonText: 'Aceptar',
         confirmButtonColor: '#007BFF'
     });
 });
+
+let idFestivoCentro = 0;
+$(document).on('click', '.aniadir-festivos-centro', function() {
+    idFestivoCentro++;
+    const fila = crearFilaFestivo(idFestivoCentro);
+    $('#festivosCentroTable tbody').append(fila);
+});
+
+function crearFilaFestivo(idFestivoCentro) {
+    return $(`
+        <tr class="fila-festivo-centro" id="festivoCentro${idFestivoCentro}">
+            <td><input type="text" class="form-control nombreFestivoCentro" name="nombreFestivoCentro" id="nombreFestivoCentro${idFestivoCentro}"></td>
+            <td><input type="text" class="form-control inicioFestivoCentro datepicker-festivo-centro" name="inicioFestivoCentro" id="inicioFestivoCentro${idFestivoCentro}"></td>
+            <td><input type="text" class="form-control finalFestivoCentro datepicker-festivo-centro" name="finalFestivoCentro" id="finalFestivoCentro${idFestivoCentro}"></td>
+            <td><button class="btn btn-danger eliminar-festivo-centro">Eliminar</button></td>
+        </tr>
+    `);
+}
+
+$(document).on('click', '.eliminar-festivo-centro', function() {
+    // Obtener la fila
+    const fila = $(this).closest('tr');
+    fila.remove();
+});
+
+$(document).on('click', '.guardar-festivos-centro', function() {
+    // Obtener los valores de las filas de la tabla
+    const nombreCentro = $('#nombreCentroFestivo').val();;
+    const festivosCentro = [];
+    $('#festivosCentroTable tbody tr').each(function() {
+        const nombre = $(this).find('.nombreFestivoCentro').val();
+        const inicio = $(this).find('.inicioFestivoCentro').val();
+        const final = $(this).find('.finalFestivoCentro').val();
+        //Modificamos la fecha, para recibir el formato dd-mm-%AN% o dd-mm-%AC% siendo AN año anterior y AC año actual.
+        inicio = modificarFecha(inicio);
+        final = modificarFecha(final);
+        festivosCentro.push({ nombre, inicio, final });
+    });
+    // Convertir el objeto a JSON
+    const festivoscentroJSON = JSON.stringify(festivosCentro);
+
+    const datosPost = {
+        nombreCentro: nombreCentro,
+        festivoscentroJSON: festivoscentroJSON
+    }
+    // Enviar el objeto JSON a través de una petición AJAX
+    enviarPost('/manejar/posts/festivoscentro', datosPost,'/menu/administrador');
+
+    // Mostrar el popup de añadido centro correctamente
+    Swal.fire({
+        title: 'festivo/s añadido/s',
+        text: 'Todo ha salido correctamente',
+        icon: 'success',
+        showConfirmButton: false,
+        showCancelButton: false,
+      });
+});
+
+function modificarFecha(fecha) {
+    //Dividimos la fecha y lo pasamos a entero para poder compararlo.
+    const partes = fecha.split("-"); // Dividir la cadena en partes utilizando el guion como separador
+
+    const dia = partes[0];
+    const mes = parseInt(partes[1], 10); // Convertir el mes a número entero
+
+    //Si el mes de la fecha es posterior a 8 (agosto) es el año pasado, si no es el actual.
+    let anio;
+    if(mes > 8) {
+        anio = "%AN%";
+    } else {
+        anio = "%AC%";
+    }
+
+    return [dia, mes.toString(), anio].join("-");
+}
 
 function enviarPost(url, data, href) {
     $.ajax({

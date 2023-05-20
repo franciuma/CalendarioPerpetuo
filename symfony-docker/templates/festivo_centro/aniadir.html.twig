@@ -13,7 +13,7 @@
 				<form action="{{ path('app_aniadir_festivo_centro_admin') }}" method="POST">
 					<div class="form-group">
 						<label for="nombreCentroFestivo">Escoge el centro: </label>
-						<select class="form-control" id="nombreCentroFestivo" name="centroFestivoSeleccionado">
+						<select class="form-control nombreCentroFestivo" id="nombreCentroFestivo" name="centroFestivoSeleccionado">
 							{% if centroSeleccionado == "" %}
 								<option selected>-- Selecciona el centro --</option>
 							{% endif %}
@@ -28,13 +28,35 @@
 						<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalFestivoCentro" {{disponible}}>
 							Ver festivos del centro
 						</button>
-						<button type="submit" class="btn btn-primary confirmar-festivos-centro">Confirmar centro</button>
+						<button type="submit" class="btn btn-primary seleccionar-festivos-centro">seleccionar centro</button>
 					</div>
-					<button type="button" class="btn btn-primary aniadir-festivos-centro">Añadir festivos del centro</button>
+					<div class="alert alert-info" role="alert">
+					Obligatoriamente cada centro debe tener estas 4 fechas con inicio y fin:
+					<ul>
+						<li>primer cuatrimestre</li>
+						<li>segundo cuatrimestre</li>
+						<li>exámenes finales primer cuatrimestre</li>
+						<li>exámenes finales segundo cuatrimestre</li>
+					</ul>
+					<b>Importante: Es posible que un festivo comience y acabe el mismo día</b>
+					</div>
+					<table id="festivosCentroTable" class="table">
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th>Inicio</th>
+								<th>Final</th>
+								<th>Eliminar</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				<button type="button" class="btn btn-primary aniadir-festivos-centro" >Añadir festivo del centro</button>
+				<button type="button" class="btn btn-primary guardar-festivos-centro">Guardar festivos del centro</button>
 				</form>
 			</div>
 		</div>
-		<button type="submit" class="btn btn-primary aniadir-festivos-centro" onclick="window.location.href='{{ path('app_menu_administrador') }}'">Volver al menú administrador</button>
+	<button type="submit" class="btn btn-primary" onclick="window.location.href='{{ path('app_menu_administrador') }}'">Volver al menú administrador</button>
 	</div>
 
 	<!-- Modal -->

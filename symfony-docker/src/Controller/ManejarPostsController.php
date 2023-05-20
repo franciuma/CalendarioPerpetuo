@@ -15,6 +15,7 @@ class ManejarPostsController extends AbstractController
     #[Route('/manejar/posts/asignatura', name: 'asignaturas')]
     #[Route('/manejar/posts/clase', name: 'clases')]
     #[Route('/manejar/posts/centro', name: 'centro')]
+    #[Route('/manejar/posts/festivoscentro', name: 'festivoscentro')]
     public function index(Request $request)
     {
         $entidad = $request->attributes->get('_route');
@@ -22,7 +23,7 @@ class ManejarPostsController extends AbstractController
         if ($request->isMethod('POST')) {
 
             // Obtener los datos del POST
-            $datosJSON = $_POST[$entidad.'JSON'];
+            $datosJSON = $request->get($entidad.'JSON');
 
             // Decode del Json para luego aplicarle el JSON_PRETTY_PRINT
             $datosDecode = json_decode($datosJSON, true);
@@ -32,10 +33,16 @@ class ManejarPostsController extends AbstractController
                 $datosDecode = array($entidad => $datosDecode);
             }
 
+            //Si es festivo se añade al JSON ya existente
+            if(strpos($entidad, "festivo") !== false) {
+                $centro = "festivosCentro".$request->get('nombreCentro');
+                $datosDecode = self::aniadirFestivoJSON($entidad, $datosDecode, $centro);
+            }
+
             // Convertir el array asociativo a JSON con formato "pretty"
             $datosJSONpretty = json_encode($datosDecode, JSON_PRETTY_PRINT);
 
-            // Guardar el archivo JSON
+            //Guardar el archivo JSON
             $guardado = file_put_contents("/app/src/Resources/".$entidad.".json", $datosJSONpretty);
 
             // Verificar si el archivo se guardó correctamente
@@ -45,5 +52,19 @@ class ManejarPostsController extends AbstractController
                 var_dump("Error al guardar el archivo");
             }
         }
+    }
+
+    /**
+     * Acopla los festivos nuevos al json de festivos en el nodo correspondiente.
+     */
+    public function aniadirFestivoJSON($entidad, $datosDecodeFestivo, $centro): array
+    {
+        //Obtenemos el array de festivos
+        $datosJSONfestivo = file_get_contents("/app/src/Resources/".$entidad.".json");
+        //Lo pasamos a array
+        $arrayFestivos = json_decode($datosJSONfestivo, true);
+        //Cogemos el nodo y metemos los datos
+        $arrayFestivos[$centro] = array_merge($arrayFestivos[$centro], $datosDecodeFestivo);
+        return $arrayFestivos;
     }
 }
