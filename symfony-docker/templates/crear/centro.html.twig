@@ -15,8 +15,13 @@
 						<label for="nombreDeCentro">Nombre del centro: </label>
                         <input type="text" class="form-control" name="nombreDelCentro">
 
-						<label for="nombreDeProvincia">Nombre de la provincia: </label>
-                        <input type="text" class="form-control" name="nombreDeProvincia">
+						<label for="nombreDeProvincia">Nombre de la localidad: </label>
+						<select class="form-control" id="nombreDeProvincia" name="nombreDeProvincia">
+							<option selected>-- Selecciona el nombre de la localidad --</option>
+							{% for provincia in provincias %}
+								<option>{{ provincia }}</option>
+							{% endfor %}
+						</select>
 					</div>
 					<button type="submit" class="btn btn-primary crear-centro">Crear centro</button>
 				</form>

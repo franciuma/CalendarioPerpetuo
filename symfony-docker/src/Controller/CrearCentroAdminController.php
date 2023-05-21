@@ -2,23 +2,40 @@
 
 namespace App\Controller;
 
+use App\Service\FestivoCentroService;
+use App\Service\FestivoLocalService;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CrearCentroAdminController extends AbstractController
 {
+    private FestivoCentroService $festivoCentroService;
+    private FestivoLocalService $festivoLocalService;
+
+    public function __construct(
+        FestivoCentroService $festivoCentroService,
+        FestivoLocalService $festivoLocalService
+    )
+    {
+        $this->festivoCentroService = $festivoCentroService;
+        $this->festivoLocalService = $festivoLocalService;
+    }
+
     #[Route('/crear/centro/admin', name: 'app_crear_centro_admin')]
     public function index(): Response
     {
+        $provincias = $this->festivoLocalService->getProvincias();
+
         return $this->render('crear/centro.html.twig', [
             'controller_name' => 'CrearCentroAdminController',
+            'provincias' => $provincias
         ]);
     }
 
-    //Crear un centro
+    //Crear un nodo centro vacío (solo el título)
     #[Route('/crear/centro/admin/procesar', name: 'app_crear_centro_admin_procesar', methods: ['POST'])]
     public function procesarFormulario(Request $request): Response
     {
@@ -27,7 +44,7 @@ class CrearCentroAdminController extends AbstractController
         $nombreProvincia = $request->request->get('nombreDeProvincia');
 
         // Crea un array con los datos del nuevo centro
-        $tituloJson = "festivosCentro{$nombreCentro}-{$nombreProvincia}";
+        $tituloJson = "festivosCentro".$nombreCentro."-".$nombreProvincia;
         $nuevoCentro = [];
 
         // Lee el contenido actual del archivo JSON
@@ -38,8 +55,14 @@ class CrearCentroAdminController extends AbstractController
         $datosJson = json_decode($contenidoJson, true);
 
         // Agrega el nuevo centro al array existente 
-        if($nombreCentro != "" && $nombreProvincia != "" ){
-            $datosJson[$tituloJson] = $nuevoCentro;
+        try {
+            if($nombreCentro != "" && $nombreProvincia != "" && !self::centroExistente($nombreCentro)){
+                $datosJson[$tituloJson] = $nuevoCentro;
+            } else {
+                throw new Exception("Centro vacío o ya existente, o provincia vacía");
+            }
+        } catch (Exception $e) {
+            echo $e->getMessage();
         }
 
         // Codifica los datos actualizados a JSON
@@ -50,5 +73,12 @@ class CrearCentroAdminController extends AbstractController
 
         // Redirecciona a la ruta 'app_menu_administrador'
         return $this->redirectToRoute('app_menu_administrador');
+    }
+
+    public function centroExistente($centro): bool
+    {
+        $centros = $this->festivoCentroService->getNombreCentros();
+
+        return in_array($centro, $centros);
     }
 }
