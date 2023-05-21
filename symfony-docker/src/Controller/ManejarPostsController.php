@@ -17,6 +17,7 @@ class ManejarPostsController extends AbstractController
     #[Route('/manejar/posts/centro', name: 'centro')]
     #[Route('/manejar/posts/festivoscentro', name: 'festivoscentro')]
     #[Route('/manejar/posts/festivosnacionales', name: 'festivosnacionales')]
+    #[Route('/manejar/posts/festivoslocales', name: 'festivoslocales')]
     public function index(Request $request)
     {
         $entidad = $request->attributes->get('_route');
@@ -38,6 +39,8 @@ class ManejarPostsController extends AbstractController
             if(strpos($entidad, "festivo") !== false) {
                 if($request->get('nombreCentro')) {
                     $nodo = "festivosCentro".$request->get('nombreCentro');
+                } else if($request->get('provincia')){
+                    $nodo = "festivosLocales".$request->get('provincia');
                 } else {
                     // Si no es ninguno, es festivo nacional
                     $nodo = "festivosNacionales-España";

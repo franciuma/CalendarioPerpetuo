@@ -522,12 +522,6 @@ function obtenerAsignaturasSelect(){
     return options;
 }
 
-$(document).on('click', '.eliminar-grupo', function() {
-    // Obtener la fila
-    const fila = $(this).closest('tr');
-    fila.remove();
-});
-
 //Creamos el POST del formulario
 $(document).on('click', '.crear-profesor', function() {
     const profesor = [];
@@ -680,12 +674,6 @@ $(document).on('click', '.eliminar-leccion', function() {
     }
 });
 
-$(document).on('click', '.eliminar-asignatura', function() {
-    // Obtener la fila
-    const fila = $(this).closest('tr');
-    fila.remove();
-});
-
 //Creamos el POST del formulario
 $(document).on('click', '.crear-asignatura', function() {
 
@@ -777,12 +765,6 @@ function crearFilaFestivo(idFestivo, tipoDeFestivo) {
     `);
 }
 
-$(document).on('click', '.eliminar-festivo-centro', function() {
-    // Obtener la fila
-    const fila = $(this).closest('tr');
-    fila.remove();
-});
-
 $(document).on('click', '.guardar-festivos-centro', function() {
     // Obtener los valores de las filas de la tabla
     const nombreCentro = $('#nombreCentroFestivo').val();;
@@ -860,12 +842,6 @@ $(document).on('click', '.aniadir-festivos-nacional', function() {
     $('#festivosNacionalesTable tbody').append(fila);
 });
 
-$(document).on('click', '.eliminar-festivo-nacional', function() {
-    // Obtener la fila
-    const fila = $(this).closest('tr');
-    fila.remove();
-});
-
 $(document).on('click', '.guardar-festivos-nacional', function() {
     // Obtener los valores de las filas de la tabla
     const festivosNacionales = [];
@@ -886,6 +862,70 @@ $(document).on('click', '.guardar-festivos-nacional', function() {
 
     // Mostrar el popup de añadido festivo centro correctamente
     mostrarPopUp("festivo/s nacional/es añadido/s");
+});
+
+// Formulario festivos locales admin
+// Datepicker de festivosLocales
+$('#festivosLocalesTable tbody').on('focus', '.datepicker-festivo-local', function() {
+    $(this).datepicker({
+        format: 'dd-mm-yyyy',
+        language: 'es',
+        weekStart: 1,
+        startDate: new Date()
+    });
+});
+
+$(document).on('click', '.seleccionar-festivos-local', function() {
+    // Mostrar el popup de centro seleccionado
+    Swal.fire({
+        title: 'Centro seleccionado',
+        text: 'Ya puedes ver los festivos asociados al centro',
+        icon: 'success',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#007BFF'
+    });
+});
+
+let idFestivosLocales = 0;
+$(document).on('click', '.aniadir-festivos-local', function() {
+    idFestivosLocales++;
+    const fila = crearFilaFestivo(idFestivosLocales, "local");
+    $('#festivosLocalesTable tbody').append(fila);
+});
+
+$(document).on('click', '.guardar-festivos-local', function() {
+    // Obtener los valores de las filas de la tabla
+    const provincia = $('#nombreFestivoLocal').val();
+    const festivosLocales = [];
+    $('#festivosLocalesTable tbody tr').each(function() {
+        const nombre = $(this).find('.nombreFestivolocal').val();
+        let inicio = $(this).find('.inicioFestivolocal').val();
+        let final = $(this).find('.finalFestivolocal').val();
+        //Modificamos la fecha, para recibir el formato dd-mm-%AN% o dd-mm-%AC% siendo AN año anterior y AC año actual.
+        inicio = modificarFecha(inicio);
+        final = modificarFecha(final);
+        festivosLocales.push({ nombre, inicio, final });
+    });
+    // Convertir el objeto a JSON
+    const festivoslocalesJSON = JSON.stringify(festivosLocales);
+
+    const datosPost = {
+        provincia: provincia,
+        festivoslocalesJSON: festivoslocalesJSON
+    }
+
+    // Enviar el objeto JSON a través de una petición AJAX
+    enviarPost('/manejar/posts/festivoslocales', datosPost,'/menu/administrador');
+
+    // Mostrar el popup de añadido festivo centro correctamente
+    mostrarPopUp("festivo/s local/es añadido/s");
+});
+
+//Eliminar filas de tablas
+$(document).on('click', '.eliminar-festivo-local, .eliminar-grupo, .eliminar-asignatura, .eliminar-festivo-centro, .eliminar-festivo-nacional', function() {
+    // Obtener la fila
+    const fila = $(this).closest('tr');
+    fila.remove();
 });
 
 function enviarPost(url, data, href) {

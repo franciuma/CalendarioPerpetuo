@@ -94,6 +94,9 @@ class FestivoCentroService
         return $centroFiltrado;
     }
 
+    /**
+     * Devuelve los nombres de los centros del json festivosCentro.json
+     */
     public function getNombreCentroProvincia(): array
     {
         $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosCentro.json');
@@ -110,6 +113,9 @@ class FestivoCentroService
         return $centroFiltrado;
     }
 
+    /**
+     * Devuelve los festivos de un centro concreto
+     */
     public function getFestivosDeCentroSeleccionado($nombreCentro): array
     {
         $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosCentro.json');

@@ -92,4 +92,17 @@ class FestivoLocalService
 
         return $provinciasFiltrado;
     }
+
+    /**
+     * Devuelve los festivos de una localidad/provincia concreta
+     */
+    public function getFestivosDeProvinciaSeleccionada($nombreProvincia): array
+    {
+        $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosLocales.json');
+        $festivosArray = json_decode($festivosJson, true);
+        $festivosProvincia = $festivosArray["festivosLocales".$nombreProvincia];
+        $nombresFestivoCentro = array_column($festivosProvincia, 'nombre');
+
+        return $nombresFestivoCentro;
+    }
 }

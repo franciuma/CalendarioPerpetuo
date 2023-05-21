@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Añadir festivos locales
+{% endblock %}
+
+{% block body %}
+	{{ parent() }}
+	<!DOCTYPE html>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<h1 class="font-weight-bold">Añadir festivos locales</h1>
+				<form action="{{ path('app_aniadir_festivo_local_admin') }}" method="POST">
+					<div class="form-group">
+						<label for="nombreFestivoLocal">Escoge la localidad: </label>
+						<select class="form-control nombreFestivoLocal" id="nombreFestivoLocal" name="FestivoLocalSeleccionado">
+							{% if provinciaSeleccionada == "" %}
+								<option selected>-- Selecciona la localidad --</option>
+							{% endif %}
+							{% for provincia in provincias %}
+								{% if provincia == provinciaSeleccionada %}
+									<option selected>{{ provincia }}</option>
+								{% else %}
+									<option>{{ provincia }}</option>
+								{% endif %}
+							{% endfor %}
+						</select>
+						<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalFestivoLocal" {{disponible}}>
+							Ver festivos locales
+						</button>
+						<button type="submit" class="btn btn-primary seleccionar-festivos-locales">seleccionar localidad</button>
+					</div>
+					<div class="alert alert-info" role="alert">
+					<b>Importante: Es posible que un festivo comience y acabe el mismo día</b>
+					</div>
+					<table id="festivosLocalesTable" class="table">
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th>Inicio</th>
+								<th>Final</th>
+								<th>Eliminar</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				<button type="button" class="btn btn-primary aniadir-festivos-local" {{disponible}}>Añadir festivo locales</button>
+				<button type="button" class="btn btn-primary guardar-festivos-local" {{disponible}}>Guardar festivos locales</button>
+				</form>
+			</div>
+		</div>
+	<button type="submit" class="btn btn-primary" onclick="window.location.href='{{ path('app_menu_administrador') }}'">Volver al menú administrador</button>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="modalFestivoLocal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+		<div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel">Festivos de {{provinciaSeleccionada}}</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+			<ul>
+			{% for festivoLocalSeleccionado in festivosLocalSeleccionado %}
+				<li>{{ festivoLocalSeleccionado }}</li>
+			{% endfor %}
+    		</ul>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+		</div>
+		</div>
+	</div>
+	</div>
+{% endblock %}
