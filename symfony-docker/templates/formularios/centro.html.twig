@@ -12,19 +12,11 @@
 				<h1 class="font-weight-bold">Creación de calendario</h1>
 				<form>
 					<div class="form-group">
-						<label for="nombreDeProvincia">Provincia</label>
-						<select class="form-control" id="nombreDeProvincia">
-							<option selected>-- Selecciona el nombre de la localidad --</option>
-							{% for provincia in provincias %}
-								<option>{{ provincia }}</option>
-							{% endfor %}
-						</select>
-
-						<label for="nombreDelCentro">Nombre del centro</label>
-						<select class="form-control" id="nombreDelCentro">
-							<option selected>-- Selecciona el nombre del centro --</option>
-							{% for nombreCentro in nombreCentros %}
-								<option>{{ nombreCentro }}</option>
+						<label for="nombreDelCentroProvincia">Selecciona el centro: </label>
+						<select class="form-control" id="nombreDelCentroProvincia">
+							<option selected>-- Selecciona el nombre del centro y localidad --</option>
+							{% for nombreCentroProvincia in nombreCentrosProvincias %}
+								<option>{{ nombreCentroProvincia }}</option>
 							{% endfor %}
 						</select>
 

@@ -24,7 +24,7 @@ let contadorFechas = 0;
 const arrayFechaAsignatura = [];
 const mapFechaGrupo = new Map();
 //Si se encuentra en la vista /formulario/calendario carga la función
-if(window.location.href == "/formulario/calendario"){
+if(window.location.pathname == "/formulario/calendario"){
     $(function() {
         //Obtenemos del formulario de calendario las entidades
         const lecciones = JSON.parse(document.getElementById('lecciones').dataset.lecciones);
@@ -704,8 +704,10 @@ $(document).on('click', '.crear-asignatura', function() {
 
 $(document).on('click', '.previsualizar-calendario, .editar-calendario', function() {
     const centro = [];
-    const nombre = $('#nombreDelCentro').val();
-    const provincia = $('#nombreDeProvincia').val();
+    const nombreProvincia = $('#nombreDelCentroProvincia').val();
+    const partesNombreProvincia = nombreProvincia.split('-');
+    const nombre = partesNombreProvincia[0];
+    const provincia = partesNombreProvincia[1];
     const profesor = $('#nombreDelProfesor').val();
     //Guardamos la variable en localStorage
     localStorage.setItem('provincia', provincia);

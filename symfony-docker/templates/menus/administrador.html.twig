@@ -13,20 +13,23 @@
 				<form>
 					<div class="form-group">
                     <ul>
-						<h4>Centro</h4>
+						<h4>Festivo Nacional</h4>
+						<li><a href="{{ path('app_aniadir_festivo_nacional_admin') }}">Añadir festivo nacional</a></li>
+						<li><a href="{{ path('app_aniadir_festivo_nacional_admin') }}">Eliminar festivo nacional</a></li>
+						<br></br>
+
+						<h4>Festivo Local</h4>
+						<li><a href="{{ path('app_crear_localidad_admin') }}">Crear una localidad</a></li>
+						<li><a href="{{ path('app_aniadir_festivo_local_admin') }}">Añadir festivos a una localidad</a></li>
+						<br></br>
+
+						<h4>Festivos de centro</h4>
                         <li><a href="{{ path('app_crear_centro_admin') }}">Crear un centro</a></li>
 						<li><a href="{{ path('app_aniadir_festivo_centro_admin') }}">Añadir festivos a un centro</a></li>
 						<li><a href="{{ path('app_formulario_profesor') }}">Editar un centro</a></li>
 						<li><a href="{{ path('app_formulario_profesor') }}">Lista de centros</a></li>
 						<li><a href="{{ path('app_formulario_profesor') }}">Eliminar un centro</a></li>
-						<br></br>
-						<h4>Festivo Nacional</h4>
-						<li><a href="{{ path('app_aniadir_festivo_nacional_admin') }}">Añadir festivo nacional</a></li>
-						<li><a href="{{ path('app_aniadir_festivo_nacional_admin') }}">Eliminar festivo nacional</a></li>
-						<br></br>
-						<h4>Festivo Local</h4>
-						<li><a href="{{ path('app_crear_localidad_admin') }}">Crear una localidad</a></li>
-						<li><a href="{{ path('app_aniadir_festivo_local_admin') }}">Añadir festivos a una localidad</a></li>
+
 					</ul>
                     </div>
 				</form>
