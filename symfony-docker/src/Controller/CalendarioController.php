@@ -19,20 +19,22 @@ use App\Repository\ClaseRepository;
 use App\Service\ClaseService;
 use App\Repository\UsuarioRepository;
 use App\Service\CalendarioService;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CalendarioController extends AbstractController
 {
-    const ANIO = "2023";
-    const ANIO_SIGUIENTE = "2024";
     const NMESES = 9;
     const NUM_MES_INICIAL = 9;
 
     private $provincia;
     private $centro;
     private $usuario;
+    private $anioAc;
+    private $anioSig;
     private AnioRepository $anioRepository;
     private CalendarioRepository $calendarioRepository;
     private ClaseService $claseService;
@@ -60,10 +62,6 @@ class CalendarioController extends AbstractController
         CalendarioService $calendarioService,
         CentroRepository $centroRepository
     ) {
-        $this->provincia = isset($_GET['provincia']) ? $_GET['provincia'] : null;
-        $this->usuario = $_GET['usuario'];
-        $this->centro = isset($_GET['centro']) ? $_GET['centro'] : null;
-
         $this->anioRepository = $anioRepository;
         $this->calendarioRepository = $calendarioRepository;
         $this->claseService = $claseService;
@@ -81,8 +79,15 @@ class CalendarioController extends AbstractController
     /**
      * @Route("/calendario", name="calendar")
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        //Calcular los años actuales y anterior
+        self::calcularAnios();
+        //Obtenemos los datos del POST
+        $this->centro = $request->get('centro');
+        $this->provincia = $request->get('provincia');
+        $this->usuario = $request->get('usuario');
+
         //Obtenemos el usuario
         $nombreCompleto = explode(" ", $this->usuario);
         //Asignamos el nombre y apellidos
@@ -91,9 +96,9 @@ class CalendarioController extends AbstractController
         $apellidoSeg = $nombreCompleto[2];
 
         $usuario = $this->usuarioRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
-        $centro = $this->centroRepository->findOneByNombre($this->centro);
         $calendario = $this->calendarioRepository->findOneByUsuario($usuario->getId());
-        
+        $centro = $this->centroRepository->findOneByNombre($this->centro);
+
         // Si no se ha creado el calendario
         if (!$calendario) {
             //Creamos el calendario y lo obtenemos
@@ -112,14 +117,27 @@ class CalendarioController extends AbstractController
     }
 
     /**
+     *  Calcula los años actual y anterior en base a los meses actuales.
+     *  Siempre que se cree un calendario, este será para el año actual y el siguiente.
+     */
+    public function calcularAnios()
+    {
+        $fechaHoy = new DateTime();
+        $aniofechaHoy = $fechaHoy->format('Y');
+
+        $this->anioAc = $aniofechaHoy;
+        $this->anioSig = intval($aniofechaHoy) + 1;
+    }
+
+    /**
      * Crea los años anterior y siguiente del calendario en base al año actual.
      */
     public function creacionAnios(Calendario $calendario): array
     {
         $anios = [];
 
-        $anio = new Anio(self::ANIO);
-        $anioSig = new Anio(self::ANIO_SIGUIENTE);
+        $anio = new Anio($this->anioAc);
+        $anioSig = new Anio($this->anioSig);
 
         $anio->setCalendario($calendario);
         $anioSig->setCalendario($calendario);

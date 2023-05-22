@@ -67,7 +67,9 @@ class FestivoLocalService
             //Creamos nuestro festivoIntermedio
             $festivoIntermedio = new FestivoLocal();
             $festivoIntermedio->setNombre($festivoLocal->getNombre());
-            $festivoIntermedio->setAbreviatura($festivoLocal->getAbreviatura());
+            if(!is_null($festivoLocal->getAbreviatura())) {
+                $festivoIntermedio->setAbreviatura($festivoLocal->getAbreviatura());
+            }
             $festivoIntermedio->setFinal($festivoLocal->getFinal());
             $festivoIntermedio->setProvincia($provincia);
             //Añadimos un día al inicio
