@@ -120,13 +120,15 @@ class CalendarioController extends AbstractController
      *  Calcula los años actual y anterior en base a los meses actuales.
      *  Siempre que se cree un calendario, este será para el año actual y el siguiente.
      */
-    public function calcularAnios()
+    public function calcularAnios(): array
     {
         $fechaHoy = new DateTime();
         $aniofechaHoy = $fechaHoy->format('Y');
 
         $this->anioAc = $aniofechaHoy;
         $this->anioSig = intval($aniofechaHoy) + 1;
+
+        return [$this->anioAc, $this->anioSig];
     }
 
     /**

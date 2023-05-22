@@ -15,20 +15,24 @@ class FestivoCentroService
 {
     private SerializerInterface $serializer;
     private FestivoCentroRepository $festivoCentroRepository;
+    private CalendarioController $calendarioController;
 
     public function __construct(
         SerializerInterface $serializer,
         FestivoCentroRepository $festivoCentroRepository,
+        CalendarioController $calendarioController
     )
     {
         $this->serializer = $serializer;
         $this->festivoCentroRepository = $festivoCentroRepository;
+        $this->calendarioController = $calendarioController;
     }
 
     public function getFestivosCentro(Centro $centro): array
     {
-        $anio = substr(CalendarioController::ANIO, 2, 3);
-        $anioSiguiente = substr(CalendarioController::ANIO_SIGUIENTE, 2, 3);
+        [$anioAc, $anioSig] = $this->calendarioController->calcularAnios();
+        $anio = substr($anioAc, 2, 3);
+        $anioSiguiente = substr($anioSig, 2, 3);
         $nombreCentro = $centro->getNombre();
         $provincia = $centro->getProvincia();
 

@@ -15,20 +15,24 @@ class FestivoLocalService
 {
     private SerializerInterface $serializer;
     private FestivoLocalRepository $festivoLocalRepository;
+    private CalendarioController $calendarioController;
 
     public function __construct(
         SerializerInterface $serializer,
         FestivoLocalRepository $festivoLocalRepository,
+        CalendarioController $calendarioController
     )
     {
         $this->serializer = $serializer;
         $this->festivoLocalRepository = $festivoLocalRepository;
+        $this->calendarioController = $calendarioController;
     }
 
     public function getFestivosLocales(Centro $centro): array
     {
-        $anio = substr(CalendarioController::ANIO, 2, 3);
-        $anioSiguiente = substr(CalendarioController::ANIO_SIGUIENTE, 2, 3);
+        [$anioAc, $anioSig] = $this->calendarioController->calcularAnios();
+        $anio = substr($anioAc, 2, 3);
+        $anioSiguiente = substr($anioSig, 2, 3);
         $provincia = $centro->getProvincia();
 
         $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosLocales.json');

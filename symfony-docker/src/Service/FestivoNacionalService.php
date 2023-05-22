@@ -14,17 +14,25 @@ class FestivoNacionalService
 {
     private SerializerInterface $serializer;
     private FestivoNacionalRepository $festivoNacionalRepository;
+    private CalendarioController $calendarioController;
 
-    public function __construct(SerializerInterface $serializer, FestivoNacionalRepository $festivoNacionalRepository)
+    public function __construct(
+        SerializerInterface $serializer,
+        FestivoNacionalRepository $festivoNacionalRepository,
+        CalendarioController $calendarioController
+    )
     {
         $this->serializer = $serializer;
         $this->festivoNacionalRepository = $festivoNacionalRepository;
+        $this->calendarioController = $calendarioController;
     }
 
     public function getFestivosNacionales(): array
     {
-        $anio = substr(CalendarioController::ANIO, 2, 3);
-        $anioSiguiente = substr(CalendarioController::ANIO_SIGUIENTE, 2, 3);
+        [$anioAc, $anioSig] = $this->calendarioController->calcularAnios();
+
+        $anio = substr($anioAc, 2, 3);
+        $anioSiguiente = substr($anioSig, 2, 3);
 
         $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosNacionales.json');
         $festivosArray = json_decode($festivosJson, true);
