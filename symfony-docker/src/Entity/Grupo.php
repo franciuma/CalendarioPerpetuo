@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\GrupoRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -29,6 +31,14 @@ class Grupo
 
     #[ORM\Column(type: Types::JSON)]
     private array $dias_practica = [];
+
+    #[ORM\OneToMany(mappedBy: 'grupo', targetEntity: Clase::class)]
+    private Collection $clases;
+
+    public function __construct()
+    {
+        $this->clases = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -91,6 +101,36 @@ class Grupo
     public function setDiasPractica(array $dias_practica): self
     {
         $this->dias_practica = $dias_practica;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Clase>
+     */
+    public function getClases(): Collection
+    {
+        return $this->clases;
+    }
+
+    public function addClase(Clase $clase): self
+    {
+        if (!$this->clases->contains($clase)) {
+            $this->clases->add($clase);
+            $clase->setGrupo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClase(Clase $clase): self
+    {
+        if ($this->clases->removeElement($clase)) {
+            // set the owning side to null (unless already changed)
+            if ($clase->getGrupo() === $this) {
+                $clase->setGrupo(null);
+            }
+        }
 
         return $this;
     }

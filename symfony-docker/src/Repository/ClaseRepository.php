@@ -39,22 +39,21 @@ class ClaseRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Clase[] Returns an array of Clase objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return Clase[] Returns an array of Clase objects
+     */
+    public function findByCalendario($calendarioId): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.calendario = :val')
+            ->setParameter('val', $calendarioId)
+            ->orderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
-    public function findOneFecha($fecha,$calendarioId): ?Clase //DEPENDIENDO, SE LE PASARA CALENDARIO, O CENTRO Y PROVINCIA
+    public function findOneFecha($fecha,$calendarioId): ?Clase
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.fecha = :val')
@@ -82,6 +81,35 @@ class ClaseRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('c')
             ->andWhere('c.calendario = :val')
             ->setParameter('val', $calendarioId)
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult()
+        ;
+    }
+
+    public function findOneFechaAsignatura($fecha, $nombreAsignatura): ?Clase
+    {
+        return $this->createQueryBuilder('c')
+            ->join('App\Entity\Asignatura','asig','WITH','c.asignatura = asig.id')
+            ->andWhere('c.fecha = :val')
+            ->andWhere('asig.nombre = :valo')
+            ->setParameter('val', $fecha)
+            ->setParameter('valo', $nombreAsignatura)
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult()
+        ;
+    }
+
+    public function findClaseByFechaNombreGrupo($fecha, $nombre, $grupoId): ?Clase
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.fecha = :fecha')
+            ->andWhere('c.nombre = :nombre')
+            ->andWhere('c.grupo = :grupo')
+            ->setParameter('fecha', $fecha)
+            ->setParameter('nombre', $nombre)
+            ->setParameter('grupo', $grupoId)
             ->getQuery()
             ->setMaxResults(1)
             ->getOneOrNullResult()

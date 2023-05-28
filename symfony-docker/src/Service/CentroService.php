@@ -30,9 +30,13 @@ class CentroService
 
         $centro = $this->serializer->denormalize($centroArray['centro'][0], 'App\Entity\Centro');
 
-        if(!$this->centroRepository->findByProvinciaCentro($centro->getNombre(), $centro->getProvincia())){
+        // Si el centro no está en la bd
+        if(is_null($this->centroRepository->findOneByProvinciaCentro($centro->getProvincia(), $centro->getNombre()))){
             $this->centroRepository->save($centro,true);
+        } else {
+            $centro = $this->centroRepository->findOneByProvinciaCentro($centro->getProvincia(), $centro->getNombre());
         }
+
         return $centro;
     }
 }

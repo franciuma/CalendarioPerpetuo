@@ -38,6 +38,9 @@ class Clase implements EventoInterface
     #[ORM\JoinColumn(nullable: false)]
     private ?Asignatura $asignatura = null;
 
+    #[ORM\ManyToOne(inversedBy: 'clases')]
+    private ?Grupo $grupo = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -128,6 +131,18 @@ class Clase implements EventoInterface
     public function setAsignatura(?Asignatura $asignatura): self
     {
         $this->asignatura = $asignatura;
+
+        return $this;
+    }
+
+    public function getGrupo(): ?Grupo
+    {
+        return $this->grupo;
+    }
+
+    public function setGrupo(?Grupo $grupo): self
+    {
+        $this->grupo = $grupo;
 
         return $this;
     }

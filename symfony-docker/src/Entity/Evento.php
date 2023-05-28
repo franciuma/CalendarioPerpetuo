@@ -18,7 +18,7 @@ class Evento
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'evento', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'evento', cascade: ['persist'])]
     private ?Dia $dia = null;
 
     #[ORM\ManyToOne]
@@ -27,7 +27,7 @@ class Evento
     #[ORM\ManyToOne]
     private ?FestivoLocal $festivoLocal = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(cascade: ['remove'])]
     private ?Clase $clase = null;
 
     #[ORM\ManyToOne]

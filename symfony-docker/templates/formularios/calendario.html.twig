@@ -21,7 +21,8 @@
 								<th>Asignatura</th>
 								<th>Grupo</th>
 								<th>Modalidad</th>
-								<th>Permutacion</th>
+								<th>Horario</th>
+								<th>Permutación</th>
 								<th>Eliminar</th>
 							</tr>
 						</thead>
@@ -32,9 +33,9 @@
 			</div>
 		</div>
 	</div>
-
 	<div id="grupos" data-grupos="{{ grupos }}" style="display: none;"></div>
-	<div id="asignaturas" data-asignaturas="{{ asignaturas|json_encode|url_encode }}" style="display: none;"></div>
+	<div id="asignaturas" data-asignaturas="{{ asignaturas }}" style="display: none;"></div>
+	<div id="clases" data-clases="{{ clases }}" style="display: none;"></div>
 	<div id="lecciones" data-lecciones="{{ lecciones }}" style="display: none;"></div>
 	<div id="festivosLocales" data-festivoslocales="{{ festivosLocales }}" style="display: none;"></div>
 	<div id="festivosNacionales" data-festivosnacionales="{{ festivosNacionales }}" style="display: none;"></div>

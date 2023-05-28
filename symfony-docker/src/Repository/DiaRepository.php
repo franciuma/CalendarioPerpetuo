@@ -35,6 +35,10 @@ class DiaRepository extends ServiceEntityRepository
         }
     }
 
+    public function flush(){
+        $this->getEntityManager()->flush();
+    }
+
     public function remove(Dia $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
@@ -59,13 +63,17 @@ class DiaRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Dia
-//    {
-//        return $this->createQueryBuilder('d')
-//            ->andWhere('d.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findOneByFecha($fecha, $calendarioId): ?Dia
+    {
+        return $this->createQueryBuilder('d')
+            ->join('App\Entity\Mes','mes','WITH','mes.id = d.mes')
+            ->join('App\Entity\Anio','an','WITH','mes.anio = an.id')
+            ->andWhere('d.fecha = :fecha')
+            ->andWhere('an.calendario = :calendarioId')
+            ->setParameter('fecha', $fecha)
+            ->setParameter('calendarioId', $calendarioId)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }

@@ -14,21 +14,18 @@ use Symfony\Component\Routing\Annotation\Route;
 class PostCentroController extends AbstractController
 {
     private CentroService $centroService;
-    private CalendarioService $calendarioService;
     private FestivoNacionalService $festivoNacionalService;
     private FestivoLocalService $festivoLocalService;
     private FestivoCentroService $festivoCentroService;
 
     public function __construct(
         CentroService $centroService,
-        CalendarioService $calendarioService,
         FestivoNacionalService $festivoNacionalService,
         FestivoLocalService $festivoLocalService,
         FestivoCentroService $festivoCentroService
     )
     {
         $this->centroService = $centroService;
-        $this->calendarioService = $calendarioService;
         $this->festivoNacionalService = $festivoNacionalService;
         $this->festivoLocalService = $festivoLocalService;
         $this->festivoCentroService = $festivoCentroService;

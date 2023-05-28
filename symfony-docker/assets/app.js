@@ -25,13 +25,13 @@ const arrayFechaAsignatura = [];
 const mapFechaGrupo = new Map();
 //Si se encuentra en la vista /formulario/calendario carga la función
 if(window.location.pathname == "/formulario/calendario"){
+    const paginaAnterior = document.referrer;
     $(function() {
         //Obtenemos del formulario de calendario las entidades
         const lecciones = JSON.parse(document.getElementById('lecciones').dataset.lecciones);
         const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
         //Devuelve un array con todos los festivos
         const arrayFestivos = calcularFestivos();
-
         //Fechas del primer cuatrimestre
         const inicioPrimerCuatri = calcularFechaCalendario("primer cuatrimestre");
         const fechaFinPrimerCuatri = calcularFechaCalendario("exámenes finales primer cuatrimestre"); 
@@ -40,20 +40,59 @@ if(window.location.pathname == "/formulario/calendario"){
         const inicioSegundoCuatri = calcularFechaCalendario("segundo cuatrimestre");
         const fechaFinSegundoCuatri = calcularFechaCalendario("exámenes finales segundo cuatrimestre");
 
-        //Recorrer los grupo
-        grupos.forEach(function(grupo) {
-            if(grupo.cuatrimestre == "Primero"){
-                completaCuatrimestre(inicioPrimerCuatri, fechaFinPrimerCuatri, grupo);
-            } else {
-                completaCuatrimestre(inicioSegundoCuatri, fechaFinSegundoCuatri, grupo);
-            }
-        });
+        // Si se está editando el calendario
+        if (paginaAnterior.includes("/editar/calendario")) {
+            //Obtenemos las clases
+            const clases = JSON.parse(document.getElementById('clases').dataset.clases);
+            clases.forEach(function(clase) {
+                const fecha = clase.fecha;
+                const asignaturaId = clase.asignaturaId;
+                const grupoLetra = clase.letraGrupo;
+                const horario = clase.horario;
+                const asignaturaNombre = clase.asignaturaNombre;
+                const nombre = clase.nombre;
+                const modalidad = clase.modalidad
+                const claveMap = fecha+asignaturaId+grupoLetra+horario;
+                let esPractica = true;
+                if(modalidad == "Teoria") {
+                    esPractica = false;
+                }
+
+                //Colocar las clases
+                arrayFechaAsignatura.push({fecha: crearFecha(fecha), asignaturaId: asignaturaId, grupoLetra: grupoLetra, horario: horario});
+                //Buscamos su grupo y lo metemos en el map
+                grupos.forEach(function(grupo) {
+                    if(grupo.asignatura == asignaturaNombre && grupo.letra == grupoLetra && grupo.horario == horario){
+                        //Lo metemos en el map
+                        mapFechaGrupo.set(claveMap, {
+                            ...grupo,
+                            esPractica,
+                            tituloSesion: nombre
+                        });
+                        //Le asignamos la variable grupo
+                        grupo = mapFechaGrupo.get(claveMap);
+                    }
+                });
+            });
+        } else {
+            //Si se está creando el calendario
+            //Recorrer los grupos
+            grupos.forEach(function(grupo) {
+                if(grupo.cuatrimestre == "Primero"){
+                    completaCuatrimestre(inicioPrimerCuatri, fechaFinPrimerCuatri, grupo);
+                } else {
+                    completaCuatrimestre(inicioSegundoCuatri, fechaFinSegundoCuatri, grupo);
+                }
+            });
+        }
 
         function completaCuatrimestre(fechaInicio, fechaFin, grupo) {
             let diasTeoria = grupo.diasTeoria;
             let diasPractica = grupo.diasPractica;
             let fechaActual = new Date(fechaInicio);
             let grupoAsignaturaId = grupo.asignaturaId;
+            let grupoLetra = grupo.letra;
+            let horario = grupo.horario;
             //Filtramos lecciones por asignaturaId
             const leccionesFiltradas = lecciones.filter(function(leccion) {
                 return leccion.asignaturaId === grupoAsignaturaId;
@@ -89,11 +128,11 @@ if(window.location.pathname == "/formulario/calendario"){
                     && !esFestivo(fechaActual, arrayFestivos)
                     ) {
                     //Se incluye la fecha actual en formato Date para el setDates de datepicker
-                    arrayFechaAsignatura.push({fecha: new Date(fechaActual), asignaturaId: grupoAsignaturaId});
+                    arrayFechaAsignatura.push({fecha: new Date(fechaActual), asignaturaId: grupoAsignaturaId, grupoLetra: grupoLetra, horario: horario});
                     //Formateamos la fecha para incluirla en el map
                     let fechaFormateada = formatearFecha(new Date(fechaActual));
                     // Incluimos en el map la entidad grupo y un valor esPractica: false
-                    mapFechaGrupo.set(fechaFormateada+grupoAsignaturaId, {
+                    mapFechaGrupo.set(fechaFormateada+grupoAsignaturaId+grupoLetra+horario, {
                         ...grupo,
                         esPractica: false,
                         tituloSesion: leccionesFiltradasTeoria[contLeccTeoria].titulo
@@ -106,11 +145,11 @@ if(window.location.pathname == "/formulario/calendario"){
                     && !esFestivo(fechaActual, arrayFestivos)
                     ) {
                     //Se incluye la fecha actual en formato Date para el setDates de datepicker
-                    arrayFechaAsignatura.push({fecha: new Date(fechaActual), asignaturaId: grupoAsignaturaId});
+                    arrayFechaAsignatura.push({fecha: new Date(fechaActual), asignaturaId: grupoAsignaturaId, grupoLetra: grupoLetra, horario: horario});
                     //Formateamos la fecha para incluirla en el map
                     let fechaFormateada = formatearFecha(new Date(fechaActual));
                     // Incluimos en el map la entidad grupo y un valor esPractica: true
-                    mapFechaGrupo.set(fechaFormateada+grupoAsignaturaId, {
+                    mapFechaGrupo.set(fechaFormateada+grupoAsignaturaId+grupoLetra+horario, {
                         ...grupo,
                         esPractica: true,
                         tituloSesion: leccionesFiltradasPractica[contLeccPractica].titulo
@@ -148,9 +187,11 @@ if(window.location.pathname == "/formulario/calendario"){
             const fechaAsignatura = arrayFechaAsignatura[indice];
             const fecha = fechaAsignatura.fecha;
             const asignaturaId = fechaAsignatura.asignaturaId;
-            const fechaStringFormato = formatearFecha(fecha); 
+            const grupoLetra = fechaAsignatura.grupoLetra;
+            const horario = fechaAsignatura.horario;
+            const fechaStringFormato = formatearFecha(fecha);
             contadorFechas++;
-            const fila = crearFilaCalendario(fechaStringFormato, asignaturaId);
+            const fila = crearFilaCalendario(fechaStringFormato, asignaturaId, grupoLetra, horario);
             $('#fechasTable tbody').append(fila);
         });
 
@@ -259,8 +300,8 @@ function formatearFecha(fecha) {
     return fechasPartes.join('-');
 }
 
-function crearFilaCalendario(fechaStringFormato, asignaturaId) {
-    const clave = fechaStringFormato+asignaturaId;
+function crearFilaCalendario(fechaStringFormato, asignaturaId, grupoLetra, horario) {
+    const clave = fechaStringFormato+asignaturaId+grupoLetra+horario;
     const asignaturas = obtenerAsignaturasSelect();
     const grupos = obtenerGrupoSelect();
     let esPractica = "";
@@ -295,8 +336,16 @@ function crearFilaCalendario(fechaStringFormato, asignaturaId) {
             </td>
             <td>
                 <select ${inactivo} class="form-control modalidad" name="modalidad" id="modalidad${fechaStringFormato}">
-                    <option>Teorica</option>
-                    <option ${esPractica ? "selected" : "Teoria"}>Practica</option>
+                    <option ${esPractica ? '' : 'selected'}></option>
+                    <option ${esPractica === true ? 'selected' : ''}>Practica</option>
+                    <option ${esPractica === false ? 'selected' : ''}>Teoria</option>
+                </select>
+            </td>
+            <td>
+                <select ${inactivo} class="form-control horario" name="horarioCalendario" id="horario${fechaStringFormato}">
+                    <option ${horario ? '' : 'selected'}></option>
+                    <option ${horario === 'Mañana' ? 'selected' : ''}>Mañana</option>
+                    <option ${horario === 'Tarde' ? 'selected' : ''}>Tarde</option>
                 </select>
             </td>
             <td><button data-asignatura-id="${asignaturaId}" class="btn btn-primary permutar-fecha">Permutar</button></td>
@@ -324,7 +373,9 @@ $(document).on('click', '.permutar-fecha', function(event) {
     const filaInicial = $(this).closest('tr');
     const asignaturaIdInicial = $(this).data('asignatura-id');
     const fechaInicial = filaInicial.find('input[name="fecha"]').val();
-    const claveInicial = fechaInicial+asignaturaIdInicial;
+    const grupoLetraInicial = filaInicial.find('select[name="grupoCalendario"]').val();
+    const horarioInicial = filaInicial.find('select[name="horarioCalendario"]').val();
+    const claveInicial = fechaInicial+asignaturaIdInicial+grupoLetraInicial+horarioInicial;
     let valorInicialMap;
     //Buscamos el mapa inicial asociado
     if (mapFechaGrupo.has(claveInicial)) {
@@ -342,7 +393,9 @@ $(document).on('click', '.permutar-fecha', function(event) {
         const filaDestino = $(this).closest('tr');
         const asignaturaIdDestino = $(this).data('asignatura-id');
         const fechaDestino = filaDestino.find('input[name="fecha"]').val();
-        const claveDestino = fechaDestino+asignaturaIdDestino;
+        const grupoLetraDestino = filaDestino.find('select[name="grupoCalendario"]').val();
+        const horarioDestino = filaDestino.find('select[name="horarioCalendario"]').val();
+        const claveDestino = fechaDestino+asignaturaIdDestino+grupoLetraDestino+horarioDestino;
         let valorDestinoMap;
         //Buscamos el mapa asociado
         if (mapFechaGrupo.has(claveDestino)) {
@@ -353,8 +406,8 @@ $(document).on('click', '.permutar-fecha', function(event) {
         mapFechaGrupo.set(claveDestino,valorInicialMap);
         mapFechaGrupo.set(claveInicial,valorDestinoMap);
         //Creamos las filas con los datos cambiados
-        const fechaNuevaInicial = crearFilaCalendario(fechaInicial, asignaturaIdInicial);
-        const fechaNuevaFinal = crearFilaCalendario(fechaDestino, asignaturaIdDestino);
+        const fechaNuevaInicial = crearFilaCalendario(fechaInicial, asignaturaIdInicial, grupoLetraInicial, horarioInicial);
+        const fechaNuevaFinal = crearFilaCalendario(fechaDestino, asignaturaIdDestino, grupoLetraDestino, horarioDestino);
         //Añadimos a la tabla las nuevas filas
         $('#fechasTable tbody').append(fechaNuevaInicial);
         $('#fechasTable tbody').append(fechaNuevaFinal);
@@ -417,8 +470,8 @@ function crearFecha(fechaStringFormato) {
 
 //Creamos el POST del formulario
 $(document).on('click', '.crear-calendario', function() {
-    const nombre = $('#nombreDelCentro').val();
-
+    // Obtener grupos
+    const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
     // Obtener los valores de las filas de la tabla
     const clases = [];
     $('#fechasTable tbody tr').each(function() {
@@ -426,7 +479,29 @@ $(document).on('click', '.crear-calendario', function() {
         const nombre = $(this).find('.nombre').val();
         const modalidad = $(this).find('.modalidad').val();
         const asignaturaNombre = $(this).find('.asignaturaCalendario').val();
-        clases.push({ fecha, nombre, modalidad, asignaturaNombre });
+        const grupoLetra = $(this).find('.grupoCalendario').val();
+        const horario = $(this).find('.horario').val();
+        const asignaturaId = obtenerAsignaturaId(asignaturaNombre);
+        const claveMap = fecha+asignaturaId+grupoLetra+horario;
+        let grupo;
+        //Obtenemos el grupo de cada fila
+        if(mapFechaGrupo.has(claveMap)){
+            grupo = mapFechaGrupo.get(claveMap);
+        } else {
+            //Se ha metido nuevo, por lo que hay que buscar su grupo y meterlo en el map
+            grupos.forEach(function(grupoFor) {
+                if(grupoFor.asignatura == asignaturaNombre && grupoFor.letra == grupoLetra && grupoFor.horario == horario){
+                    //Lo metemos en el map
+                    mapFechaGrupo.set(claveMap, {
+                        ...grupoFor,
+                    });
+                    //Le asignamos la variable grupo
+                    grupo = mapFechaGrupo.get(claveMap);
+                }
+            });
+        }
+
+        clases.push({ fecha, nombre, modalidad, asignaturaNombre, grupo });
     });
 
     // Convertir el objeto a JSON
@@ -446,7 +521,7 @@ $(document).on('click', '.crear-calendario', function() {
 $(document).on('click', '.ver-calendario', function() {
     const nombreProfesor = $('#nombreleerProfesor').val();
     // Enviar el objeto JSON a través de una petición AJAX
-    window.location.replace('/calendario?usuario=' + nombreProfesor);
+    window.location.replace('/ver/calendario?usuario=' + nombreProfesor);
 });
 
 //Formulario profesor
@@ -510,16 +585,27 @@ function crearFilaGrupo() {
     `);
 }
 
-function obtenerAsignaturasSelect(){
+function obtenerAsignaturasSelect() {
     //Obtenemos las asignaturas del template de formulario/profesor
     const asignaturas = JSON.parse(decodeURIComponent(document.getElementById('asignaturas').dataset.asignaturas));
     let options = "";
     //Los recorremos y agregamos las opciones
-    for (var i = 0; i < asignaturas.length; i++) {
+    for (let i = 0; i < asignaturas.length; i++) {
         options += `<option>${asignaturas[i]}</option>`;
     }
 
     return options;
+}
+
+function obtenerAsignaturaId(asignaturaNombre) {
+    //Cogemos las asignaturas de formulario/calendario
+    const asignaturas = JSON.parse(document.getElementById('asignaturas').dataset.asignaturas);
+    //Buscamos el nombre de asignatura y devolvemos su id
+    for (let i = 0; i < asignaturas.length; i++) {
+        if (asignaturas[i].asignatura == asignaturaNombre) {
+            return asignaturas[i].id;
+        }
+    }
 }
 
 //Creamos el POST del formulario
@@ -701,14 +787,13 @@ $(document).on('click', '.crear-asignatura', function() {
 });
 
 //Formulario centro
-
-$(document).on('click', '.previsualizar-calendario, .editar-calendario', function() {
+$(document).on('click', '.previsualizar-calendario', function() {
     const centro = [];
-    const nombreProvincia = $('#nombreDelCentroProvincia').val();
-    const partesNombreProvincia = nombreProvincia.split('-');
+    const profesor = $('#nombreDelProfesor').val();
+    const nombreCentroProvincia = $('#nombreDelCentroProvincia').val();
+    const partesNombreProvincia = nombreCentroProvincia.split('-');
     const nombre = partesNombreProvincia[0];
     const provincia = partesNombreProvincia[1];
-    const profesor = $('#nombreDelProfesor').val();
     //Guardamos la variable en localStorage
     localStorage.setItem('provincia', provincia);
     localStorage.setItem('centro',nombre);
@@ -718,14 +803,41 @@ $(document).on('click', '.previsualizar-calendario, .editar-calendario', functio
 
     const centroJSON = JSON.stringify({centro});
 
-    if(provincia && nombre){
-        //Poner en un futuro que el centro se cree con el admin y no en el post de centro
-        enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, '/post/centro');
-    } else {
-        //Si no existen provincia y nombre es que están editando un calendario.
-        enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, '/formulario/calendario');
-    }
+    enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, '/post/centro');
 });
+
+//Formulario editar calendario
+$(document).on('click', '.editar-calendario', function() {
+    const profesor = $('#nombreDelProfesor').val();
+    //Mandamos por AJAX a un controlador que nos devuelva el centro y provincia de un profesor en caso de editar un calendario
+    $.ajax({
+        url: '/obtener/info/profesor',
+        method: 'GET',
+        data: { profesor: profesor },
+        success: function(response) {
+            const nombreCentroProvincia = response;
+            editarCalendario(nombreCentroProvincia, profesor);
+            // Maneja la respuesta del servidor aquí
+            console.log(response);
+        },
+        error: function() {
+            // Maneja el error si la llamada AJAX falla
+        }
+    });
+});
+
+function editarCalendario(nombreCentroProvincia, profesor)
+{
+    const centro = [];
+    const partesNombreProvincia = nombreCentroProvincia.split('-');
+    const nombre = partesNombreProvincia[0];
+    const provincia = partesNombreProvincia[1];
+    const editar = true;
+    centro.push({nombre, provincia, profesor, editar});
+    const centroJSON = JSON.stringify({centro});
+    enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, '/formulario/calendario');
+}
+
 
 //Formulario festivos de centro admin
 // Datepicker de festivosCentro

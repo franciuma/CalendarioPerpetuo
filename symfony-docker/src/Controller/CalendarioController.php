@@ -18,6 +18,7 @@ use App\Repository\FestivoCentroRepository;
 use App\Repository\ClaseRepository;
 use App\Service\ClaseService;
 use App\Repository\UsuarioRepository;
+use App\Repository\EventoRepository;
 use App\Service\CalendarioService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,6 +36,7 @@ class CalendarioController extends AbstractController
     private $usuario;
     private $anioAc;
     private $anioSig;
+    private EventoRepository $eventoRepository;
     private AnioRepository $anioRepository;
     private CalendarioRepository $calendarioRepository;
     private ClaseService $claseService;
@@ -60,7 +62,8 @@ class CalendarioController extends AbstractController
         UsuarioRepository $usuarioRepository,
         FestivoCentroRepository $festivoCentroRepository,
         CalendarioService $calendarioService,
-        CentroRepository $centroRepository
+        CentroRepository $centroRepository,
+        EventoRepository $eventoRepository
     ) {
         $this->anioRepository = $anioRepository;
         $this->calendarioRepository = $calendarioRepository;
@@ -74,11 +77,14 @@ class CalendarioController extends AbstractController
         $this->festivoCentroRepository = $festivoCentroRepository;
         $this->calendarioService = $calendarioService;
         $this->centroRepository = $centroRepository;
+        $this->eventoRepository = $eventoRepository;
     }
 
     /**
      * @Route("/calendario", name="calendar")
      */
+    #[Route('/calendario', name: 'app_calendario')]
+    #[Route('/ver/calendario', name: 'app_ver_calendario')]
     public function index(Request $request): Response
     {
         //Calcular los años actuales y anterior
@@ -98,16 +104,21 @@ class CalendarioController extends AbstractController
         $usuario = $this->usuarioRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
         $calendario = $this->calendarioRepository->findOneByUsuario($usuario->getId());
         $centro = $this->centroRepository->findOneByNombre($this->centro);
-
-        // Si no se ha creado el calendario
-        if (!$calendario) {
-            //Creamos el calendario y lo obtenemos
-            $calendario = $this->calendarioService->getCalendario($this->usuario, $centro);
-            $this->claseService->getClases($calendario);
-            //Crea los años del calendario
-            $anios = self::creacionAnios($calendario);
-            //Crea todo el calendario
-            self::creacionCalendario($anios, $calendario);
+        //Si no se está leyendo un calendario
+        if (!($request->getPathInfo() == '/ver/calendario')) {
+            // Si no se ha creado el calendario
+            if (!$calendario) {
+                //Creamos el calendario y lo obtenemos
+                $calendario = $this->calendarioService->getCalendario($this->usuario, $centro);
+                $this->claseService->getClases($calendario, true);
+                //Crea los años del calendario
+                $anios = self::creacionAnios($calendario);
+                //Crea todo el calendario
+                self::creacionCalendario($anios, $calendario);
+            } else {
+                //Editamos el calendario existente        
+                self::editarClasesCalendario($calendario);
+            }
         }
 
         return $this->render('calendario/index.html.twig', [
@@ -245,6 +256,65 @@ class CalendarioController extends AbstractController
             $dia->setEvento($evento);
         } else if ($nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
             $dia->setEsNoLectivo(true);
+        }
+    }
+
+    public function editarClasesCalendario($calendario)
+    {
+        //Obtenemos las clases actuales
+        $clasesActuales = $this->claseRepository->findByCalendario($calendario->getId());
+
+        //Obtenemos las clases editadas (vienen en el JSON)
+        $clasesEditadas = $this->claseService->getClases($calendario, false);
+
+        //Vemos que clases actuales no están en las clases editadas, para así borrarlas
+        $claseActualEncontrada = false;
+        foreach ($clasesActuales as $claseActual) {
+            $claseActualEncontrada = false;
+            foreach ($clasesEditadas as $claseEditada) {
+                if ($claseActual->getFecha() === $claseEditada->getFecha()
+                    && $claseActual->getNombre() === $claseEditada->getNombre()
+                    && $claseActual->getGrupo()->getId() === $claseEditada->getGrupo()->getId()
+                ) {
+                    $claseActualEncontrada = true;
+                    break;
+                }
+            }
+
+            if (!$claseActualEncontrada) {
+                //Buscamos el día al que pertenece y ponemos que no hay clase
+                $dia = $this->diaRepository->findOneByFecha($claseActual->getFecha(), $calendario->getId());
+                //Buscamos el evento y lo borramos, en cascada se borrará la clase asociada
+                $evento = $dia->getEvento();
+                //Configuramos dia
+                $dia->setHayClase(false);
+                $dia->setEvento(null);
+                //Eliminamos el evento
+                $this->eventoRepository->remove($evento, true);
+                //Guardamos la información del día
+                $this->diaRepository->save($dia, true);
+            }
+        }
+
+        //Ahora vemos que clases editadas no están en la base de datos
+        foreach ($clasesEditadas as $claseEditada) {
+            //Buscamos la clase actual en las clases editadas
+            $nuevaClase = $this->claseRepository->findClaseByFechaNombreGrupo(
+                $claseEditada->getFecha(),
+                $claseEditada->getNombre(),
+                $claseEditada->getGrupo()->getId()
+            );
+            //Si la clase no está se persiste, incluido su evento
+            if(is_null($nuevaClase)) {
+                //Buscamos el día al que pertenece y añadimos el evento
+                $evento = new Evento($claseEditada);
+                $dia = $this->diaRepository->findOneByFecha($claseEditada->getFecha(), $calendario->getId());
+                $dia->setHayClase(true);
+                $dia->setEvento($evento);
+                //Persistimos el dia y la clase
+                $this->diaRepository->save($dia);
+                $this->claseRepository->save($claseEditada, true);
+            }
         }
     }
 }
