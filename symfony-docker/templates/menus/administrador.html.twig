@@ -1,39 +1,51 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Menú principal administrador
+{% block title %}
+    Menú principal administrador
 {% endblock %}
 
 {% block body %}
-	{{ parent() }}
-	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-6">
-				<h1 class="font-weight-bold">Menú principal administrador</h1>
-				<form>
-					<div class="form-group">
-                    <ul>
-						<h4>Festivo Nacional</h4>
-						<li><a href="{{ path('app_aniadir_festivo_nacional_admin') }}">Añadir festivo nacional</a></li>
-						<li><a href="{{ path('app_aniadir_festivo_nacional_admin') }}">Eliminar festivo nacional</a></li>
-						<br></br>
+    {{ parent() }}
 
-						<h4>Festivo Local</h4>
-						<li><a href="{{ path('app_crear_localidad_admin') }}">Crear una localidad</a></li>
-						<li><a href="{{ path('app_aniadir_festivo_local_admin') }}">Añadir festivos a una localidad</a></li>
-						<br></br>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="font-weight-bold">Menú principal administrador</h1>
+                <ul class="menu-list d-flex justify-content-between">
+                    <li class="flex-fill">
+                        <h4 class="menu-title">Festivo Nacional</h4>
+                        <ul>
+                            <li><a href="{{ path('app_aniadir_festivo_nacional_admin') }}">Añadir festivo nacional</a></li>
+                            <li><a href="{{ path('app_aniadir_festivo_nacional_admin') }}">Eliminar festivo nacional</a></li>
+                        </ul>
+                    </li>
+                    <li class="flex-fill">
+                        <h4 class="menu-title">Festivo Local</h4>
+                        <ul>
+                            <li><a href="{{ path('app_crear_localidad_admin') }}">Crear una localidad</a></li>
+                            <li><a href="{{ path('app_aniadir_festivo_local_admin') }}">Añadir festivos a una localidad</a></li>
+                        </ul>
+                    </li>
+                    <li class="flex-fill">
+                        <h4 class="menu-title">Festivos de centro</h4>
+                        <ul>
+                            <li><a href="{{ path('app_crear_centro_admin') }}">Crear un centro</a></li>
+                            <li><a href="{{ path('app_formulario_profesor') }}">Editar un centro</a></li>
+                            <li><a href="{{ path('app_formulario_profesor') }}">Lista de centros</a></li>
+                            <li><a href="{{ path('app_formulario_profesor') }}">Eliminar un centro</a></li>
+                            <li><a href="{{ path('app_aniadir_festivo_centro_admin') }}">Añadir festivos a un centro</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
-						<h4>Festivos de centro</h4>
-                        <li><a href="{{ path('app_crear_centro_admin') }}">Crear un centro</a></li>
-						<li><a href="{{ path('app_aniadir_festivo_centro_admin') }}">Añadir festivos a un centro</a></li>
-						<li><a href="{{ path('app_formulario_profesor') }}">Editar un centro</a></li>
-						<li><a href="{{ path('app_formulario_profesor') }}">Lista de centros</a></li>
-						<li><a href="{{ path('app_formulario_profesor') }}">Eliminar un centro</a></li>
-
-					</ul>
-                    </div>
-				</form>
-			</div>
-		</div>
-	</div>
+    <footer class="footer mt-auto py-3">
+        <div class="container">
+            <div class="text-left">
+                <a href="{{ path('app_menu_principal') }}" class="btn btn-primary">Volver al menú principal</a>
+            </div>
+        </div>
+    </footer>
 {% endblock %}
