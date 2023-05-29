@@ -591,7 +591,12 @@ function obtenerAsignaturasSelect() {
     let options = "";
     //Los recorremos y agregamos las opciones
     for (let i = 0; i < asignaturas.length; i++) {
-        options += `<option>${asignaturas[i]}</option>`;
+        if(window.location.pathname == "/formulario/calendario") {
+            options += `<option>${asignaturas[i].asignatura}</option>`;
+        } else {
+            options += `<option>${asignaturas[i]}</option>`;
+        }
+        
     }
 
     return options;
