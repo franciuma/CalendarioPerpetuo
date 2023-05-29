@@ -69,7 +69,9 @@ class FestivoNacionalService
             //Creamos nuestro festivoIntermedio
             $festivoIntermedio = new FestivoNacional();
             $festivoIntermedio->setNombre($festivoNacional->getNombre());
-            $festivoIntermedio->setAbreviatura($festivoNacional->getAbreviatura());
+            if(!is_null($festivoNacional->getAbreviatura())) {
+                $festivoIntermedio->setAbreviatura($festivoNacional->getAbreviatura());
+            }
             $festivoIntermedio->setFinal($festivoNacional->getFinal());
             //Añadimos un día al inicio
             $inicio->add(new \DateInterval('P1D')); 

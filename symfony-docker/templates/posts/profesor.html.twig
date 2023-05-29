@@ -3,12 +3,16 @@
 {% block title %}Hello PostProfesorController!{% endblock %}
 
 {% block body %}
-<div>
-    <h1>¡Docente agregado con exito! ✅</h1>
-    <ul>
-        <li><a href="{{ path('app_formulario_profesor') }}">Crear más docentes</a></li>
-        <li><a href="{{ path('app_formulario_centro') }}">Crear un calendario</a></li>
-        <li><a href="{{ path('app_menu_profesor') }}">Volver al menú</a></li>
-    </ul>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h1 class="font-weight-bold">¡Docente agregado con exito! ✅</h1>
+            <ul class="menu-list">
+                <li><a href="{{ path('app_formulario_profesor') }}">Crear más docentes</a></li>
+                <li><a href="{{ path('app_formulario_centro') }}">Crear un calendario</a></li>
+                <li><a href="{{ path('app_menu_profesor') }}">Volver al menú</a></li>
+            </ul>
+        </div>
+    </div>
 </div>
 {% endblock %}

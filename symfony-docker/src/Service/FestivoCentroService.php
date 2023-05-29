@@ -72,7 +72,9 @@ class FestivoCentroService
             //Creamos nuestro festivoIntermedio
             $festivoIntermedio = new FestivoCentro();
             $festivoIntermedio->setNombre($festivoCentro->getNombre());
-            $festivoIntermedio->setAbreviatura($festivoCentro->getAbreviatura());
+            if(!is_null($festivoCentro->getAbreviatura())) {
+                $festivoIntermedio->setAbreviatura($festivoCentro->getAbreviatura());
+            }
             $festivoIntermedio->setFinal($festivoCentro->getFinal());
             $festivoIntermedio->setCentro($festivoCentro->getCentro());
             //Añadimos un día al inicio

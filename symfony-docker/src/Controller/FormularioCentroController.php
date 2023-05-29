@@ -7,19 +7,31 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\FestivoCentroService;
 use App\Repository\UsuarioRepository;
+use App\Service\CentroService;
+use App\Service\FestivoLocalService;
+use App\Service\FestivoNacionalService;
 
 class FormularioCentroController extends AbstractController
 {
-    private FestivoCentroService $festivoCentroService;
+    private CentroService $centroService;
     private UsuarioRepository $usuarioRepository;
+    private FestivoCentroService $festivoCentroService;
+    private FestivoNacionalService $festivoNacionalService;
+    private FestivoLocalService $festivoLocalService;
 
     public function __construct(
-        FestivoCentroService $festivoCentroService,
-        UsuarioRepository $usuarioRepository
+        CentroService $centroService,
+        UsuarioRepository $usuarioRepository,
+        FestivoNacionalService $festivoNacionalService,
+        FestivoLocalService $festivoLocalService,
+        FestivoCentroService $festivoCentroService
     )
     {
-        $this->festivoCentroService = $festivoCentroService;
+        $this->centroService = $centroService;
         $this->usuarioRepository = $usuarioRepository;
+        $this->festivoNacionalService = $festivoNacionalService;
+        $this->festivoLocalService = $festivoLocalService;
+        $this->festivoCentroService = $festivoCentroService;
     }
 
     #[Route('/formulario/centro', name: 'app_formulario_centro')]
@@ -40,5 +52,22 @@ class FormularioCentroController extends AbstractController
             'nombreCentrosProvincias' => $nombreCentrosProvincias,
             'profesores' => $nombreProfesores
         ]);
+    }
+
+    #[Route('/post/centro', name: 'app_post_centro')]
+    public function postCentro(): Response
+    {
+        //Creamos el centro
+        $centro = $this->centroService->getCentro();
+        //Creamos los festivos nacionales
+        //Puede ser opcional, que se creen por defecto y ya si se añaden más se metan en administrador.
+        $this->festivoNacionalService->getFestivosNacionales();
+        //Creamos los festivos locales
+        $this->festivoLocalService->getFestivosLocales($centro);
+        //Creamos los festivos de centro
+        $this->festivoCentroService->getFestivosCentro($centro);
+
+        //Redirigimos al controlador de previsualización de calendario
+        return $this->redirectToRoute('app_formulario_calendario');
     }
 }
