@@ -22,6 +22,9 @@ class Asignatura
     #[ORM\Column(length: 255)]
     private ?string $cuatrimestre = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $abreviatura = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +62,18 @@ class Asignatura
     public function setCuatrimestre(string $cuatrimestre): self
     {
         $this->cuatrimestre = $cuatrimestre;
+
+        return $this;
+    }
+
+    public function getAbreviatura(): ?string
+    {
+        return $this->abreviatura;
+    }
+
+    public function setAbreviatura(string $abreviatura): self
+    {
+        $this->abreviatura = $abreviatura;
 
         return $this;
     }

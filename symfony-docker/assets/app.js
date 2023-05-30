@@ -596,7 +596,6 @@ function obtenerAsignaturasSelect() {
         } else {
             options += `<option>${asignaturas[i]}</option>`;
         }
-        
     }
 
     return options;
@@ -674,6 +673,7 @@ function crearFilaAsignatura() {
     return $(`
         <tr class="fila-asignatura" id="asignatura${idAsignatura}">
             <td><input type="text" class="form-control nombreAsig" name="nombreAsig" id="nombreAsignatura${idAsignatura}"></td>
+            <td><input type="text" class="form-control abrevAsig" name="abrevAsig" id="abrevAsignatura${idAsignatura}"></td>
             <td><input type="number" class="form-control numLecciones" name="numLeccTeor" id="numLeccionesTeor${idAsignatura}" value="1"></td>
             <td><input type="number" class="form-control numLecciones" name="numLeccPrac" id="numLeccionesPrac${idAsignatura}" value="1"></td>
             <td><select class="form-control cuatrimestre" name="cuatrimestre" id="cuatrimestre${idAsignatura}">
@@ -765,7 +765,7 @@ $(document).on('click', '.eliminar-leccion', function() {
     }
 });
 
-//Creamos el POST del formulario
+//Creamos el POST del formulario asignatura
 $(document).on('click', '.crear-asignatura', function() {
 
     // Obtener los valores de las filas de la tabla
@@ -773,6 +773,7 @@ $(document).on('click', '.crear-asignatura', function() {
     let lecciones = [];
     $('#asignaturasTable tbody tr[id^="asignatura"]').each(function() {
         const nombre = $(this).find('.nombreAsig').val();
+        const abreviatura = $(this).find('.abrevAsig').val();
         const nombreTitulacion = $(this).find('.ntitulacion').val();
         const cuatrimestre = $(this).find('.cuatrimestre').val();
         $(this).next('div').find('.fila-leccion').each(function() {
@@ -780,7 +781,7 @@ $(document).on('click', '.crear-asignatura', function() {
             const modalidad = $(this).find('.modalidad').val();
             lecciones.push({ titulo, modalidad })
         });
-        asignaturas.push({ nombre, nombreTitulacion, cuatrimestre, lecciones });
+        asignaturas.push({ nombre, abreviatura, nombreTitulacion, cuatrimestre, lecciones });
         lecciones = [];
     });
 
