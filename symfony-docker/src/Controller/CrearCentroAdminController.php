@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Service\FestivoCentroService;
 use App\Service\FestivoLocalService;
+use App\Service\CentroService;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,16 +13,18 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CrearCentroAdminController extends AbstractController
 {
+    private CentroService $centroService;
     private FestivoCentroService $festivoCentroService;
     private FestivoLocalService $festivoLocalService;
 
     public function __construct(
+        CentroService $centroService,
         FestivoCentroService $festivoCentroService,
         FestivoLocalService $festivoLocalService
-    )
-    {
+    ) {
         $this->festivoCentroService = $festivoCentroService;
         $this->festivoLocalService = $festivoLocalService;
+        $this->centroService = $centroService;
     }
 
     #[Route('/crear/centro/admin', name: 'app_crear_centro_admin')]
@@ -44,7 +47,7 @@ class CrearCentroAdminController extends AbstractController
         $nombreProvincia = $request->request->get('nombreDeProvincia');
 
         // Crea un array con los datos del nuevo centro
-        $tituloJson = "festivosCentro".$nombreCentro."-".$nombreProvincia;
+        $tituloJson = "festivosCentro" . $nombreCentro . "-" . $nombreProvincia;
         $nuevoCentro = [];
 
         // Lee el contenido actual del archivo JSON
@@ -56,7 +59,7 @@ class CrearCentroAdminController extends AbstractController
 
         // Agrega el nuevo centro al array existente 
         try {
-            if($nombreCentro != "" && $nombreProvincia != "" && !self::centroExistente($nombreCentro)){
+            if ($nombreCentro != "" && $nombreProvincia != "" && !self::centroExistente($nombreCentro)) {
                 $datosJson[$tituloJson] = $nuevoCentro;
             } else {
                 throw new Exception("Centro vacío o ya existente, o provincia vacía");
@@ -70,6 +73,9 @@ class CrearCentroAdminController extends AbstractController
 
         // Guarda los cambios en el archivo JSON
         file_put_contents($rutaArchivo, $contenidoActualizado);
+
+        //Creamos el centro en la base de datos
+        $this->centroService->getCentro();
 
         // Redirecciona a la ruta 'app_menu_administrador'
         return $this->redirectToRoute('app_menu_administrador');

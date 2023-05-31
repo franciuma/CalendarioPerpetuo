@@ -24,9 +24,13 @@ class Centro
     #[ORM\OneToMany(mappedBy: 'centro', targetEntity: Calendario::class)]
     private Collection $calendarios;
 
+    #[ORM\OneToMany(mappedBy: 'centro', targetEntity: Titulacion::class)]
+    private Collection $titulaciones;
+
     public function __construct()
     {
         $this->calendarios = new ArrayCollection();
+        $this->titulaciones = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -82,6 +86,36 @@ class Centro
             // set the owning side to null (unless already changed)
             if ($calendario->getCentro() === $this) {
                 $calendario->setCentro(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Titulacion>
+     */
+    public function getTitulaciones(): Collection
+    {
+        return $this->titulaciones;
+    }
+
+    public function addTitulacione(Titulacion $titulacione): self
+    {
+        if (!$this->titulaciones->contains($titulacione)) {
+            $this->titulaciones->add($titulacione);
+            $titulacione->setCentro($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTitulacione(Titulacion $titulacione): self
+    {
+        if ($this->titulaciones->removeElement($titulacione)) {
+            // set the owning side to null (unless already changed)
+            if ($titulacione->getCentro() === $this) {
+                $titulacione->setCentro(null);
             }
         }
 

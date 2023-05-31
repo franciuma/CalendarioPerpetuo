@@ -21,7 +21,11 @@ class Titulacion
     #[ORM\OneToMany(mappedBy: 'titulacion', targetEntity: Asignatura::class)]
     private Collection $asignatura;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\Column(length: 255)]
+    private ?string $abreviatura = null;
+
+    #[ORM\ManyToOne(inversedBy: 'titulaciones')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Centro $centro = null;
 
     public function __construct()
@@ -72,6 +76,18 @@ class Titulacion
                 $asignatura->setTitulacion(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAbreviatura(): ?string
+    {
+        return $this->abreviatura;
+    }
+
+    public function setAbreviatura(string $abreviatura): self
+    {
+        $this->abreviatura = $abreviatura;
 
         return $this;
     }

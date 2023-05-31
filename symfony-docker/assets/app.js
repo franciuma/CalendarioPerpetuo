@@ -1041,8 +1041,60 @@ $(document).on('click', '.guardar-festivos-local', function() {
     mostrarPopUp("festivo/s local/es añadido/s");
 });
 
+//Formulario de titulación
+let idTitulacion = 0;
+$(document).on('click', '.aniadir-fila-titulacion', function() {
+    idTitulacion++;
+    const fila = crearFilaTitulacion(idTitulacion);
+    $('#titulacionesTable tbody').append(fila);
+});
+
+function crearFilaTitulacion() {
+    const optionsCentro = obtenerCentroSelect();
+    return $(`
+        <tr class="fila-titulacion" id="titulacion${idTitulacion}">
+            <td><input type="text" class="form-control nombreTitul" name="nombreTitul" id="nombreTitul${idTitulacion}"></td>
+            <td><input type="text" class="form-control abrevTitul" name="abrevTitul" id="abrevTitul${idTitulacion}"></td>
+            <td><select class="form-control centroTitul" name="centroTitul" id="centroTitul${idTitulacion}">
+            <option selected></option>
+            ${optionsCentro}
+            </select>
+            </td>
+            <td><button class="btn btn-danger eliminar-titulacion">Eliminar</button></td>
+        </tr>
+    `);
+}
+
+function obtenerCentroSelect(){
+    //obtenemos los centros desde /formulario/titulacion
+    const centros = JSON.parse(document.getElementById('centros').dataset.centros);
+    let options = "";
+    //Los recorremos y agregamos las opciones
+    for (var i = 0; i < centros.length; i++) {
+        options += `<option>${centros[i]}</option>`;
+    }
+
+    return options;
+}
+
+$(document).on('click', '.crear-titulacion', function() {
+    // Obtener los valores de las filas de la tabla
+    const titulaciones = [];
+    $('#titulacionesTable tbody tr').each(function() {
+        const nombreTitulacion = $(this).find('.nombreTitul').val();
+        const abreviatura = $(this).find('.abrevTitul').val();
+        const centro = $(this).find('.centroTitul').val();
+        titulaciones.push({ nombreTitulacion, abreviatura, centro });
+    });
+    // Convertir el objeto a JSON
+    const titulacionesJSON = JSON.stringify(titulaciones);
+
+    // Enviar el objeto JSON a través de una petición AJAX
+    enviarPost('/manejar/posts/titulaciones', {titulacionesJSON: titulacionesJSON},'/post/titulacion');
+});
+
 //Eliminar filas de tablas
-$(document).on('click', '.eliminar-festivo-local, .eliminar-grupo, .eliminar-asignatura, .eliminar-festivo-centro, .eliminar-festivo-nacional', function() {
+$(document).on('click', '.eliminar-festivo-local, .eliminar-grupo, .eliminar-asignatura, .eliminar-festivo-centro, .eliminar-festivo-nacional, .eliminar-titulacion', function() {
     // Obtener la fila
     const fila = $(this).closest('tr');
     fila.remove();

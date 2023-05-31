@@ -18,6 +18,7 @@ class ManejarPostsController extends AbstractController
     #[Route('/manejar/posts/festivoscentro', name: 'festivoscentro')]
     #[Route('/manejar/posts/festivosnacionales', name: 'festivosnacionales')]
     #[Route('/manejar/posts/festivoslocales', name: 'festivoslocales')]
+    #[Route('/manejar/posts/titulaciones', name: 'titulaciones')]
     public function index(Request $request)
     {
         $entidad = $request->attributes->get('_route');
