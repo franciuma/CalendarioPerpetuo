@@ -670,22 +670,41 @@ $(document).on('click', '.aniadir-fila-asig', function() {
 });
 
 function crearFilaAsignatura() {
+    const optionTitulacion = obtenerTitulacionSelect();
     return $(`
         <tr class="fila-asignatura" id="asignatura${idAsignatura}">
             <td><input type="text" class="form-control nombreAsig" name="nombreAsig" id="nombreAsignatura${idAsignatura}"></td>
             <td><input type="text" class="form-control abrevAsig" name="abrevAsig" id="abrevAsignatura${idAsignatura}"></td>
             <td><input type="number" class="form-control numLecciones" name="numLeccTeor" id="numLeccionesTeor${idAsignatura}" value="1"></td>
             <td><input type="number" class="form-control numLecciones" name="numLeccPrac" id="numLeccionesPrac${idAsignatura}" value="1"></td>
-            <td><select class="form-control cuatrimestre" name="cuatrimestre" id="cuatrimestre${idAsignatura}">
-            <option>Primero</option>
-            <option>Segundo</option>
+            <td>
+            <select class="form-control cuatrimestre" name="cuatrimestre" id="cuatrimestre${idAsignatura}">
+                <option>Primero</option>
+                <option>Segundo</option>
             </select>
             </td>
-            <td><input type="text" class="form-control ntitulacion" name="ntitulacion" id="ntitulacion${idAsignatura}"></td>
+            <td>
+                <select class="form-control ntitulacion" name="ntitulacion" id="ntitulacion${idAsignatura}">
+                <option selected></option>
+                ${optionTitulacion}
+                </select>
+            </td>
             <td><button class="btn btn-primary aniadir-lecciones" data-id="${idAsignatura}">Añadir sesiones</button></td>
             <td><button class="btn btn-danger eliminar-asignatura">Eliminar</button></td>
         </tr>
     `);
+}
+
+function obtenerTitulacionSelect(){
+    //obtenemos las titulaciones desde /formulario/asignatura
+    const titulaciones = JSON.parse(document.getElementById('titulaciones').dataset.titulaciones);
+    let options = "";
+    //Los recorremos y agregamos las opciones
+    for (var i = 0; i < titulaciones.length; i++) {
+        options += `<option>${titulaciones[i]}</option>`;
+    }
+
+    return options;
 }
 
 let idLeccion = 0;
