@@ -371,6 +371,7 @@ $(document).on('click', '.permutar-fecha', function(event) {
     event.preventDefault();
     // Obtener la fila y la fecha seleccionada
     const filaInicial = $(this).closest('tr');
+    const posicionFilaInicial = filaInicial.index();
     const asignaturaIdInicial = $(this).data('asignatura-id');
     const fechaInicial = filaInicial.find('input[name="fecha"]').val();
     const grupoLetraInicial = filaInicial.find('select[name="grupoCalendario"]').val();
@@ -384,13 +385,14 @@ $(document).on('click', '.permutar-fecha', function(event) {
     }
 
     $('.permutar-fecha').removeClass('permutar-fecha').addClass('destino-permutar-fecha').text('Destino permutación');
-    //Quitamos los datos que tengamos de destino-permutar-fecha
+    //Reseteamos los datos que tengamos de destino-permutar-fecha
     $(document).off('click', '.destino-permutar-fecha');
 
     $(document).on('click', '.destino-permutar-fecha', function(event) {
         event.preventDefault();
         // Obtener la fila y la fecha seleccionada
         const filaDestino = $(this).closest('tr');
+        const posicionFilaDestino = filaDestino.index();
         const asignaturaIdDestino = $(this).data('asignatura-id');
         const fechaDestino = filaDestino.find('input[name="fecha"]').val();
         const grupoLetraDestino = filaDestino.find('select[name="grupoCalendario"]').val();
@@ -408,9 +410,12 @@ $(document).on('click', '.permutar-fecha', function(event) {
         //Creamos las filas con los datos cambiados
         const fechaNuevaInicial = crearFilaCalendario(fechaInicial, asignaturaIdInicial, grupoLetraInicial, horarioInicial);
         const fechaNuevaFinal = crearFilaCalendario(fechaDestino, asignaturaIdDestino, grupoLetraDestino, horarioDestino);
+        //Obtenemos los lugares de las filas
+        const nuevaFilaInicial = $('#fechasTable tbody tr').eq(posicionFilaInicial);
+        const nuevaFilaDestino = $('#fechasTable tbody tr').eq(posicionFilaDestino);
         //Añadimos a la tabla las nuevas filas
-        $('#fechasTable tbody').append(fechaNuevaInicial);
-        $('#fechasTable tbody').append(fechaNuevaFinal);
+        nuevaFilaInicial.after(fechaNuevaFinal);
+        nuevaFilaDestino.after(fechaNuevaInicial);
 
         //Borramos las filas antiguas
         filaInicial.remove();
