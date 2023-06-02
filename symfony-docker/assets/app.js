@@ -348,7 +348,7 @@ function crearFilaCalendario(fechaStringFormato, asignaturaId, grupoLetra, horar
                     <option ${horario === 'Tarde' ? 'selected' : ''}>Tarde</option>
                 </select>
             </td>
-            <td><button data-asignatura-id="${asignaturaId}" class="btn btn-primary permutar-fecha">Permutar</button></td>
+            <td><button data-asignatura-id="${asignaturaId}" type="button" class="btn btn-primary permutar-fecha">Permutar</button></td>
             <td><button class="btn btn-danger eliminar-fecha">Eliminar</button></td>
         </tr>
     `);
@@ -367,8 +367,7 @@ function obtenerGrupoSelect(){
 }
 
 // Permutación de dos clases en previsualización de calendario
-$(document).on('click', '.permutar-fecha', function(event) {
-    event.preventDefault();
+$(document).on('click', '.permutar-fecha', function() {
     // Obtener la fila y la fecha seleccionada
     const filaInicial = $(this).closest('tr');
     const posicionFilaInicial = filaInicial.index();
@@ -385,11 +384,19 @@ $(document).on('click', '.permutar-fecha', function(event) {
     }
 
     $('.permutar-fecha').removeClass('permutar-fecha').addClass('destino-permutar-fecha').text('Destino permutación');
+    $(this).removeClass('destino-permutar-fecha').addClass('cancelar-permutacion').text('Cancelar Permutación').addClass('btn-danger');
+
+    //Si toca a cancelar permutación
+    $(document).off('click', '.cancelar-permutacion').on('click', '.cancelar-permutacion', function() {
+        $('.destino-permutar-fecha').removeClass('destino-permutar-fecha').addClass('permutar-fecha').text('Permutar').removeAttr('style');
+        $(this).removeClass('cancelar-permutacion').addClass('permutar-fecha').text('Permutar').removeClass('btn-danger');
+        //Volvemos a crear el mapa borrado
+        mapFechaGrupo.set(claveInicial, valorInicialMap);
+    });
     //Reseteamos los datos que tengamos de destino-permutar-fecha
     $(document).off('click', '.destino-permutar-fecha');
 
-    $(document).on('click', '.destino-permutar-fecha', function(event) {
-        event.preventDefault();
+    $(document).on('click', '.destino-permutar-fecha', function() {
         // Obtener la fila y la fecha seleccionada
         const filaDestino = $(this).closest('tr');
         const posicionFilaDestino = filaDestino.index();
@@ -694,8 +701,8 @@ function crearFilaAsignatura() {
                 ${optionTitulacion}
                 </select>
             </td>
-            <td><button class="btn btn-primary aniadir-lecciones" data-id="${idAsignatura}">Añadir sesiones</button></td>
-            <td><button class="btn btn-danger eliminar-asignatura">Eliminar</button></td>
+            <td><button class="btn btn-primary aniadir-lecciones" type="button" data-id="${idAsignatura}">Añadir sesiones</button></td>
+            <td><button class="btn btn-danger eliminar-asignatura" type="button">Eliminar</button></td>
         </tr>
     `);
 }
@@ -713,8 +720,7 @@ function obtenerTitulacionSelect(){
 }
 
 let idLeccion = 0;
-$(document).on('click', '.aniadir-lecciones', function(event) {
-    event.preventDefault();
+$(document).on('click', '.aniadir-lecciones', function() {
     const asignaturaId = $(this).data('id');
     const tabla = crearTablaLeccion(asignaturaId);
     $(`#asignatura${asignaturaId}`).after(tabla);
