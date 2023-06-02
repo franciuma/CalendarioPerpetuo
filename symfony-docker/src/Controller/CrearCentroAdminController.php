@@ -75,7 +75,7 @@ class CrearCentroAdminController extends AbstractController
         file_put_contents($rutaArchivo, $contenidoActualizado);
 
         //Creamos el centro en la base de datos
-        $this->centroService->getCentro();
+        $this->centroService->insertaCentroBd($nombreProvincia, $nombreCentro);
 
         // Redirecciona a la ruta 'app_menu_administrador'
         return $this->redirectToRoute('app_menu_administrador');

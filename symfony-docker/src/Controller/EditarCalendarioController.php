@@ -29,7 +29,6 @@ class EditarCalendarioController extends AbstractController
         //Filtramos los profesores que tengan un calendario creado.
         $profesores = $this->usuarioRepository->findAllProfesoresConCalendario();
 
-        //Meter $this->claseRepository->findOneByCalendario($calendario->getId())
         $nombreProfesores = array_map(function($profesor) {
             $nombre = $profesor->getNombre();
             $apellidop = $profesor->getPrimerApellido();

@@ -27,12 +27,10 @@ class FestivoNacionalService
         $this->calendarioController = $calendarioController;
     }
 
-    public function getFestivosNacionales(): array
+    public function getFestivosNacionales($curso): array
     {
-        [$anioAc, $anioSig] = $this->calendarioController->calcularAnios();
-
-        $anio = substr($anioAc, 2, 3);
-        $anioSiguiente = substr($anioSig, 2, 3);
+        $anio = substr($curso[0], 2, 3);
+        $anioSiguiente = substr($curso[1], 2, 3);
 
         $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosNacionales.json');
         $festivosArray = json_decode($festivosJson, true);

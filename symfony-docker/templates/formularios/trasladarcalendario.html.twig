@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Trasladar calendario
+{% endblock %}
+
+{% block body %}
+	{{ parent() }}
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<h1 class="font-weight-bold">Trasladar calendario</h1>
+				<form>
+					<div class="form-group">
+						<label for="labelCurso">Curso académico al que trasladar el calendario</label>
+                        <input type="text" class="form-control" id="cursoacademico" placeholder="Ejemplo: 2023/2024">
+
+                        <label for="nombreDelProfesor">Docente</label>
+						<select class="form-control" id="nombreDelProfesor">
+							<option selected>-- Selecciona el docente --</option>
+							{% for profesor in profesores %}
+								<option>{{ profesor }}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<button type="button" class="btn btn-primary trasladar-calendario">Trasladar calendario</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<footer class="footer mt-auto py-3">
+        <div class="container">
+            <div class="text-left">
+                <a href="{{ path('app_menu_profesor') }}" class="btn btn-primary">Volver al menú docente</a>
+            </div>
+        </div>
+    </footer>
+{% endblock %}

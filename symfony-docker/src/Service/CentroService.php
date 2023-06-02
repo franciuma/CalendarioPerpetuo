@@ -39,4 +39,19 @@ class CentroService
 
         return $centro;
     }
+
+    /**
+     * Inserta en la base de datos un centro en base a los datos recibidos
+     */
+    public function insertaCentroBd($provincia, $nombre)
+    {
+        $centro = $this->centroRepository->findOneByProvinciaCentro($provincia, $nombre);
+
+        if(!$centro) {
+            $centro = new Centro();
+            $centro->setProvincia($provincia);
+            $centro->setNombre($nombre);
+            $this->centroRepository->save($centro, true);
+        }
+    }
 }

@@ -28,11 +28,10 @@ class FestivoCentroService
         $this->calendarioController = $calendarioController;
     }
 
-    public function getFestivosCentro(Centro $centro): array
+    public function getFestivosCentro(Centro $centro, $curso): array
     {
-        [$anioAc, $anioSig] = $this->calendarioController->calcularAnios();
-        $anio = substr($anioAc, 2, 3);
-        $anioSiguiente = substr($anioSig, 2, 3);
+        $anio = substr($curso[0], 2, 3);
+        $anioSiguiente = substr($curso[1], 2, 3);
         $nombreCentro = $centro->getNombre();
         $provincia = $centro->getProvincia();
 

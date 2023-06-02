@@ -92,7 +92,7 @@ class FormularioCalendarioController extends AbstractController
 
         $clasesJson = "";
         //Si está el editar, es que se está editando un calendario
-        if(isset($centroArray['centro'][0]['editar'])) {
+        if(isset($centroArray['centro'][0]['accionCalendario'])) {
             $centroObjeto = $this->centroRepository->findOneByUsuario($profesor->getId());
             $centro = $centroObjeto->getNombre();
             $provincia = $centroObjeto->getProvincia();

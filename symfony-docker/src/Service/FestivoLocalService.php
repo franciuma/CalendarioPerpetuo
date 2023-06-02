@@ -28,12 +28,10 @@ class FestivoLocalService
         $this->calendarioController = $calendarioController;
     }
 
-    public function getFestivosLocales(Centro $centro): array
+    public function getFestivosLocales($provincia, $curso): array
     {
-        [$anioAc, $anioSig] = $this->calendarioController->calcularAnios();
-        $anio = substr($anioAc, 2, 3);
-        $anioSiguiente = substr($anioSig, 2, 3);
-        $provincia = $centro->getProvincia();
+        $anio = substr($curso[0], 2, 3);
+        $anioSiguiente = substr($curso[1], 2, 3);
 
         $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosLocales.json');
         $festivosArray = json_decode($festivosJson, true);
