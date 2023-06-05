@@ -1011,7 +1011,7 @@ $(document).on('click', '.aniadir-festivos-centro', function() {
 function crearFilaFestivo(idFestivo, tipoDeFestivo) {
     return $(`
         <tr class="fila-festivo-${tipoDeFestivo}" id="festivoCentro${idFestivo}">
-            <td><input type="text" class="form-control nombreFestivo${tipoDeFestivo}" name="nombreFestivo${tipoDeFestivo}" id="nombreFestivo${tipoDeFestivo}${idFestivo}"></td>
+            <td><input type="text" class="form-control nombreFestivo${tipoDeFestivo}" name="nombreFestivo${tipoDeFestivo}" id="nombreFestivo${tipoDeFestivo}${idFestivo}" placeholder="Ej: Dia de la paz"></td>
             <td><input type="text" class="form-control inicioFestivo${tipoDeFestivo} datepicker-festivo-${tipoDeFestivo}" name="inicioFestivo${tipoDeFestivo}" id="inicioFestivo${tipoDeFestivo}${idFestivo}"></td>
             <td><input type="text" class="form-control finalFestivo${tipoDeFestivo} datepicker-festivo-${tipoDeFestivo}" name="finalFestivo${tipoDeFestivo}" id="finalFestivo${tipoDeFestivo}${idFestivo}"></td>
             <td><button class="btn btn-danger eliminar-festivo-${tipoDeFestivo}">Eliminar</button></td>
