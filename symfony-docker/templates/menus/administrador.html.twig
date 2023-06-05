@@ -23,30 +23,35 @@
                         </ul>
                     </li>
                     <li class="flex-fill">
-                        <h4 class="menu-title">Festivo Nacional</h4>
-                        <ul>
-                            <li><a href="{{ path('app_aniadir_festivo_nacional_admin') }}">Añadir festivo nacional</a></li>
-                            <li><a href="{{ path('app_aniadir_festivo_nacional_admin') }}">Eliminar festivo nacional</a></li>
-                            <li><a href="{{ path('app_actualizar_festivos_nacionales_admin') }}">Actualizar festivos nacionales</a></li>
-                        </ul>
-                    </li>
-                    <li class="flex-fill">
-                        <h4 class="menu-title">Festivo Local</h4>
-                        <ul>
-                            <li><a href="{{ path('app_crear_localidad_admin') }}">Crear una localidad</a></li>
-                            <li><a href="{{ path('app_aniadir_festivo_local_admin') }}">Añadir festivos a una localidad</a></li>
-                            <li><a href="{{ path('app_actualizar_festivos_locales_admin') }}">Actualizar festivos locales</a></li>
-                        </ul>
-                    </li>
-                    <li class="flex-fill">
-                        <h4 class="menu-title">Festivos de centro</h4>
-                        <ul>
-                            <li><a href="{{ path('app_crear_centro_admin') }}">Crear un centro</a></li>
-                            <li><a href="{{ path('app_formulario_profesor') }}">Editar un centro</a></li>
-                            <li><a href="{{ path('app_formulario_profesor') }}">Lista de centros</a></li>
-                            <li><a href="{{ path('app_formulario_profesor') }}">Eliminar un centro</a></li>
-                            <li><a href="{{ path('app_aniadir_festivo_centro_admin') }}">Añadir festivos a un centro</a></li>
-                            <li><a href="{{ path('app_actualizar_festivos_centro_admin') }}">Actualizar festivos de centro</a></li>
+                        <h4 class="menu-title text-center" >Periodos no lectivos</h4>
+                        <ul class="menu-list d-flex justify-content-between">
+                            <li class="flex-fill">
+                                <h4 class="menu-title">Nacional</h4>
+                                <ul>
+                                    <li><a href="{{ path('app_aniadir_festivo_nacional_admin') }}">Añadir periodo</a></li>
+                                    <li><a href="{{ path('app_aniadir_festivo_nacional_admin') }}">Eliminar periodo</a></li>
+                                    <li><a href="{{ path('app_actualizar_festivos_nacionales_admin') }}">Actualizar periodo</a></li>
+                                </ul>
+                            </li>
+                            <li class="flex-fill">
+                                <h4 class="menu-title">Local</h4>
+                                <ul>
+                                    <li><a href="{{ path('app_crear_localidad_admin') }}">Crear localidad</a></li>
+                                    <li><a href="{{ path('app_aniadir_festivo_local_admin') }}">Añadir periodo</a></li>
+                                    <li><a href="{{ path('app_actualizar_festivos_locales_admin') }}">Actualizar periodo</a></li>
+                                </ul>
+                            </li>
+                            <li class="flex-fill">
+                                <h4 class="menu-title">Centro</h4>
+                                <ul>
+                                    <li><a href="{{ path('app_crear_centro_admin') }}">Crear un centro</a></li>
+                                    <li><a href="{{ path('app_formulario_profesor') }}">Editar un centro</a></li>
+                                    <li><a href="{{ path('app_formulario_profesor') }}">Lista de centros</a></li>
+                                    <li><a href="{{ path('app_formulario_profesor') }}">Eliminar un centro</a></li>
+                                    <li><a href="{{ path('app_aniadir_festivo_centro_admin') }}">Añadir periodo</a></li>
+                                    <li><a href="{{ path('app_actualizar_festivos_centro_admin') }}">Actualizar periodo</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </li>
                 </ul>

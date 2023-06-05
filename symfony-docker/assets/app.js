@@ -512,8 +512,8 @@ $(document).on('click', '.permutar-fecha', function() {
         const nuevaFilaInicial = $('#fechasTable tbody tr').eq(posicionFilaInicial);
         const nuevaFilaDestino = $('#fechasTable tbody tr').eq(posicionFilaDestino);
         //Añadimos a la tabla las nuevas filas
-        nuevaFilaInicial.after(fechaNuevaFinal);
-        nuevaFilaDestino.after(fechaNuevaInicial);
+        nuevaFilaDestino.after(fechaNuevaFinal);
+        nuevaFilaInicial.after(fechaNuevaInicial);
 
         //Borramos las filas antiguas
         filaInicial.remove();
