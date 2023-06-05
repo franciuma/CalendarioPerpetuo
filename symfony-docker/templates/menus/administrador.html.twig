@@ -13,6 +13,16 @@
                 <h1 class="font-weight-bold">Menú principal administrador</h1>
                 <ul class="menu-list d-flex justify-content-between">
                     <li class="flex-fill">
+                        <h4 class="menu-title">Docentes</h4>
+                        <ul>
+                            <li><a href="{{ path('app_formulario_profesor') }}">Crear docente</a></li>
+                            <br></br>
+                            <li><a href="{{ path('app_formulario_profesor') }}">Ver docentes</a></li>
+                            <li><a href="{{ path('app_formulario_profesor') }}">Editar docente</a></li>
+                            <li><a href="{{ path('app_formulario_profesor') }}">Eliminar docente</a></li>
+                        </ul>
+                    </li>
+                    <li class="flex-fill">
                         <h4 class="menu-title">Festivo Nacional</h4>
                         <ul>
                             <li><a href="{{ path('app_aniadir_festivo_nacional_admin') }}">Añadir festivo nacional</a></li>

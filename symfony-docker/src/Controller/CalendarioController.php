@@ -110,13 +110,13 @@ class CalendarioController extends AbstractController
             // Si no se ha creado el calendario
             if (!$calendario) {
                 //Creamos el calendario completo
-                self::crearCalendarioCompleto($centro);
+                $calendario = self::crearCalendarioCompleto($centro);
             //Si se está trasladando el calendario
             } else if($request->getPathInfo() == '/trasladar/calendario'){
                 //Borramos el antiguo calendario completamente
                 self::eliminarCalendarioCompleto($calendario);
                 //Creamos el calendario completo con los años nuevos.
-                self::crearCalendarioCompleto($centro);
+                $calendario = self::crearCalendarioCompleto($centro);
             } else {
                 //Editamos el calendario existente        
                 self::editarClasesCalendario($calendario);
@@ -125,7 +125,7 @@ class CalendarioController extends AbstractController
 
         return $this->render('calendario/index.html.twig', [
             'calendario' => $calendario,
-            'dias_semana' => $calendario->getdiasSemana()
+            'dias_semana' => $calendario->getDiasSemana()
         ]);
     }
 
@@ -153,6 +153,8 @@ class CalendarioController extends AbstractController
         $anios = self::creacionAnios($calendario);
         //Crea toda la estructura del calendario
         self::creacionCalendario($anios, $calendario);
+
+        return $calendario;
     }
 
     /**
