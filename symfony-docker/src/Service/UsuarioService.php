@@ -33,4 +33,22 @@ class UsuarioService
 
         return $profesor;
     }
+
+    public function getAllProfesoresNombreCompleto($conCalendario): array
+    {
+        if($conCalendario) {
+            $profesores = $this->usuarioRepository->findAllProfesoresConCalendario();
+        } else {
+            $profesores = $this->usuarioRepository->findAllProfesores();
+        }
+
+        $nombreProfesores = array_map(function($profesor) {
+            $nombre = $profesor->getNombre();
+            $apellidop = $profesor->getPrimerApellido();
+            $apellidos = $profesor->getSegundoApellido();
+            return $nombre." ".$apellidop." ".$apellidos;
+        }, $profesores);
+
+        return $nombreProfesores;
+    }
 }

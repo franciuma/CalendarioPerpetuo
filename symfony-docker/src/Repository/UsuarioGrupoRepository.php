@@ -30,6 +30,14 @@ class UsuarioGrupoRepository extends ServiceEntityRepository
         }
     }
 
+    public function removeUsuarioGrupos(array $usuarioGrupos): void
+    {
+        foreach ($usuarioGrupos as $usuarioGrupo) {
+            $this->getEntityManager()->remove($usuarioGrupo);
+            $this->getEntityManager()->flush();
+        }
+    }
+
     public function remove(UsuarioGrupo $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
@@ -39,20 +47,19 @@ class UsuarioGrupoRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return UsuarioGrupo[] Returns an array of UsuarioGrupo objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return UsuarioGrupo[] Returns an array of UsuarioGrupo objects
+     */
+    public function findUsuarioGrupoByUsuarioId($usuarioId): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.usuario = :val')
+            ->setParameter('val', $usuarioId)
+            ->orderBy('p.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
 //    public function findOneBySomeField($value): ?UsuarioGrupo
 //    {

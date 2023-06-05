@@ -10,47 +10,33 @@ use App\Repository\UsuarioRepository;
 use App\Service\CentroService;
 use App\Service\FestivoLocalService;
 use App\Service\FestivoNacionalService;
+use App\Service\UsuarioService;
 
 class FormularioCentroController extends AbstractController
 {
-    private CentroService $centroService;
-    private UsuarioRepository $usuarioRepository;
+    private UsuarioService $usuarioService;
     private FestivoCentroService $festivoCentroService;
-    private FestivoNacionalService $festivoNacionalService;
-    private FestivoLocalService $festivoLocalService;
 
     public function __construct(
-        CentroService $centroService,
-        UsuarioRepository $usuarioRepository,
-        FestivoNacionalService $festivoNacionalService,
-        FestivoLocalService $festivoLocalService,
+        UsuarioService $usuarioService,
         FestivoCentroService $festivoCentroService
     )
     {
-        $this->centroService = $centroService;
-        $this->usuarioRepository = $usuarioRepository;
-        $this->festivoNacionalService = $festivoNacionalService;
-        $this->festivoLocalService = $festivoLocalService;
         $this->festivoCentroService = $festivoCentroService;
+        $this->usuarioService = $usuarioService;
     }
 
     #[Route('/formulario/centro', name: 'app_formulario_centro')]
     public function index(): Response
     {
         $nombreCentrosProvincias = $this->festivoCentroService->getNombreCentroProvincia();
-        $profesores = $this->usuarioRepository->findAllProfesores();
-
-        $nombreProfesores = array_map(function($profesor) {
-            $nombre = $profesor->getNombre();
-            $apellidop = $profesor->getPrimerApellido();
-            $apellidos = $profesor->getSegundoApellido();
-            return $nombre." ".$apellidop." ".$apellidos;
-        }, $profesores);
+        $conCalendario = false;
+        $profesores = $this->usuarioService->getAllProfesoresNombreCompleto($conCalendario);
 
         return $this->render('formularios/centro.html.twig', [
             'controller_name' => 'FormularioCentroController',
             'nombreCentrosProvincias' => $nombreCentrosProvincias,
-            'profesores' => $nombreProfesores
+            'profesores' => $profesores
         ]);
     }
 

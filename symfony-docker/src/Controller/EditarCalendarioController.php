@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\CentroRepository;
 use App\Repository\UsuarioRepository;
+use App\Service\UsuarioService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,33 +13,30 @@ use Symfony\Component\Routing\Annotation\Route;
 class EditarCalendarioController extends AbstractController
 {
     private UsuarioRepository $usuarioRepository;
+    private UsuarioService $usuarioService;
     private CentroRepository $centroRepository;
 
     public function __construct(
         UsuarioRepository $usuarioRepository,
-        CentroRepository $centroRepository
+        CentroRepository $centroRepository,
+        UsuarioService $usuarioService
     )
     {
         $this->usuarioRepository = $usuarioRepository;
         $this->centroRepository = $centroRepository;
+        $this->usuarioService = $usuarioService;
     }
 
     #[Route('/editar/calendario', name: 'app_editar_calendario')]
     public function index(): Response
     {
         //Filtramos los profesores que tengan un calendario creado.
-        $profesores = $this->usuarioRepository->findAllProfesoresConCalendario();
-
-        $nombreProfesores = array_map(function($profesor) {
-            $nombre = $profesor->getNombre();
-            $apellidop = $profesor->getPrimerApellido();
-            $apellidos = $profesor->getSegundoApellido();
-            return $nombre." ".$apellidop." ".$apellidos;
-        }, $profesores);
+        $conCalendario = true;
+        $profesores = $this->usuarioService->getAllProfesoresNombreCompleto($conCalendario);
 
         return $this->render('editar/calendario.html.twig', [
             'controller_name' => 'EditarCalendarioController',
-            'profesores' => $nombreProfesores
+            'profesores' => $profesores
         ]);
     }
 
