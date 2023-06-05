@@ -15,7 +15,7 @@ class Mes
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToMany(mappedBy: 'mes', targetEntity: Dia::class)]
+    #[ORM\OneToMany(mappedBy: 'mes', targetEntity: Dia::class, cascade: ['remove'])]
     private Collection $dias;
 
     #[ORM\Column(length: 255)]

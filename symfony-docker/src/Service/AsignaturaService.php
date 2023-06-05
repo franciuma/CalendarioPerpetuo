@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Repository\AsignaturaRepository;
+use App\Repository\TitulacionRepository;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -12,30 +13,35 @@ class AsignaturaService
 {
     private SerializerInterface $serializer;
     private AsignaturaRepository $asignaturaRepository;
+    private TitulacionRepository $titulacionRepository;
 
     public function __construct(
         SerializerInterface $serializer,
         AsignaturaRepository $asignaturaRepository,
+        TitulacionRepository $titulacionRepository
     )
     {
         $this->serializer = $serializer;
         $this->asignaturaRepository = $asignaturaRepository;
+        $this->titulacionRepository = $titulacionRepository;
     }
 
-    public function getAsignaturas($titulaciones): void
+    public function getAsignaturas(): void
     {
         $asignaturasJson = file_get_contents(__DIR__ . '/../resources/asignaturas.json');
         $asignaturasArray = json_decode($asignaturasJson, true);
 
-        $asignaturas = $this->serializer->denormalize($asignaturasArray['asignaturas'], 'App\Entity\Asignatura[]');
-        $contador = 0;
+        foreach ($asignaturasArray['asignaturas'] as $asignatura) {
+            $titulacion = $asignatura["nombreTitulacion"];
+            $titulacionDividida = explode("-",$titulacion);
+            $asignaturaObjeto = $this->serializer->denormalize($asignatura, 'App\Entity\Asignatura');
 
-        foreach ($asignaturas as $asignatura) {
-            if(!$this->asignaturaRepository->findOneByNombre($asignatura->getNombre())){
-                $asignatura->setTitulacion($titulaciones[$contador]);
-                $this->asignaturaRepository->save($asignatura,true);
+            if(!$this->asignaturaRepository->findOneByNombre($asignaturaObjeto->getNombre())){
+                //Buscamos la titulación
+                $titulacionObjeto = $this->titulacionRepository->findOneByAbreviaturaProvincia($titulacionDividida[0], $titulacionDividida[1]);
+                $asignaturaObjeto->setTitulacion($titulacionObjeto);
+                $this->asignaturaRepository->save($asignaturaObjeto,true);
             }
-            $contador++;
         }
     }
 }

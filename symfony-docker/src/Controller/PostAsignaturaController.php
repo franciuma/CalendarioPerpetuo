@@ -30,9 +30,9 @@ class PostAsignaturaController extends AbstractController
     public function index(): Response
     {
         //Persistir las titulaciones y devolver array de objetos Titulacion
-        $titulaciones = $this->titulacionService->getTitulaciones();
+        $this->titulacionService->getTitulaciones();
         //Persistir las asignaturas del JSON a la bd
-        $this->asignaturaService->getAsignaturas($titulaciones);
+        $this->asignaturaService->getAsignaturas();
         //Persistir las clases del JSON a la bd
         $this->leccionService->getLecciones();
 

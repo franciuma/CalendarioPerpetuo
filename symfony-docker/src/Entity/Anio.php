@@ -16,7 +16,7 @@ class Anio
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToMany(mappedBy: 'anio', targetEntity: Mes::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'anio', targetEntity: Mes::class, orphanRemoval: true, cascade: ['remove'])]
     private Collection $mes;
 
     #[ORM\Column(length: 255)]

@@ -23,13 +23,19 @@ let contadorFechas = 0;
 //Array clave: valor con fecha: asignaturaId
 const arrayFechaAsignatura = [];
 const mapFechaGrupo = new Map();
-//Si se encuentra en la vista /formulario/calendario carga la función
-if(window.location.pathname == "/formulario/calendario"){
+
+if(
+    window.location.pathname == "/formulario/calendario" ||
+    window.location.pathname == "/formulario/trasladar/calendario" ||
+    window.location.pathname == "/formulario/editar/calendario"
+    ){
     const paginaAnterior = document.referrer;
+
     $(function() {
         //Obtenemos del formulario de calendario las entidades
         const lecciones = JSON.parse(document.getElementById('lecciones').dataset.lecciones);
         const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
+
         //Devuelve un array con todos los festivos
         const arrayFestivos = calcularFestivos();
         //Fechas del primer cuatrimestre
@@ -75,7 +81,7 @@ if(window.location.pathname == "/formulario/calendario"){
                 });
             });
         } else {
-            //Si se está creando el calendario
+            //Si se está creando o trasladando el calendario
             //Recorrer los grupos
             grupos.forEach(function(grupo) {
                 if(grupo.cuatrimestre == "Primero"){
@@ -86,6 +92,12 @@ if(window.location.pathname == "/formulario/calendario"){
             });
         }
 
+        /**
+         * Dada la fechaInicio, fechaFin y el grupo, completa la fecha de las clases.
+         * @param {Date} fechaInicio 
+         * @param {Date} fechaFin 
+         * @param {grupo} grupo 
+         */
         function completaCuatrimestre(fechaInicio, fechaFin, grupo) {
             let diasTeoria = grupo.diasTeoria;
             let diasPractica = grupo.diasPractica;
@@ -93,19 +105,6 @@ if(window.location.pathname == "/formulario/calendario"){
             let grupoAsignaturaId = grupo.asignaturaId;
             let grupoLetra = grupo.letra;
             let horario = grupo.horario;
-            //Filtramos lecciones por asignaturaId
-            const leccionesFiltradas = lecciones.filter(function(leccion) {
-                return leccion.asignaturaId === grupoAsignaturaId;
-            });
-
-            //Filtramos lecciones por teoria y practica
-            const leccionesFiltradasTeoria = leccionesFiltradas.filter(function(leccion) {
-                return leccion.modalidad === "Teorica";
-            });
-
-            const leccionesFiltradasPractica = leccionesFiltradas.filter(function(leccion) {
-                return leccion.modalidad === "Practica";
-            });
 
             //Creamos un array de días de la semana
             const diasSemana = {
@@ -121,7 +120,47 @@ if(window.location.pathname == "/formulario/calendario"){
             let contLeccTeoria = 0;
             let contLeccPractica = 0;
 
+            let leccionesFiltradas;
+            let leccionesFiltradasTeoria;
+            let leccionesFiltradasPractica;
+            let sonClase = false;
+            //En caso de trasladar calendario, en vez de utilizar las lecciones usaremos los títulos de las clases.
+            if(paginaAnterior.includes("/trasladar")) {
+                //Obtenemos las clases del grupo
+                const clases = JSON.parse(document.getElementById('clases').dataset.clases);
+                //Filtramos clases por asignaturaId
+                leccionesFiltradas = clases.filter(function(clase) {
+                    return clase.asignaturaId === grupoAsignaturaId;
+                });
+
+                //Filtramos clases por teoria y practica
+                leccionesFiltradasTeoria = leccionesFiltradas.filter(function(clase) {
+                    return clase.modalidad === "Teoria";
+                });
+                leccionesFiltradasPractica = leccionesFiltradas.filter(function(clase) {
+                    return clase.modalidad === "Practica";
+                });
+                sonClase = true;
+            } else {
+                //Filtramos lecciones por asignaturaId
+                leccionesFiltradas = lecciones.filter(function(leccion) {
+                    return leccion.asignaturaId === grupoAsignaturaId;
+                });
+
+                //Filtramos lecciones por teoria y practica
+                leccionesFiltradasTeoria = leccionesFiltradas.filter(function(leccion) {
+                    return leccion.modalidad === "Teorica";
+                });
+                leccionesFiltradasPractica = leccionesFiltradas.filter(function(leccion) {
+                    return leccion.modalidad === "Practica";
+                });
+            }
+
             while (fechaActual <= fechaFin) {
+                //Si viene de clases tituloSesion será .nombre y si viene de lecciones será .titulo
+                let tituloSesionTeoria = obtenerTituloSesion(leccionesFiltradasTeoria, contLeccTeoria, sonClase ? 'nombre' : 'titulo');
+                let tituloSesionPractica = obtenerTituloSesion(leccionesFiltradasPractica, contLeccPractica, sonClase ? 'nombre' : 'titulo');
+
                 // Si coinciden los dias teoria, además no están completas y no es festivo, se incluye.
                 if (diasTeoria.includes(diasSemana[fechaActual.getDay()]) 
                     && contLeccTeoria != leccionesFiltradasTeoria.length
@@ -135,7 +174,7 @@ if(window.location.pathname == "/formulario/calendario"){
                     mapFechaGrupo.set(fechaFormateada+grupoAsignaturaId+grupoLetra+horario, {
                         ...grupo,
                         esPractica: false,
-                        tituloSesion: leccionesFiltradasTeoria[contLeccTeoria].titulo
+                        tituloSesion: tituloSesionTeoria
                     });
                     contLeccTeoria++;
                 }
@@ -152,13 +191,20 @@ if(window.location.pathname == "/formulario/calendario"){
                     mapFechaGrupo.set(fechaFormateada+grupoAsignaturaId+grupoLetra+horario, {
                         ...grupo,
                         esPractica: true,
-                        tituloSesion: leccionesFiltradasPractica[contLeccPractica].titulo
+                        tituloSesion: tituloSesionPractica
                     });
                     contLeccPractica++;
                 }
                 // Se actualiza la fecha actual
                 fechaActual.setDate(fechaActual.getDate() + 1);
             }
+        }
+
+        function obtenerTituloSesion(lecciones, indice, propiedad) {
+            if (indice < lecciones.length) {
+                return lecciones[indice][propiedad];
+            }
+            return '';
         }
 
         function fechas_deshabilitadas(fecha) {
@@ -222,12 +268,28 @@ if(window.location.pathname == "/formulario/calendario"){
 function calcularFechaCalendario(nombreFestivo) {
     const festivosCentro = JSON.parse(document.getElementById('festivosCentro').dataset.festivoscentro);
     const centro = document.getElementById('centro').dataset.centro;
+    const curso = JSON.parse(document.getElementById('curso').dataset.curso);
 
-    //Filtramos para buscar el nombreFestivo que se requiere
-    const festivosCentroFiltrado = festivosCentro.filter(function(festivoCentro) {
-        return festivoCentro.nombreFestivo == nombreFestivo
+    let festivosCentroFiltrado;
+    if(curso != "") {
+        //Filtramos para buscar el nombreFestivo que se requiere y el curso
+        festivosCentroFiltrado = festivosCentro.filter(function(festivoCentro) {
+            let inicioFestivo = crearFecha(festivoCentro.inicio);
+            let mesInicioFestivo = inicioFestivo.getMonth();
+            let anioFestivo = inicioFestivo.getFullYear().toString();
+            let anioInicioFestivo = anioFestivo.substring(anioFestivo.length - 2);
+            if(mesInicioFestivo>=8 && anioInicioFestivo == curso[0] || mesInicioFestivo>=0 && anioInicioFestivo == curso[1]) {
+                return festivoCentro.nombreFestivo == nombreFestivo
                 && festivoCentro.nombreCentro == centro;
-    });
+            }
+        });
+    } else {
+        //Filtramos para buscar el nombreFestivo que se requiere
+        festivosCentroFiltrado = festivosCentro.filter(function(festivoCentro) {
+            return festivoCentro.nombreFestivo == nombreFestivo
+                && festivoCentro.nombreCentro == centro;
+        });
+    }
 
     let claseDia;
     if(nombreFestivo.includes("finales")) {
@@ -246,20 +308,49 @@ function calcularFestivos() {
     const festivosCentro = JSON.parse(document.getElementById('festivosCentro').dataset.festivoscentro);
     const centro = document.getElementById('centro').dataset.centro;
     const provincia = document.getElementById('provincia').dataset.provincia;
+    const curso = JSON.parse(document.getElementById('curso').dataset.curso);
 
     //Declaramos el array a devolver, el cual tendrá simplemente un array de todas las fechas festivas
     const festivos = [];
+    let festivosLocalesFiltrado;
+    let festivosCentroFiltrado;
+    // En caso de tener el curso, significa que se habrá trasladado o editado el calendario
+    if(curso != "") {
+        //Filtraremos festivosLocales y festivoCentro en base al curso académico
+        //Obtenemos los festivosLocales en base a la provincia proporcionada y curso
+        festivosLocalesFiltrado = festivosLocales.filter(function(festivoLocal) {
+            let inicioFestivo = crearFecha(festivoLocal.inicio);
+            let mesInicioFestivo = inicioFestivo.getMonth();
+            let anioFestivo = inicioFestivo.getFullYear().toString();
+            let anioInicioFestivo = anioFestivo.substring(anioFestivo.length - 2);
+            if(mesInicioFestivo>=8 && anioInicioFestivo == curso[0] || mesInicioFestivo>=0 && anioInicioFestivo == curso[1]) {
+                return festivoLocal.provincia == provincia;
+            }
+        });
 
-    //Obtenemos los festivosLocales en base a la provincia proporcionada
-    const festivosLocalesFiltrado = festivosLocales.filter(function(festivoLocal) {
-        return festivoLocal.provincia == provincia;
-    });
+        //Obtenemos los festivosCentro en base al centro proporcionado y curso
+        festivosCentroFiltrado = festivosCentro.filter(function(festivoCentro) {
+            let inicioFestivo = crearFecha(festivoCentro.inicio);
+            let mesInicioFestivo = inicioFestivo.getMonth();
+            let anioFestivo = inicioFestivo.getFullYear().toString();
+            let anioInicioFestivo = anioFestivo.substring(anioFestivo.length - 2);
+            if(mesInicioFestivo>=8 && anioInicioFestivo == curso[0] || mesInicioFestivo>=0 && anioInicioFestivo == curso[1]) {
+                return festivoCentro.nombreCentro == centro
+                    && !(festivoCentro.nombreFestivo).includes("cuatrimestre");
+            }
+        });
+    } else {
+        //Obtenemos los festivosLocales en base a la provincia proporcionada
+        festivosLocalesFiltrado = festivosLocales.filter(function(festivoLocal) {
+            return festivoLocal.provincia == provincia;
+        });
 
-    //Obtenemos los festivosCentro en base al centro proporcionado
-    const festivosCentroFiltrado = festivosCentro.filter(function(festivoCentro) {
-        return festivoCentro.nombreCentro == centro
-        && !(festivoCentro.nombreFestivo).includes("cuatrimestre");
-    });
+        //Obtenemos los festivosCentro en base al centro proporcionado
+        festivosCentroFiltrado = festivosCentro.filter(function(festivoCentro) {
+            return festivoCentro.nombreCentro == centro
+            && !(festivoCentro.nombreFestivo).includes("cuatrimestre");
+        });
+    }
 
     completaArrayFestivos(festivosNacionales, festivos);
     completaArrayFestivos(festivosLocalesFiltrado, festivos);
@@ -524,9 +615,14 @@ $(document).on('click', '.crear-calendario', function() {
     const nombreProfesor = localStorage.getItem('profesor');
     const provincia = localStorage.getItem('provincia');
     const centro = localStorage.getItem('centro');
-
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/manejar/posts/clase',{clasesJSON: clasesJSON},'/calendario?provincia='+ provincia + '&usuario='+ nombreProfesor + '&centro=' + centro); //parametros de URL
+    if(window.location.pathname == "/formulario/trasladar/calendario") {
+        enviarPost('/manejar/posts/clase',{clasesJSON: clasesJSON},'/trasladar/calendario?provincia='+ provincia + '&usuario='+ nombreProfesor + '&centro=' + centro); //parametros de URL
+    } else {
+        //Si se traslada el calendario viene de /formulario/trasladar/calendario
+        enviarPost('/manejar/posts/clase',{clasesJSON: clasesJSON},'/calendario?provincia='+ provincia + '&usuario='+ nombreProfesor + '&centro=' + centro); //parametros de URL
+
+    }
 });
 
 //LEER un calendario
@@ -603,7 +699,7 @@ function obtenerAsignaturasSelect() {
     let options = "";
     //Los recorremos y agregamos las opciones
     for (let i = 0; i < asignaturas.length; i++) {
-        if(window.location.pathname == "/formulario/calendario") {
+        if(window.location.pathname.includes("/calendario")) {
             options += `<option>${asignaturas[i].asignatura}</option>`;
         } else {
             options += `<option>${asignaturas[i]}</option>`;
@@ -837,14 +933,16 @@ $(document).on('click', '.previsualizar-calendario', function() {
 
     centro.push({nombre, provincia, profesor});
 
-    const centroJSON = JSON.stringify({centro});
+    const centroJSON = JSON.stringify(centro);
 
     enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, '/post/centro');
 });
 
 //Formulario editar calendario
-$(document).on('click', '.editar-calendario', function() {
+$(document).on('click', '.editar-calendario, .trasladar-calendario', function() {
     const profesor = $('#nombreDelProfesor').val();
+    //En caso de trasladar, recogemos el curso académico
+    const curso = $('#cursoacademico').val();
     //Mandamos por AJAX a un controlador que nos devuelva el centro y provincia de un profesor en caso de editar un calendario
     $.ajax({
         url: '/obtener/info/profesor',
@@ -852,7 +950,7 @@ $(document).on('click', '.editar-calendario', function() {
         data: { profesor: profesor },
         success: function(response) {
             const nombreCentroProvincia = response;
-            editarCalendario(nombreCentroProvincia, profesor);
+            editarCalendario(nombreCentroProvincia, profesor, curso);
             // Maneja la respuesta del servidor aquí
             console.log(response);
         },
@@ -862,16 +960,22 @@ $(document).on('click', '.editar-calendario', function() {
     });
 });
 
-function editarCalendario(nombreCentroProvincia, profesor)
+function editarCalendario(nombreCentroProvincia, profesor, curso)
 {
     const centro = [];
     const partesNombreProvincia = nombreCentroProvincia.split('-');
     const nombre = partesNombreProvincia[0];
     const provincia = partesNombreProvincia[1];
     const editar = true;
-    centro.push({nombre, provincia, profesor, editar});
-    const centroJSON = JSON.stringify({centro});
-    enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, '/formulario/calendario');
+    centro.push({nombre, provincia, profesor, editar, curso});
+    const centroJSON = JSON.stringify(centro);
+    //Si no hay curso se está editando, en otro caso se está trasladando.
+
+    if(!curso) {
+        enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, '/formulario/editar/calendario');
+    } else {
+        enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, '/formulario/trasladar/calendario');
+    }
 }
 
 
@@ -917,7 +1021,7 @@ function crearFilaFestivo(idFestivo, tipoDeFestivo) {
 
 $(document).on('click', '.guardar-festivos-centro', function() {
     // Obtener los valores de las filas de la tabla
-    const nombreCentro = $('#nombreCentroFestivo').val();;
+    const nombreCentro = $('#nombreCentroFestivo').val();
     const festivosCentro = [];
     $('#festivosCentroTable tbody tr').each(function() {
         const nombre = $(this).find('.nombreFestivocentro').val();

@@ -85,10 +85,11 @@ class CalendarioController extends AbstractController
      */
     #[Route('/calendario', name: 'app_calendario')]
     #[Route('/ver/calendario', name: 'app_ver_calendario')]
+    #[Route('/trasladar/calendario', name: 'app_trasladar_calendario')]
     public function index(Request $request): Response
     {
         //Calcular los años actuales y anterior
-        self::calcularAnios();
+        self::calcularAnios($request);
         //Obtenemos los datos del POST
         $this->centro = $request->get('centro');
         $this->provincia = $request->get('provincia');
@@ -108,13 +109,14 @@ class CalendarioController extends AbstractController
         if (!($request->getPathInfo() == '/ver/calendario')) {
             // Si no se ha creado el calendario
             if (!$calendario) {
-                //Creamos el calendario y lo obtenemos
-                $calendario = $this->calendarioService->getCalendario($this->usuario, $centro);
-                $this->claseService->getClases($calendario, true);
-                //Crea los años del calendario
-                $anios = self::creacionAnios($calendario);
-                //Crea todo el calendario
-                self::creacionCalendario($anios, $calendario);
+                //Creamos el calendario completo
+                self::crearCalendarioCompleto($centro);
+            //Si se está trasladando el calendario
+            } else if($request->getPathInfo() == '/trasladar/calendario'){
+                //Borramos el antiguo calendario completamente
+                self::eliminarCalendarioCompleto($calendario);
+                //Creamos el calendario completo con los años nuevos.
+                self::crearCalendarioCompleto($centro);
             } else {
                 //Editamos el calendario existente        
                 self::editarClasesCalendario($calendario);
@@ -123,21 +125,58 @@ class CalendarioController extends AbstractController
 
         return $this->render('calendario/index.html.twig', [
             'calendario' => $calendario,
-            'dias_semana' => $calendario->getdiasSemana(),
+            'dias_semana' => $calendario->getdiasSemana()
         ]);
+    }
+
+    /**
+     * Elimina un calendario por completo a partir de la entidad
+     */
+    public function eliminarCalendarioCompleto($calendario)
+    {
+        //Borramos los eventos de clase
+        $eventosClases = $this->eventoRepository->findEventoClaseByCalendario($calendario, true);
+        $this->eventoRepository->removeEventos($eventosClases, true);
+        //Borramos el calendario antiguo
+        $this->calendarioRepository->remove($calendario, true);
+    }
+
+    /**
+     * Crea un calendario completo a partir de un centro
+     */
+    public function crearCalendarioCompleto($centro)
+    {
+        //Creamos el calendario y lo obtenemos
+        $calendario = $this->calendarioService->getCalendario($this->usuario, $centro);
+        $this->claseService->getClases($calendario, true);
+        //Crea los años del calendario
+        $anios = self::creacionAnios($calendario);
+        //Crea toda la estructura del calendario
+        self::creacionCalendario($anios, $calendario);
     }
 
     /**
      *  Calcula los años actual y anterior en base a los meses actuales.
      *  Siempre que se cree un calendario, este será para el año actual y el siguiente.
      */
-    public function calcularAnios(): array
+    public function calcularAnios(Request $request): array
     {
-        $fechaHoy = new DateTime();
-        $aniofechaHoy = $fechaHoy->format('Y');
-
-        $this->anioAc = $aniofechaHoy;
-        $this->anioSig = intval($aniofechaHoy) + 1;
+        $centroJson = file_get_contents(__DIR__ . '/../resources/centro.json');
+        $centroArray = json_decode($centroJson, true);
+        //Si está el curso en centro.json, se está trasladando el calendario.
+        if($request->getPathInfo() == '/trasladar/calendario') {
+            $curso = $centroArray[0]["curso"];
+            $curso = explode("/",$curso);
+            $this->anioAc = $curso[0];
+            $this->anioSig = $curso[1];
+        } else {
+            // Si no está el curso en centro.json, se está creando el calendario nuevo.
+            $fechaHoy = new DateTime();
+            $aniofechaHoy = $fechaHoy->format('Y');
+    
+            $this->anioAc = $aniofechaHoy;
+            $this->anioSig = intval($aniofechaHoy) + 1;
+        }
 
         return [$this->anioAc, $this->anioSig];
     }
@@ -166,6 +205,7 @@ class CalendarioController extends AbstractController
 
     /**
      * Crea los meses, años y días del calendario y los persiste a la bd.
+     * Es básicamente la estructura del calendario.
      */
     public function creacionCalendario($anios, Calendario $calendario): void
     {
@@ -259,6 +299,9 @@ class CalendarioController extends AbstractController
         }
     }
 
+    /**
+     * Función para editar las clases y modificar un calendario existente.
+     */
     public function editarClasesCalendario($calendario)
     {
         //Obtenemos las clases actuales

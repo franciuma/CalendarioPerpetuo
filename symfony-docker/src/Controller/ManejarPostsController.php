@@ -32,7 +32,7 @@ class ManejarPostsController extends AbstractController
             $datosDecode = json_decode($datosJSON, true);
 
             if($entidad == "asignaturas" || $entidad == "clases"){
-                // Crear el array asociativo y agregar el array de asignaturas dentro de él
+                // Crear el array asociativo y agregar el array de la entidad dentro de él
                 $datosDecode = array($entidad => $datosDecode);
             }
 

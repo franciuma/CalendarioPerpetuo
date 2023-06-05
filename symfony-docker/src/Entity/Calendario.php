@@ -40,10 +40,10 @@ class Calendario
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: Anio::class)]
+    #[ORM\OneToMany(mappedBy: 'calendario', targetEntity: Anio::class, cascade: ['remove'])]
     private Collection $anios;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne]
     private ?Usuario $usuario = null;
 
     #[ORM\ManyToOne(inversedBy: 'calendarios')]

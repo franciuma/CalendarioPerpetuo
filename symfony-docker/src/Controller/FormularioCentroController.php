@@ -58,14 +58,14 @@ class FormularioCentroController extends AbstractController
     public function postCentro(): Response
     {
         //Creamos el centro
-        $centro = $this->centroService->getCentro();
+        //$centro = $this->centroService->getCentro();
         //Creamos los festivos nacionales
         //Puede ser opcional, que se creen por defecto y ya si se añaden más se metan en administrador.
-        $this->festivoNacionalService->getFestivosNacionales();
+        //$this->festivoNacionalService->getFestivosNacionales();
         //Creamos los festivos locales
-        $this->festivoLocalService->getFestivosLocales($centro);
+        //$this->festivoLocalService->getFestivosLocales($centro->getProvincia());
         //Creamos los festivos de centro
-        $this->festivoCentroService->getFestivosCentro($centro);
+        //$this->festivoCentroService->getFestivosCentro($centro);
 
         //Redirigimos al controlador de previsualización de calendario
         return $this->redirectToRoute('app_formulario_calendario');

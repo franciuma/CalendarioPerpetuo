@@ -54,6 +54,19 @@ class TitulacionRepository extends ServiceEntityRepository
 //        ;
 //    }
 
+    public function findOneByAbreviaturaProvincia($abreviatura, $provincia): ?Titulacion
+        {
+            return $this->createQueryBuilder('t')
+                ->join('App\Entity\Centro','c','WITH','c.id = t.centro')
+                ->andWhere('t.abreviatura = :abreviatura')
+                ->andWhere('c.provincia = :provincia')
+                ->setParameter('abreviatura', $abreviatura)
+                ->setParameter('provincia', $provincia)
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+        }
+
     public function findOneBynombreTitulacion($nombreTitulacion): ?Titulacion
     {
         return $this->createQueryBuilder('t')

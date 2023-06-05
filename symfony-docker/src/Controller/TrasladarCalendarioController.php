@@ -25,10 +25,10 @@ class TrasladarCalendarioController extends AbstractController
         $this->festivoLocalService = $festivoLocalService;
     }
 
-    #[Route('/trasladar/calendario', name: 'app_trasladar_calendario')]
+    #[Route('/trasladar', name: 'app_trasladar')]
     public function trasladarCalendario(): Response
     {
-        //Filtramos los profesores que tengan un calendario creado.
+        //Filtramos los profesores que tengan un calendario creado. 
         $profesores = $this->usuarioRepository->findAllProfesoresConCalendario();
 
         $nombreProfesores = array_map(function($profesor) {

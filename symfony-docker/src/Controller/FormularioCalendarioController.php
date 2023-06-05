@@ -15,6 +15,7 @@ use App\Repository\FestivoNacionalRepository;
 use App\Repository\LeccionRepository;
 use App\Service\CalendarioService;
 use App\Repository\UsuarioRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 class FormularioCalendarioController extends AbstractController
 {
@@ -55,7 +56,9 @@ class FormularioCalendarioController extends AbstractController
     }
 
     #[Route('/formulario/calendario', name: 'app_formulario_calendario')]
-    public function index(): Response
+    #[Route('/formulario/trasladar/calendario', name: 'app_formulario_trasladar_calendario')]
+    #[Route('/formulario/editar/calendario', name: 'app_formulario_editar_calendario')]
+    public function index(Request $request): Response
     {
         //Obtenemos las lecciones
         $lecciones = $this->leccionRepository->findAll();
@@ -86,17 +89,25 @@ class FormularioCalendarioController extends AbstractController
 
         $centroJson = file_get_contents(__DIR__ . '/../resources/centro.json');
         $centroArray = json_decode($centroJson, true);
-        $nombreProfesor = $centroArray['centro'][0]['profesor'];
+        $nombreProfesor = $centroArray[0]['profesor'];
         //Obtenemos profesor introducido en la base de datos
         $profesor = $this->calendarioService->getProfesorSeleccionado($nombreProfesor);
 
         $clasesJson = "";
-        //Si está el editar, es que se está editando un calendario
-        if(isset($centroArray['centro'][0]['accionCalendario'])) {
+        $cursoJson = json_encode("");
+        //Si está el editar, es que se está editando o trasladando un calendario
+        if(isset($centroArray[0]['editar'])) {
             $centroObjeto = $this->centroRepository->findOneByUsuario($profesor->getId());
             $centro = $centroObjeto->getNombre();
             $provincia = $centroObjeto->getProvincia();
-
+            //Obtenemos el curso y le damos formato si existe
+            if(isset($centroArray[0]['curso'])) {
+                $curso = explode("/", $centroArray[0]['curso']);
+                $anio = substr($curso[0], 2, 3);
+                $anioSiguiente = substr($curso[1], 2, 3);
+                $cursoCompleto = [$anio, $anioSiguiente];
+                $cursoJson = json_encode($cursoCompleto);
+            }
             // Obtenemos el calendario existente
             $calendario = $this->calendarioRepository->findOneByUsuario($profesor->getId());
             //Obtenemos las clases asociadas a ese calendario
@@ -118,8 +129,8 @@ class FormularioCalendarioController extends AbstractController
             //creamos un json de los grupos para pasar al javascript
             $clasesJson = json_encode($clasesArray);
         } else {
-            $centro = $centroArray['centro'][0]['nombre'];
-            $provincia = $centroArray['centro'][0]['provincia'];
+            $centro = $centroArray[0]['nombre'];
+            $provincia = $centroArray[0]['provincia'];
         }
 
         //Obtener los grupos pertenecientes dado un profesor
@@ -191,7 +202,8 @@ class FormularioCalendarioController extends AbstractController
             'festivosCentro' => $festivosCentroJson,
             'centro' => $centro,
             'provincia' => $provincia,
-            'clases' => $clasesJson
+            'clases' => $clasesJson,
+            'curso' => $cursoJson
         ]);
     }
 }

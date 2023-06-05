@@ -31,7 +31,7 @@ class TitulacionService
         $titulacionesJson = file_get_contents(__DIR__ . '/../resources/titulaciones.json');
         $titulacionesArray = json_decode($titulacionesJson, true);
 
-        //Array de objetos Titulacion que devuelve el método
+        //Array de objetos Titulacion
         $titulaciones = [];
 
         foreach ($titulacionesArray as $titulacion) {

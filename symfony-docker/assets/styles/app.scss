@@ -110,6 +110,15 @@ select.horario {
     width: 100px;
 }
 
+// Tabla formulario titulación
+input.nombreTitul {
+    width: 200px;
+}
+
+select.centroTitul {
+    width: 200px;
+}
+
 //Para los menús
 .menu-list {
     list-style-type: none;
@@ -143,4 +152,11 @@ select.horario {
 
 .menu-title {
     margin-bottom: 10px;
+}
+
+//Boton actualizar festivos
+.actualizarfestivos-btn {
+    font-weight: bold;
+    background-color: white;
+    color: black;
 }

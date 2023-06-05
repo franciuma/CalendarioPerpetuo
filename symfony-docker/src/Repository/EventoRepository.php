@@ -39,18 +39,26 @@ class EventoRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Evento[] Returns an array of Evento objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('e')
-//            ->andWhere('e.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('e.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function removeEventos(array $eventos): void
+    {
+        foreach ($eventos as $evento) {
+            $this->getEntityManager()->remove($evento);
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    /**
+     * @return Evento[] Returns an array of Evento objects
+     */
+    public function findEventoClaseByCalendario($calendarioId): array
+    {
+        return $this->createQueryBuilder('e')
+            ->join('App\Entity\Clase','cl','WITH','cl.id = e.clase')
+            ->andWhere('cl.calendario = :val')
+            ->setParameter('val', $calendarioId)
+            ->orderBy('e.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
