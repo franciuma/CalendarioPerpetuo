@@ -15,6 +15,7 @@ use App\Repository\FestivoNacionalRepository;
 use App\Repository\LeccionRepository;
 use App\Service\CalendarioService;
 use App\Repository\UsuarioRepository;
+use DateTime;
 use Symfony\Component\HttpFoundation\Request;
 
 class FormularioCalendarioController extends AbstractController
@@ -94,7 +95,7 @@ class FormularioCalendarioController extends AbstractController
         $profesor = $this->calendarioService->getProfesorSeleccionado($nombreProfesor);
 
         $clasesJson = "";
-        $cursoJson = json_encode("");
+        $cursoJson = json_encode(self::calcularCursoActual());
         //Si está el editar, es que se está editando o trasladando un calendario
         if(isset($centroArray[0]['editar'])) {
             $centroObjeto = $this->centroRepository->findOneByUsuario($profesor->getId());
@@ -205,5 +206,16 @@ class FormularioCalendarioController extends AbstractController
             'clases' => $clasesJson,
             'curso' => $cursoJson
         ]);
+    }
+
+    public function calcularCursoActual(): array
+    {
+        $fechaHoy = new DateTime();
+        $aniofechaHoy = $fechaHoy->format('Y');
+        $anioSiguiente = intval($aniofechaHoy) + 1;
+
+        $anioActualFormato = substr($aniofechaHoy, 2, 3);
+        $anioSiguienteFormato = substr(strval($anioSiguiente), 2, 3);
+        return [$anioActualFormato, $anioSiguienteFormato];
     }
 }

@@ -95,14 +95,7 @@ class CalendarioController extends AbstractController
         $this->provincia = $request->get('provincia');
         $this->usuario = $request->get('usuario');
 
-        //Obtenemos el usuario
-        $nombreCompleto = explode(" ", $this->usuario);
-        //Asignamos el nombre y apellidos
-        $nombre = $nombreCompleto[0];
-        $apellidoPr = $nombreCompleto[1];
-        $apellidoSeg = $nombreCompleto[2];
-
-        $usuario = $this->usuarioRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
+        $usuario = self::obtenerUsuarioCalendario();
         $calendario = $this->calendarioRepository->findOneByUsuario($usuario->getId());
         $centro = $this->centroRepository->findOneByNombre($this->centro);
         //Si no se está leyendo un calendario
@@ -279,8 +272,11 @@ class CalendarioController extends AbstractController
         $festivoNacional = $this->festivoNacionalRepository->findOneFecha($dia->getFecha());
         $festivoLocal = $this->festivoLocalRepository->findOneFecha($dia->getFecha());
         $provinciafestivoLocal = $festivoLocal ? $festivoLocal->getProvincia() : null;
-        $festivoCentro = $this->festivoCentroRepository->findOneFechaCentro($dia->getFecha(), $this->centro);
-        $centroNombre = $festivoCentro ? $festivoCentro->getCentro()->getNombre() : null;
+
+        $usuario = self::obtenerUsuarioCalendario();
+        $centro = $this->centroRepository->findOneByUsuario($usuario->getId());
+        $festivoCentro = $this->festivoCentroRepository->findOneFechaCentro($dia->getFecha(), $centro->getId());
+        $centroNombre = $festivoCentro ? $centro->getNombre() : null;
 
         //Si es clase y pertenece al mismo calendario.
         if($clase && ($calendario->getId() == $clase->getCalendarioId())) {
@@ -299,6 +295,24 @@ class CalendarioController extends AbstractController
         } else if ($nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
             $dia->setEsNoLectivo(true);
         }
+    }
+
+    /**
+     * Obtiene el objeto Usuario del calendario actual
+     */
+    public function obtenerUsuarioCalendario()
+    {
+        //Obtenemos el usuario
+        $nombreCompleto = explode(" ", $this->usuario);
+        //Asignamos el nombre y apellidos
+        $nombre = $nombreCompleto[0];
+        $apellidoPr = $nombreCompleto[1];
+        $apellidoSeg = $nombreCompleto[2];
+
+        //Obtenemos el usuario
+        $usuario = $this->usuarioRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
+
+        return $usuario;
     }
 
     /**

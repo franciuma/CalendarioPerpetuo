@@ -38,6 +38,7 @@ if(
 
         //Devuelve un array con todos los festivos
         const arrayFestivos = calcularFestivos();
+
         //Fechas del primer cuatrimestre
         const inicioPrimerCuatri = calcularFechaCalendario("primer cuatrimestre");
         const fechaFinPrimerCuatri = calcularFechaCalendario("exámenes finales primer cuatrimestre"); 
@@ -309,75 +310,48 @@ function calcularFestivos() {
     const centro = document.getElementById('centro').dataset.centro;
     const provincia = document.getElementById('provincia').dataset.provincia;
     const curso = JSON.parse(document.getElementById('curso').dataset.curso);
-
     //Declaramos el array a devolver, el cual tendrá simplemente un array de todas las fechas festivas
     const festivos = [];
-    let festivosLocalesFiltrado;
-    let festivosCentroFiltrado;
-    // En caso de tener el curso, significa que se habrá trasladado o editado el calendario
-    if(curso != "") {
-        //Filtraremos festivosLocales y festivoCentro en base al curso académico
-        //Obtenemos los festivosLocales en base a la provincia proporcionada y curso
-        festivosLocalesFiltrado = festivosLocales.filter(function(festivoLocal) {
-            let inicioFestivo = crearFecha(festivoLocal.inicio);
-            let mesInicioFestivo = inicioFestivo.getMonth();
-            let anioFestivo = inicioFestivo.getFullYear().toString();
-            let anioInicioFestivo = anioFestivo.substring(anioFestivo.length - 2);
-            if(mesInicioFestivo>=8 && anioInicioFestivo == curso[0] || mesInicioFestivo>=0 && anioInicioFestivo == curso[1]) {
-                return festivoLocal.provincia == provincia;
-            }
-        });
 
-        //Obtenemos los festivosCentro en base al centro proporcionado y curso
-        festivosCentroFiltrado = festivosCentro.filter(function(festivoCentro) {
-            let inicioFestivo = crearFecha(festivoCentro.inicio);
-            let mesInicioFestivo = inicioFestivo.getMonth();
-            let anioFestivo = inicioFestivo.getFullYear().toString();
-            let anioInicioFestivo = anioFestivo.substring(anioFestivo.length - 2);
-            if(mesInicioFestivo>=8 && anioInicioFestivo == curso[0] || mesInicioFestivo>=0 && anioInicioFestivo == curso[1]) {
-                return festivoCentro.nombreCentro == centro
-                    && !(festivoCentro.nombreFestivo).includes("cuatrimestre");
-            }
-        });
-    } else {
-        //Obtenemos los festivosLocales en base a la provincia proporcionada
-        festivosLocalesFiltrado = festivosLocales.filter(function(festivoLocal) {
-            return festivoLocal.provincia == provincia;
-        });
-
-        //Obtenemos los festivosCentro en base al centro proporcionado
-        festivosCentroFiltrado = festivosCentro.filter(function(festivoCentro) {
-            return festivoCentro.nombreCentro == centro
-            && !(festivoCentro.nombreFestivo).includes("cuatrimestre");
-        });
-    }
-
-    completaArrayFestivos(festivosNacionales, festivos);
-    completaArrayFestivos(festivosLocalesFiltrado, festivos);
-    completaArrayFestivos(festivosCentroFiltrado, festivos);
-
-    return festivos;
-}
-
-function completaArrayFestivos(arrayFestivo, festivos) {
-    //Recorremos los festivos nacionales
-    arrayFestivo.forEach(function(festivo) {
-        if(festivo.inicio == festivo.final) {
-            festivos.push(crearFecha(festivo.inicio));
-        } else {
-            creaFestivosIntermedios(festivo.inicio, festivo.final, festivos);
+    //Filtraremos todos los festivos en base al curso académico
+    festivosNacionales.filter(function(festivoNacional) {
+        let inicioFestivo = crearFecha(festivoNacional.inicio);
+        let mesInicioFestivo = inicioFestivo.getMonth();
+        let anioFestivo = inicioFestivo.getFullYear().toString();
+        let anioInicioFestivo = anioFestivo.substring(anioFestivo.length - 2);
+        if(mesInicioFestivo>=8 && anioInicioFestivo == curso[0] || mesInicioFestivo>=0 && anioInicioFestivo == curso[1]) {
+            festivos.push(inicioFestivo);
         }
     });
-}
 
-function creaFestivosIntermedios(inicio, final, festivos) {
-    let fechaActual = crearFecha(inicio);
-    let fechaFin = crearFecha(final);
-    
-    while (fechaActual <= fechaFin) {
-        festivos.push(new Date(fechaActual));
-        fechaActual.setDate(fechaActual.getDate() + 1);
-    }
+    //Obtenemos los festivosLocales en base a la provincia proporcionada y curso
+    festivosLocales.filter(function(festivoLocal) {
+        let inicioFestivo = crearFecha(festivoLocal.inicio);
+        let mesInicioFestivo = inicioFestivo.getMonth();
+        let anioFestivo = inicioFestivo.getFullYear().toString();
+        let anioInicioFestivo = anioFestivo.substring(anioFestivo.length - 2);
+        if((mesInicioFestivo>=8 && anioInicioFestivo == curso[0] || mesInicioFestivo>=0 && anioInicioFestivo == curso[1])
+            && festivoLocal.provincia == provincia
+        ) {
+            festivos.push(inicioFestivo);
+        }
+    });
+
+    //Obtenemos los festivosCentro en base al centro proporcionado y curso
+    festivosCentro.filter(function(festivoCentro) {
+        let inicioFestivo = crearFecha(festivoCentro.inicio);
+        let mesInicioFestivo = inicioFestivo.getMonth();
+        let anioFestivo = inicioFestivo.getFullYear().toString();
+        let anioInicioFestivo = anioFestivo.substring(anioFestivo.length - 2);
+        if((mesInicioFestivo>=8 && anioInicioFestivo == curso[0] || mesInicioFestivo>=0  && anioInicioFestivo == curso[1])
+            && festivoCentro.nombreCentro == centro
+            && !(festivoCentro.nombreFestivo).includes("cuatrimestre")
+        ) {
+            festivos.push(inicioFestivo);
+        }
+    });
+
+    return festivos;
 }
 
 //Pasa la fecha a formato "normal", como 12-11-23
