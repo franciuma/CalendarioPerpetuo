@@ -39,6 +39,14 @@ class ClaseRepository extends ServiceEntityRepository
         }
     }
 
+    public function removeClases(array $clases)
+    {
+        foreach ($clases as $clase) {
+            $this->getEntityManager()->remove($clase);
+            $this->getEntityManager()->flush();
+        }
+    }
+
     /**
      * @return Clase[] Returns an array of Clase objects
      */
@@ -113,6 +121,16 @@ class ClaseRepository extends ServiceEntityRepository
             ->getQuery()
             ->setMaxResults(1)
             ->getOneOrNullResult()
+        ;
+    }
+
+    public function findByGrupoId($grupoId): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.grupo = :grupo')
+            ->setParameter('grupo', $grupoId)
+            ->getQuery()
+            ->getResult()
         ;
     }
 }

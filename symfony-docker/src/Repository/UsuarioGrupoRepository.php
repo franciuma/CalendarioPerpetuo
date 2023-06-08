@@ -61,6 +61,28 @@ class UsuarioGrupoRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findByGrupoId($grupoId): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.grupo = :val')
+            ->setParameter('val', $grupoId)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findOneByUsuarioGrupo($usuarioId, $grupoId): ?UsuarioGrupo
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.grupo = :grupo')
+            ->andWhere('p.usuario = :usuario')
+            ->setParameter('grupo', $grupoId)
+            ->setParameter('usuario', $usuarioId)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
 //    public function findOneBySomeField($value): ?UsuarioGrupo
 //    {
 //        return $this->createQueryBuilder('p')

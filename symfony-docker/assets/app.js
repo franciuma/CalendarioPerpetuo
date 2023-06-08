@@ -608,10 +608,22 @@ $(document).on('click', '.ver-calendario', function() {
 
 //Formulario profesor
 let idGrupo = 0;
+//Si se está editando un profesor
+if(window.location.pathname == "/editar/docente") {
+    //Obtenemos los grupos y creamos sus filas
+    const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
+    crearFilasExistentesGrupo(grupos);
+}
+
 $(document).on('click', '.aniadir-fila-prof', function() {
     idGrupo++;
     const fila = crearFilaGrupo();
     $('#gruposTable tbody').append(fila);
+    configurarMultiSelect();
+});
+
+function configurarMultiSelect()
+{
     const multiselectConfig = {
         // Compatibilidad con bootstrap 5
         templates: {
@@ -627,7 +639,55 @@ $(document).on('click', '.aniadir-fila-prof', function() {
 
     $(`#diasTeoria${idGrupo}`).multiselect(multiselectConfig);
     $(`#diasPractica${idGrupo}`).multiselect(multiselectConfig);
-});
+}
+
+function crearFilasExistentesGrupo(grupos) {
+    var diasSemana = `<option>Lunes</option>
+    <option>Martes</option>
+    <option>Miércoles</option>
+    <option>Jueves</option>
+    <option>Viernes</option>`;
+
+    const asignaturasOptions = obtenerAsignaturasSelect();
+    let fila;
+
+    grupos.forEach(grupo => {
+        idGrupo++;
+        fila = $(`
+        <tr id="grupo${grupo.id}">
+            <td><input type="text" class="form-control grupo" name="grupo" id="grupo${idGrupo}" value="${grupo.letra}" disabled></td>
+            <td>
+                <select type="text" class="form-control asignatura" name="asignatura" id="asignatura${idGrupo}" disabled>
+                <option selected>${grupo.asignatura}</option>
+                ${asignaturasOptions}
+                </select>
+            </td>
+            <td>
+                <select class="form-control horario" name="horario" id="horario${idGrupo}" disabled>
+                    <option selected>${grupo.horario}</option>
+                    <option>Mañana</option>
+                    <option>Tarde</option>
+                </select>
+            </td>
+            <td>
+                <select class="form-control diasTeoria" name="diasTeoria" id="diasTeoria${idGrupo}" multiple="multiple">
+                    <option selected>${grupo.diasTeoria}</option>
+                    ${diasSemana}
+                </select>
+            </td>
+            <td>
+                <select class="form-control diasPractica" name="diasPractica" id="diasPractica${idGrupo}" multiple="multiple">
+                    <option selected>${grupo.diasPractica}</option>
+                    ${diasSemana}
+                </select>
+            </td>
+            <td><button class="btn btn-danger eliminar-grupo">Eliminar</button></td>
+        </tr>
+    `);
+    $('#gruposTable tbody').append(fila);
+    configurarMultiSelect();
+    });
+}
 
 function crearFilaGrupo() {
     var diasSemana = `<option>Lunes</option>
@@ -695,7 +755,7 @@ function obtenerAsignaturaId(asignaturaNombre) {
 }
 
 //Creamos el POST del formulario
-$(document).on('click', '.crear-profesor', function() {
+$(document).on('click', '.crear-profesor, .editar-profesor', function() {
     const profesor = [];
     const nombre = $('#nombreProf').val();
     const primerapellido = $('#papellidoProf').val();
@@ -725,7 +785,13 @@ $(document).on('click', '.crear-profesor', function() {
     const profesorGrupoJSON = JSON.stringify(datos);
 
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/manejar/posts/docente',{profesorGrupoJSON: profesorGrupoJSON},'/post/docente');
+    if(window.location.pathname == "/editar/docente") {
+        const profesorId = document.getElementById('profesorid').dataset.profesorid;
+        enviarPost('/manejar/posts/docente',{profesorGrupoJSON: profesorGrupoJSON},'/post/docente/editado?profesor='+profesorId);
+    } else {
+        enviarPost('/manejar/posts/docente',{profesorGrupoJSON: profesorGrupoJSON},'/post/docente');
+    }
+    
 });
 
 //Formulario Asignatura

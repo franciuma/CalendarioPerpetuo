@@ -47,6 +47,16 @@ class EventoRepository extends ServiceEntityRepository
         }
     }
 
+    public function findByClaseId($claseId): ?Evento
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.clase = :val')
+            ->setParameter('val', $claseId)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     /**
      * @return Evento[] Returns an array of Evento objects
      */

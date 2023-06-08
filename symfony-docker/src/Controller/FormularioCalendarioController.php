@@ -59,7 +59,7 @@ class FormularioCalendarioController extends AbstractController
     #[Route('/formulario/calendario', name: 'app_formulario_calendario')]
     #[Route('/formulario/trasladar/calendario', name: 'app_formulario_trasladar_calendario')]
     #[Route('/formulario/editar/calendario', name: 'app_formulario_editar_calendario')]
-    public function index(Request $request): Response
+    public function index(): Response
     {
         //Obtenemos las lecciones
         $lecciones = $this->leccionRepository->findAll();

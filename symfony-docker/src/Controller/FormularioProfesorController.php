@@ -50,7 +50,7 @@ class FormularioProfesorController extends AbstractController
         ]);
     }
 
-    #[Route('/formulario/eliminar/docente', name: 'app_eliminar_profesor')]
+    #[Route('/eliminar/docente', name: 'app_eliminar_profesor')]
     public function eliminarProfesor(Request $request): Response
     {
         $profesores = "";
@@ -58,9 +58,10 @@ class FormularioProfesorController extends AbstractController
             $profesor = $request->request->get('profesorSeleccionado');
             $nombreCompleto = explode(" ", $profesor);
             //Asignamos el nombre y apellidos
-            $nombre = $nombreCompleto[0];
-            $apellidoPr = $nombreCompleto[1];
-            $apellidoSeg = $nombreCompleto[2];
+            $apellidoPr = $nombreCompleto[count($nombreCompleto) - 2];
+            $apellidoSeg = $nombreCompleto[count($nombreCompleto) - 1];
+            $nombre = implode(" ", array_slice($nombreCompleto, 0, count($nombreCompleto) - 2));
+
             //Obtenemos el profesor, su usuarioGrupo y sus grupos
             $profesorObjeto = $this->usuarioRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
             $grupos = $this->usuarioRepository->findGruposByUsuario($nombre, $apellidoPr, $apellidoSeg);
@@ -75,6 +76,60 @@ class FormularioProfesorController extends AbstractController
         $profesores = $this->usuarioService->getAllProfesoresNombreCompleto($conCalendario);
 
         return $this->render('eliminar/profesor.html.twig', [
+            'profesores' => $profesores
+        ]);
+    }
+
+    #[Route('/editar/docente', name: 'app_editar_profesor')]
+    public function editarProfesor(Request $request): Response
+    {
+        $asignaturas = $this->asignaturaRepository->findAll();
+        $profesor = $request->request->get('profesorSeleccionado');
+        $nombreCompleto = explode(" ", $profesor);
+        //Asignamos el nombre y apellidos
+        $apellidoPr = $nombreCompleto[count($nombreCompleto) - 2];
+        $apellidoSeg = $nombreCompleto[count($nombreCompleto) - 1];
+        $nombre = implode(" ", array_slice($nombreCompleto, 0, count($nombreCompleto) - 2));
+
+        //Obtenemos el profesor y sus grupos
+        $profesorObjeto = $this->usuarioRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
+        $profesorId = $profesorObjeto->getId();
+        $grupos = $this->usuarioRepository->findGruposByUsuario($nombre, $apellidoPr, $apellidoSeg);
+
+        //Mandamos los atributos que vamos a utilizar para los grupos
+        $gruposArray = array_map(function($grupo) {
+            return [
+                'id' => $grupo->getId(),
+                'letra' => $grupo->getLetra(),
+                'asignatura' => $grupo->getAsignatura()->getNombre(),
+                'diasTeoria' => $grupo->getDiasTeoria(),
+                'diasPractica' => $grupo->getDiasPractica(),
+                'horario' => $grupo->getHorario(),
+            ];
+        }, $grupos);
+        
+        //creamos un json de los grupos para pasar al javascript
+        $gruposJson = json_encode($gruposArray);
+
+        $titulosAsignaturas = array_map(function ($asignatura) {
+            return $asignatura->getNombre();
+        }, $asignaturas);
+
+        return $this->render('editar/profesor.html.twig', [
+            'asignaturas' => $titulosAsignaturas,
+            'profesor' => $profesorObjeto,
+            'grupos' => $gruposJson,
+            'profesorid' => $profesorId
+        ]);
+    }
+
+    #[Route('/seleccionar/docente', name: 'app_seleccionar_profesor')]
+    public function seleccionarProfesor(): Response
+    {
+        $conCalendario = false;
+        $profesores = $this->usuarioService->getAllProfesoresNombreCompleto($conCalendario);
+
+        return $this->render('leer/profesor.html.twig', [
             'profesores' => $profesores
         ]);
     }

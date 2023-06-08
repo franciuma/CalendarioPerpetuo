@@ -47,9 +47,9 @@ class EditarCalendarioController extends AbstractController
         $profesorNombre = $request->get('profesor');
         $nombreCompleto = explode(" ", $profesorNombre);
         //Asignamos el nombre y apellidos
-        $nombre = $nombreCompleto[0];
-        $apellidoPr = $nombreCompleto[1];
-        $apellidoSeg = $nombreCompleto[2];
+        $apellidoPr = $nombreCompleto[count($nombreCompleto) - 2];
+        $apellidoSeg = $nombreCompleto[count($nombreCompleto) - 1];
+        $nombre = implode(" ", array_slice($nombreCompleto, 0, count($nombreCompleto) - 2));
 
         $profesor = $this->usuarioRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
 

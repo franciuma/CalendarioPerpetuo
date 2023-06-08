@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Usuario;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Repository\UsuarioRepository;
 
@@ -32,6 +33,41 @@ class UsuarioService
         $this->usuarioRepository->save($profesor,true);
 
         return $profesor;
+    }
+
+    /**
+     * Edita un profesor, comparando el que recibe con el de la base de datos.
+     */
+    public function editarProfesor(Usuario $profesor)
+    {
+        $profesorJson = file_get_contents(__DIR__ . '/../resources/profesorGrupo.json');
+        $profesorArray = json_decode($profesorJson, true);
+
+        $profesorNuevo = $this->serializer->denormalize($profesorArray['profesor'][0], 'App\Entity\Usuario');
+
+        //Comparamos todas las propiedades del profesor nuevo y original
+        if($profesor->getNombre() != $profesorNuevo->getNombre()) {
+            $profesor->setNombre($profesorNuevo->getNombre());
+        }
+
+        if($profesor->getPrimerApellido() != $profesorNuevo->getPrimerApellido()) {
+            $profesor->setPrimerApellido($profesorNuevo->getPrimerApellido());
+        }
+
+        if($profesor->getSegundoApellido() != $profesorNuevo->getSegundoApellido()) {
+            $profesor->setSegundoApellido($profesorNuevo->getSegundoApellido());
+        }
+
+        if($profesor->getCorreo() != $profesorNuevo->getCorreo()) {
+            $profesor->setCorreo($profesorNuevo->getCorreo());
+        }
+
+        if($profesor->getDespacho() != $profesorNuevo->getDespacho()) {
+            $profesor->setDespacho($profesorNuevo->getDespacho());
+        }
+
+        //Guardamos los cambios en la base de datos
+        $this->usuarioRepository->save($profesor, true);
     }
 
     public function getAllProfesoresNombreCompleto($conCalendario): array

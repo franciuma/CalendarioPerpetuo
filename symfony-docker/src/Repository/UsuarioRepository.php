@@ -55,6 +55,18 @@ class UsuarioRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findGruposByUsuarioId($usuarioId): array
+    {
+        return $this->createQueryBuilder('u')
+            ->select('g')
+            ->join('App\Entity\UsuarioGrupo','ug','WITH','u.id = ug.usuario')
+            ->join('App\Entity\Grupo','g','WITH','ug.grupo = g.id')
+            ->where('u.id = :usuarioid')
+            ->setParameter('usuarioid', $usuarioId)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findOneByNombreApellidos($nombreUsuario, $apellidoPr, $apellidoSeg): ?Usuario
     {
         return $this->createQueryBuilder('u')
@@ -74,6 +86,16 @@ class UsuarioRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('u')
             ->andWhere('u.nombre = :val')
             ->setParameter('val', $nombre)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    public function findOneById($usuarioId): ?Usuario
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.id = :val')
+            ->setParameter('val', $usuarioId)
             ->getQuery()
             ->getOneOrNullResult()
         ;

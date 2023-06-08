@@ -42,9 +42,9 @@ class CalendarioService
     {
         $nombreCompleto = explode(" ", $nombreUsuario);
         //Asignamos el nombre y apellidos
-        $nombre = $nombreCompleto[0];
-        $apellidoPr = $nombreCompleto[1];
-        $apellidoSeg = $nombreCompleto[2];
+        $apellidoPr = $nombreCompleto[count($nombreCompleto) - 2];
+        $apellidoSeg = $nombreCompleto[count($nombreCompleto) - 1];
+        $nombre = implode(" ", array_slice($nombreCompleto, 0, count($nombreCompleto) - 2));
 
         //Obtenemos el usuario
         $profesorSeleccionado = $this->usuarioRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg, 'Profesor');
