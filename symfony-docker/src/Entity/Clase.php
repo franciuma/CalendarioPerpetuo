@@ -41,6 +41,9 @@ class Clase implements EventoInterface
     #[ORM\ManyToOne(inversedBy: 'clases')]
     private ?Grupo $grupo = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $enlace = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -143,6 +146,18 @@ class Clase implements EventoInterface
     public function setGrupo(?Grupo $grupo): self
     {
         $this->grupo = $grupo;
+
+        return $this;
+    }
+
+    public function getEnlace(): ?string
+    {
+        return $this->enlace;
+    }
+
+    public function setEnlace(?string $enlace): self
+    {
+        $this->enlace = $enlace;
 
         return $this;
     }

@@ -413,6 +413,7 @@ function crearFilaCalendario(fechaStringFormato, asignaturaId, grupoLetra, horar
                     <option ${horario === 'Tarde' ? 'selected' : ''}>Tarde</option>
                 </select>
             </td>
+            <td><input type="text" class="form-control enlace" name="enlace" id="enlace${fechaStringFormato}" placeholder="Enlace a la clase" ></td>
             <td><button data-asignatura-id="${asignaturaId}" type="button" class="btn btn-primary permutar-fecha">Permutar</button></td>
             <td><button class="btn btn-danger eliminar-fecha">Eliminar</button></td>
         </tr>
@@ -558,6 +559,7 @@ $(document).on('click', '.crear-calendario', function() {
         const asignaturaNombre = $(this).find('.asignaturaCalendario').val();
         const grupoLetra = $(this).find('.grupoCalendario').val();
         const horario = $(this).find('.horario').val();
+        const enlace = $(this).find('.enlace').val();
         const asignaturaId = obtenerAsignaturaId(asignaturaNombre);
         const claveMap = fecha+asignaturaId+grupoLetra+horario;
         let grupo;
@@ -578,7 +580,7 @@ $(document).on('click', '.crear-calendario', function() {
             });
         }
 
-        clases.push({ fecha, nombre, modalidad, asignaturaNombre, grupo });
+        clases.push({ fecha, nombre, modalidad, enlace, asignaturaNombre, grupo });
     });
 
     // Convertir el objeto a JSON
