@@ -9,8 +9,11 @@
             <h1 class="font-weight-bold">¡Docente {{accion}} con exito! ✅</h1>
             <ul class="menu-list">
                 <li><a href="{{ path('app_formulario_profesor') }}">Crear más docentes</a></li>
-                <li><a href="{{ path('app_formulario_centro') }}">Crear un calendario</a></li>
-                <li><a href="{{ path('app_menu_profesor') }}">Volver al menú</a></li>
+                {% if accion == 'editado' %}
+                    <li><a href="{{ path('app_menu_profesor') }}">Volver al menú</a></li>
+                {% else %}
+                    <li><a href="{{ path('app_menu_administrador') }}">Volver al menú</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>
