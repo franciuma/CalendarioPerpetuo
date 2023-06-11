@@ -766,9 +766,20 @@ $(document).on('click', '.crear-profesor, .editar-profesor', function() {
     const correo = $('#correo').val();
     const tipo = 'Profesor';
 
+    const camposObligatorios = [
+        { nombre: 'nombre', valor: nombre },
+        { nombre: 'primer apellido', valor: primerapellido },
+        { nombre: 'segundo apellido', valor: segundoapellido }
+    ];
+
+    if(manejarErroresVacios(camposObligatorios)) {
+        return;
+    }
+
     profesor.push({nombre, primerapellido, segundoapellido, despacho, correo, tipo});
 
     const grupo = [];
+    let error;
     // Obtener los valores de las filas de la tabla
     $('#gruposTable tbody tr').each(function() {
         const letra = $(this).find('.grupo').val();
@@ -777,8 +788,21 @@ $(document).on('click', '.crear-profesor, .editar-profesor', function() {
         const diasTeoria = $(this).find('.diasTeoria').val();
         const diasPractica = $(this).find('.diasPractica').val();
 
+        const camposObligatorios = [
+            { nombre: 'grupo', valor: letra },
+        ];
+    
+        if(manejarErroresVacios(camposObligatorios)) {
+            error = true;
+            return;
+        }
+
         grupo.push({letra, asignaturaNombre, diasTeoria, diasPractica, horario});
     });
+
+    if(error) {
+        return;
+    }
 
     const datos = {
         profesor: profesor,
@@ -793,7 +817,6 @@ $(document).on('click', '.crear-profesor, .editar-profesor', function() {
     } else {
         enviarPost('/manejar/posts/docente',{profesorGrupoJSON: profesorGrupoJSON},'/post/docente');
     }
-    
 });
 
 //Formulario Asignatura
@@ -939,11 +962,22 @@ $(document).on('click', '.crear-asignatura', function() {
     // Obtener los valores de las filas de la tabla
     const asignaturas = [];
     let lecciones = [];
+    let error;
     $('#asignaturasTable tbody tr[id^="asignatura"]').each(function() {
         const nombre = $(this).find('.nombreAsig').val();
         const abreviatura = $(this).find('.abrevAsig').val();
         const nombreTitulacion = $(this).find('.ntitulacion').val();
         const cuatrimestre = $(this).find('.cuatrimestre').val();
+        const camposObligatorios = [
+            { nombre: 'nombre', valor: nombre },
+            { nombre: 'titulacion', valor: nombreTitulacion },
+        ];
+
+        if(manejarErroresVacios(camposObligatorios)) {
+            error = true;
+            return;
+        }
+
         $(this).next('div').find('.fila-leccion').each(function() {
             const titulo = $(this).find('.tituloLecc').val();
             const modalidad = $(this).find('.modalidad').val();
@@ -952,6 +986,10 @@ $(document).on('click', '.crear-asignatura', function() {
         asignaturas.push({ nombre, abreviatura, nombreTitulacion, cuatrimestre, lecciones });
         lecciones = [];
     });
+
+    if(error) {
+        return;
+    }
 
     // Convertir el objeto a JSON
     const asignaturasJSON = JSON.stringify(asignaturas);
@@ -1043,6 +1081,11 @@ $(document).on('click', '.seleccionar-festivos-centro', function() {
     });
 });
 
+$(document).on('click', '.actualizar-festivos', function() {
+    // Mostrar el popup de centro seleccionado
+    alertaPersonalizada('Actualizado', 'Periodos no lectivos actualizados', 'success');
+});
+
 let idFestivoCentro = 0;
 $(document).on('click', '.aniadir-festivos-centro', function() {
     idFestivoCentro++;
@@ -1107,7 +1150,26 @@ function modificarFecha(fecha) {
 }
 
 $(document).on('click', '.crear-centro', function() {
-    mostrarPopUp("Centro añadido correctamente");
+    const centros = JSON.parse(document.getElementById('centros').dataset.centros);
+    const nombreCentro = $('.nombreDelCentro').val();
+    const nombreProvincia = $('.nombreDeProvincia').val();
+
+    const camposObligatorios = [
+        { nombre: 'nombre del centro', valor: nombreCentro },
+        { nombre: 'nombre de provincia', valor: nombreProvincia }
+    ];
+
+    if(manejarErroresVacios(camposObligatorios)){
+        return;
+    }
+    //Comprobamos que el centro no exista
+    const centroFormulario = nombreCentro+'-'+nombreProvincia;
+    centros.forEach(function(centro) {
+        if(centroFormulario == centro) {
+            alertaPersonalizada("Centro ya existente", "", "error");
+            return;
+        } 
+    });
 });
 
 function mostrarPopUp(titulo) {
@@ -1256,12 +1318,30 @@ function obtenerCentroSelect(){
 $(document).on('click', '.crear-titulacion', function() {
     // Obtener los valores de las filas de la tabla
     const titulaciones = [];
+    let error;
     $('#titulacionesTable tbody tr').each(function() {
         const nombreTitulacion = $(this).find('.nombreTitul').val();
         const abreviatura = $(this).find('.abrevTitul').val();
         const centro = $(this).find('.centroTitul').val();
+
+        const camposObligatorios = [
+            { nombre: 'nombre', valor: nombreTitulacion },
+            { nombre: 'abreviatura', valor: abreviatura },
+            { nombre: 'centro', valor: centro },
+        ];
+
+        if(manejarErroresVacios(camposObligatorios)) {
+            error = true;
+            return;
+        }
+
         titulaciones.push({ nombreTitulacion, abreviatura, centro });
     });
+
+    if(error) {
+        return;
+    }
+
     // Convertir el objeto a JSON
     const titulacionesJSON = JSON.stringify(titulaciones);
 
@@ -1275,6 +1355,28 @@ $(document).on('click', '.eliminar-festivo-local, .eliminar-grupo, .eliminar-asi
     const fila = $(this).closest('tr');
     fila.remove();
 });
+
+function manejarErroresVacios(camposObligatorios, excepcion)
+{
+    for (const campo of camposObligatorios) {
+        if (campo.valor === "" || campo.valor.includes("--")) {
+            alertaPersonalizada("Error en " + campo.nombre, "El campo " + campo.nombre + " es obligatorio", "error");
+            return true;
+        }
+    }
+    return false;
+}
+
+function alertaPersonalizada(titulo, texto, icono)
+{
+    Swal.fire({
+        title: titulo,
+        text: texto,
+        icon: icono,
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#007BFF'
+    });
+}
 
 function enviarPost(url, data, href) {
     $.ajax({

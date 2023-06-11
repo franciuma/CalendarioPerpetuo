@@ -31,16 +31,20 @@ class CrearCentroAdminController extends AbstractController
     public function index(): Response
     {
         $provincias = $this->festivoLocalService->getProvincias();
+        $centros = $this->festivoCentroService->getNombreCentroProvincia();
+
+        $centrosJson = json_encode($centros);
 
         return $this->render('crear/centro.html.twig', [
             'controller_name' => 'CrearCentroAdminController',
-            'provincias' => $provincias
+            'provincias' => $provincias,
+            'centros' => $centrosJson
         ]);
     }
 
     //Crear un nodo centro vacío (solo el título)
     #[Route('/crear/centro/admin/procesar', name: 'app_crear_centro_admin_procesar', methods: ['POST'])]
-    public function procesarFormulario(Request $request): Response
+    public function procesarFormulario(Request $request)
     {
         // Obtén los datos del formulario
         $nombreCentro = $request->request->get('nombreDelCentro');
@@ -59,13 +63,18 @@ class CrearCentroAdminController extends AbstractController
 
         // Agrega el nuevo centro al array existente 
         try {
-            if ($nombreCentro != "" && $nombreProvincia != "" && !self::centroExistente($nombreCentro)) {
-                $datosJson[$tituloJson] = $nuevoCentro;
-            } else {
-                throw new Exception("Centro vacío o ya existente, o provincia vacía");
+            if($nombreCentro == "") {
+                throw new Exception("Nombre del centro vacío");
             }
+            if($nombreProvincia == "-- Selecciona el nombre de la localidad --") {
+                throw new Exception("Nombre de provincia vacía");
+            }
+            if(self::centroExistente($nombreCentro, $nombreProvincia)){
+                throw new Exception("Centro ya existente");
+            }
+            $datosJson[$tituloJson] = $nuevoCentro;
         } catch (Exception $e) {
-            echo $e->getMessage();
+            return $this->redirectToRoute('app_crear_centro_admin');
         }
 
         // Codifica los datos actualizados a JSON
@@ -81,10 +90,9 @@ class CrearCentroAdminController extends AbstractController
         return $this->redirectToRoute('app_menu_administrador');
     }
 
-    public function centroExistente($centro): bool
+    public function centroExistente($nombreCentro, $nombreProvincia): bool
     {
-        $centros = $this->festivoCentroService->getNombreCentros();
-
-        return in_array($centro, $centros);
+        $centros = $this->festivoCentroService->getNombreCentroProvincia();
+        return in_array($nombreCentro.'-'.$nombreProvincia, $centros);
     }
 }

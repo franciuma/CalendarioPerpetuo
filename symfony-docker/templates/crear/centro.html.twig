@@ -13,10 +13,10 @@
 				<form action="{{ path('app_crear_centro_admin_procesar') }}" method="post">
 					<div class="form-group">
 						<label for="nombreDeCentro">Nombre del centro: </label>
-                        <input type="text" class="form-control" name="nombreDelCentro">
+                        <input type="text" class="form-control nombreDelCentro" name="nombreDelCentro">
 
 						<label for="nombreDeProvincia">Nombre de la localidad: </label>
-						<select class="form-control" id="nombreDeProvincia" name="nombreDeProvincia">
+						<select class="form-control nombreDeProvincia" id="nombreDeProvincia" name="nombreDeProvincia">
 							<option selected>-- Selecciona el nombre de la localidad --</option>
 							{% for provincia in provincias %}
 								<option>{{ provincia }}</option>
@@ -28,6 +28,8 @@
 			</div>
 		</div>
 	</div>
+
+	<div id="centros" data-centros="{{ centros }}" style="display: none;"></div>
 
 	<footer class="footer mt-auto py-3">
         <div class="container">
