@@ -44,9 +44,20 @@ class FormularioProfesorController extends AbstractController
             return $asignatura->getNombre();
         }, $asignaturas);
 
+        $profesores = $this->usuarioRepository->findAllProfesores();
+
+        $profesoresArray = array_map(function($profesor) {
+            return [
+                'nombreCompleto' => $profesor->getNombre()." ".$profesor->getPrimerApellido()." ".$profesor->getSegundoApellido()
+            ];
+        }, $profesores);
+        
+        $profesoresJson = json_encode($profesoresArray);
+
         return $this->render('formularios/profesor.html.twig', [
             'controller_name' => 'FormularioProfesorController',
-            'asignaturas' => $titulosAsignaturas
+            'asignaturas' => $titulosAsignaturas,
+            'nombreProfesores' => $profesoresJson
         ]);
     }
 

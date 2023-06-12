@@ -758,6 +758,7 @@ function obtenerAsignaturaId(asignaturaNombre) {
 
 //Creamos el POST del formulario
 $(document).on('click', '.crear-profesor, .editar-profesor', function() {
+    let error;
     const profesor = [];
     const nombre = $('#nombreProf').val();
     const primerapellido = $('#papellidoProf').val();
@@ -772,14 +773,25 @@ $(document).on('click', '.crear-profesor, .editar-profesor', function() {
         { nombre: 'segundo apellido', valor: segundoapellido }
     ];
 
-    if(manejarErroresVacios(camposObligatorios)) {
+    if($(this).hasClass('crear-profesor')) {
+        const profesores = JSON.parse(document.getElementById('profesores').dataset.profesores);
+        profesores.forEach(function(profesor) {
+            const nombreCompleto = nombre+" "+primerapellido+" "+segundoapellido;
+            if(profesor.nombreCompleto === nombreCompleto) {
+                alertaPersonalizada("Docente ya existente","", "error");
+                error = true;
+                return;
+            } 
+        });
+    }
+
+    if(manejarErroresVacios(camposObligatorios) || error) {
         return;
     }
 
     profesor.push({nombre, primerapellido, segundoapellido, despacho, correo, tipo});
 
     const grupo = [];
-    let error;
     // Obtener los valores de las filas de la tabla
     $('#gruposTable tbody tr').each(function() {
         const letra = $(this).find('.grupo').val();
