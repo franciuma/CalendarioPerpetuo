@@ -30,6 +30,11 @@ class ClaseRepository extends ServiceEntityRepository
         }
     }
 
+    public function flush()
+    {
+        $this->getEntityManager()->flush();
+    }
+
     public function remove(Clase $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
@@ -43,7 +48,6 @@ class ClaseRepository extends ServiceEntityRepository
     {
         foreach ($clases as $clase) {
             $this->getEntityManager()->remove($clase);
-            $this->getEntityManager()->flush();
         }
     }
 
@@ -61,7 +65,7 @@ class ClaseRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findOneFecha($fecha,$calendarioId): ?Clase
+    public function findByFecha($fecha,$calendarioId): array
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.fecha = :val')
@@ -69,8 +73,7 @@ class ClaseRepository extends ServiceEntityRepository
             ->setParameter('val', $fecha)
             ->setParameter('valo', $calendarioId)
             ->getQuery()
-            ->setMaxResults(1)
-            ->getOneOrNullResult()
+            ->getResult()
         ;
     }
 

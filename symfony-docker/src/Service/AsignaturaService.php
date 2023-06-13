@@ -40,8 +40,9 @@ class AsignaturaService
                 //Buscamos la titulación
                 $titulacionObjeto = $this->titulacionRepository->findOneByAbreviaturaProvincia($titulacionDividida[0], $titulacionDividida[1]);
                 $asignaturaObjeto->setTitulacion($titulacionObjeto);
-                $this->asignaturaRepository->save($asignaturaObjeto,true);
+                $this->asignaturaRepository->save($asignaturaObjeto);
             }
         }
+        $this->asignaturaRepository->flush();
     }
 }

@@ -30,11 +30,15 @@ class UsuarioGrupoRepository extends ServiceEntityRepository
         }
     }
 
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
+
     public function removeUsuarioGrupos(array $usuarioGrupos): void
     {
         foreach ($usuarioGrupos as $usuarioGrupo) {
             $this->getEntityManager()->remove($usuarioGrupo);
-            $this->getEntityManager()->flush();
         }
     }
 

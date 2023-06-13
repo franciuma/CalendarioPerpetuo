@@ -48,7 +48,7 @@ class FestivoLocalService
         foreach ($festivos as $festivoLocal) {
             if(!$this->festivoLocalRepository->findOneFecha($festivoLocal->getInicio())) {
                 $festivoLocal->setProvincia($provincia);
-                $this->festivoLocalRepository->save($festivoLocal,true);
+                $this->festivoLocalRepository->save($festivoLocal);
 
                 //Buscamos los festivos que tengan dias intermedios y no sean acerca de cuatrimestres (inicios y finales de cuatrimestres)
                 if($festivoLocal->getInicio() != $festivoLocal->getFinal()) {
@@ -56,6 +56,8 @@ class FestivoLocalService
                 }
             }
         }
+
+        $this->festivoLocalRepository->flush();
 
         return $festivos;
     }
@@ -77,7 +79,7 @@ class FestivoLocalService
             //Añadimos un día al inicio
             $inicio->add(new \DateInterval('P1D')); 
             $festivoIntermedio->setInicio($inicio->format('j-n-y'));
-            $this->festivoLocalRepository->save($festivoIntermedio,true);
+            $this->festivoLocalRepository->save($festivoIntermedio);
         }
     }
 

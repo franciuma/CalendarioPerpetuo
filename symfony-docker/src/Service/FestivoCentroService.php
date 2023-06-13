@@ -50,7 +50,7 @@ class FestivoCentroService
         foreach ($festivos as $festivoCentro) {
             if(!$this->festivoCentroRepository->findOneFechaCentro($festivoCentro->getInicio(), $nombreCentro)) {
                 $festivoCentro->setCentro($centro);
-                $this->festivoCentroRepository->save($festivoCentro,true);
+                $this->festivoCentroRepository->save($festivoCentro);
 
                 //Buscamos los festivos que tengan dias intermedios y no sean acerca de cuatrimestres (inicios y finales de cuatrimestres)
                 if($festivoCentro->getInicio() != $festivoCentro->getFinal() && !strstr($festivoCentro->getNombre(), 'cuatrimestre')) {
@@ -58,6 +58,8 @@ class FestivoCentroService
                 }
             }
         }
+
+        $this->festivoCentroRepository->flush();
 
         return $festivos;
     }
@@ -79,7 +81,7 @@ class FestivoCentroService
             //Añadimos un día al inicio
             $inicio->add(new \DateInterval('P1D')); 
             $festivoIntermedio->setInicio($inicio->format('j-n-y'));
-            $this->festivoCentroRepository->save($festivoIntermedio,true);
+            $this->festivoCentroRepository->save($festivoIntermedio);
         }
     }
 

@@ -30,6 +30,11 @@ class AnioRepository extends ServiceEntityRepository
         }
     }
 
+    public function flush()
+    {
+        $this->getEntityManager()->flush();
+    }
+
     public function remove(Anio $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);

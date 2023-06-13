@@ -39,11 +39,15 @@ class GrupoRepository extends ServiceEntityRepository
         }
     }
 
+    public function flush()
+    {
+        $this->getEntityManager()->flush();
+    }
+
     public function removeGrupos(array $grupos): void
     {
         foreach ($grupos as $grupo) {
             $this->getEntityManager()->remove($grupo);
-            $this->getEntityManager()->flush();
         }
     }
 

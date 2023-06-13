@@ -48,13 +48,16 @@ class FestivoNacionalService
 
         foreach ($festivos as $festivoNacional) {
             if(!$this->festivoNacionalRepository->findOneFecha($festivoNacional->getInicio())) {
-                $this->festivoNacionalRepository->save($festivoNacional,true);
+                $this->festivoNacionalRepository->save($festivoNacional);
             }
             //Buscamos los festivos que tengan dias intermedios y no sean acerca de cuatrimestres (inicios y finales de cuatrimestres)
             if($festivoNacional->getInicio() != $festivoNacional->getFinal()) {
                 self::completaFestivosCentroIntermedios($festivoNacional);
             }
         }
+
+        $this->festivoNacionalRepository->flush();
+
         return $arrayNombreFestivos;
     }
 
@@ -74,7 +77,7 @@ class FestivoNacionalService
             //Añadimos un día al inicio
             $inicio->add(new \DateInterval('P1D')); 
             $festivoIntermedio->setInicio($inicio->format('j-n-y'));
-            $this->festivoNacionalRepository->save($festivoIntermedio,true);
+            $this->festivoNacionalRepository->save($festivoIntermedio);
         }
     }
 }

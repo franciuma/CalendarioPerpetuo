@@ -128,10 +128,11 @@ class CalendarioController extends AbstractController
     public function eliminarCalendarioCompleto($calendario)
     {
         //Borramos los eventos de clase
-        $eventosClases = $this->eventoRepository->findEventoClaseByCalendario($calendario, true);
-        $this->eventoRepository->removeEventos($eventosClases, true);
+        $eventosClases = $this->eventoRepository->findEventoClaseByCalendario($calendario);
+        $this->eventoRepository->removeEventos($eventosClases);
         //Borramos el calendario antiguo
-        $this->calendarioRepository->remove($calendario, true);
+        $this->calendarioRepository->remove($calendario);
+        $this->eventoRepository->flush();
     }
 
     /**
@@ -189,8 +190,8 @@ class CalendarioController extends AbstractController
         $anio->setCalendario($calendario);
         $anioSig->setCalendario($calendario);
 
-        $this->anioRepository->save($anio, true);
-        $this->anioRepository->save($anioSig, true);
+        $this->anioRepository->save($anio);
+        $this->anioRepository->save($anioSig);
 
         array_push($anios, $anio);
         array_push($anios, $anioSig);
@@ -224,7 +225,7 @@ class CalendarioController extends AbstractController
             $ultimoDiaDeMes = intval(self::ultimoDiaMes($mesActual, $anio->getNumAnio()));
             $mes->setPrimerDia($primerDiaDeMes);
             $mes->setAnio($anio);
-            $this->mesRepository->save($mes, true);
+            $this->mesRepository->save($mes);
 
             for ($numDia = 1; $numDia <= $ultimoDiaDeMes; $numDia++) {
                 $dia = new Dia($numDia);
@@ -238,9 +239,12 @@ class CalendarioController extends AbstractController
                 self::colocarEventos($dia, $nombreDiaDeLaSemana, $calendario);
 
                 $dia->setMes($mes);
-                $this->diaRepository->save($dia, true);
+                //Almacenamos los días
+                $this->diaRepository->save($dia);
             }
         }
+        //Persistimos todas las entidades guardadas
+        $this->diaRepository->flush();
         $calendario->addAnio($anio);
     }
 
@@ -268,7 +272,7 @@ class CalendarioController extends AbstractController
      */
     public function colocarEventos(Dia $dia, $nombreDiaDeLaSemana, Calendario $calendario)
     {
-        $clase = $this->claseRepository->findOneFecha($dia->getFecha(), $calendario->getId());
+        $clases = $this->claseRepository->findByFecha($dia->getFecha(), $calendario->getId());
         $festivoNacional = $this->festivoNacionalRepository->findOneFecha($dia->getFecha());
         $festivoLocal = $this->festivoLocalRepository->findOneFecha($dia->getFecha());
         $provinciafestivoLocal = $festivoLocal ? $festivoLocal->getProvincia() : null;
@@ -279,10 +283,14 @@ class CalendarioController extends AbstractController
         $centroNombre = $festivoCentro ? $centro->getNombre() : null;
 
         //Si es clase y pertenece al mismo calendario.
-        if($clase && ($calendario->getId() == $clase->getCalendarioId())) {
-            $evento = new Evento($clase);
-            $dia->setHayClase(true);
-            $dia->setEvento($evento);
+        if(count($clases) != 0) {
+            foreach ($clases as $clase) {
+                if(($calendario->getId() == $clase->getCalendarioId())) {
+                    $evento = new Evento($clase);
+                    $dia->setHayClase(true);
+                    $dia->setEvento($evento);
+                }
+            }
         } else if (
             $festivoNacional
             || ($festivoLocal && $this->provincia == $provinciafestivoLocal)
@@ -349,9 +357,11 @@ class CalendarioController extends AbstractController
                 $dia->setHayClase(false);
                 $dia->setEvento(null);
                 //Eliminamos el evento
-                $this->eventoRepository->remove($evento, true);
+                $this->eventoRepository->remove($evento);
                 //Guardamos la información del día
-                $this->diaRepository->save($dia, true);
+                $this->diaRepository->save($dia);
+                //Actualizamos la bd
+                $this->eventoRepository->flush();
             }
         }
 
@@ -372,7 +382,9 @@ class CalendarioController extends AbstractController
                 $dia->setEvento($evento);
                 //Persistimos el dia y la clase
                 $this->diaRepository->save($dia);
-                $this->claseRepository->save($claseEditada, true);
+                $this->claseRepository->save($claseEditada);
+                //Guardamos los cambios en la base de datos
+                $this->diaRepository->flush();
             }
         }
     }

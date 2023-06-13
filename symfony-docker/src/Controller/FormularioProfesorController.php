@@ -78,9 +78,10 @@ class FormularioProfesorController extends AbstractController
             $grupos = $this->usuarioRepository->findGruposByUsuario($nombre, $apellidoPr, $apellidoSeg);
             $profesorGrupo = $this->usuarioGrupoRepository->findUsuarioGrupoByUsuarioId($profesorObjeto->getId());
 
-            $this->usuarioGrupoRepository->removeUsuarioGrupos($profesorGrupo, true);
-            $this->grupoRepository->removeGrupos($grupos, true);
-            $this->usuarioRepository->remove($profesorObjeto, true);
+            $this->usuarioGrupoRepository->removeUsuarioGrupos($profesorGrupo);
+            $this->grupoRepository->removeGrupos($grupos);
+            $this->usuarioRepository->remove($profesorObjeto);
+            $this->usuarioRepository->flush();
         }
 
         $conCalendario = false;
@@ -135,13 +136,23 @@ class FormularioProfesorController extends AbstractController
     }
 
     #[Route('/seleccionar/docente', name: 'app_seleccionar_profesor')]
-    public function seleccionarProfesor(): Response
+    #[Route('/lista/docente', name: 'app_lista_profesor')]
+    public function seleccionarProfesor(Request $request): Response
     {
+        $rutaActual = $request->getPathInfo();
+
         $conCalendario = false;
         $profesores = $this->usuarioService->getAllProfesoresNombreCompleto($conCalendario);
 
-        return $this->render('leer/profesor.html.twig', [
-            'profesores' => $profesores
-        ]);
+        if($rutaActual == '/seleccionar/docente') {
+            return $this->render('leer/profesor.html.twig', [
+                'profesores' => $profesores
+            ]);
+        } else {
+            return $this->render('listar/profesor.html.twig', [
+                'profesores' => $profesores
+            ]);
+        }
+        
     }
 }

@@ -54,11 +54,13 @@ class ClaseService
             $clase->setCalendario($calendario);
 
             if($persistirBd == true) {
-                $this->claseRepository->save($clase, true);
+                $this->claseRepository->save($clase);
             }
 
             array_push($clases, $clase);
         }
+
+        $this->claseRepository->flush();
 
         return $clases;
     }

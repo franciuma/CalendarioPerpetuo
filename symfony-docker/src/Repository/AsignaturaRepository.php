@@ -30,6 +30,11 @@ class AsignaturaRepository extends ServiceEntityRepository
         }
     }
 
+    public function flush()
+    {
+        $this->getEntityManager()->flush();
+    }
+
     public function remove(Asignatura $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);

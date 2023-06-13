@@ -31,6 +31,11 @@ class FestivoNacionalRepository extends ServiceEntityRepository
         }
     }
 
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
+
     public function remove(FestivoNacional $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);

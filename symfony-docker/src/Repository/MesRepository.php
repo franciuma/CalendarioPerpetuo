@@ -30,6 +30,11 @@ class MesRepository extends ServiceEntityRepository
         }
     }
 
+    public function flush()
+    {
+        $this->getEntityManager()->flush();
+    }
+
     public function remove(Mes $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);

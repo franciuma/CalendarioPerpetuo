@@ -44,12 +44,13 @@ class TitulacionService
             $titulacion = $this->serializer->denormalize($titulacion, 'App\Entity\Titulacion');
             $titulacion->setCentro($centro);
             if(!$this->titulacionRepository->findOneBynombreTitulacion($titulacion->getNombreTitulacion())){
-                $this->titulacionRepository->save($titulacion,true);
+                $this->titulacionRepository->save($titulacion);
                 $titulaciones[] = $titulacion;
             } else {
                 $titulaciones[] = $this->titulacionRepository->findOneBynombreTitulacion($titulacion->getNombreTitulacion());
             }
         }
+        $this->titulacionRepository->flush();
 
         return $titulaciones;
     }

@@ -36,8 +36,9 @@ class LeccionService
             foreach ($leccionesAsignatura as $leccion) {
                 $asignaturaLeccion = $this->asignaturaRepository->findOneByNombre($asignatura['nombre']);
                 $leccion->setAsignatura($asignaturaLeccion);
-                $this->leccionRepository->save($leccion,true);
+                $this->leccionRepository->save($leccion);
             }
         }
+        $this->leccionRepository->flush();
     }
 }

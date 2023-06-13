@@ -30,6 +30,11 @@ class FestivoLocalRepository extends ServiceEntityRepository
         }
     }
 
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
+
     public function remove(FestivoLocal $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);

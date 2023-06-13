@@ -53,10 +53,12 @@ class GrupoService
             $asignatura = $this->asignaturaRepository->findOneByNombre($asignaturaNombre);
             $grupo->setAsignatura($asignatura);
             if($persistirBd) {
-                $this->grupoRepository->save($grupo,true);
+                $this->grupoRepository->save($grupo);
             }
             $grupos[] = $grupo;
         }
+
+        $this->grupoRepository->flush();
 
         return $grupos;
     }
@@ -75,16 +77,14 @@ class GrupoService
                 //Si el grupo no está en los nuevos, es porque se ha borrado
                 //Además se borrara sus clases asociadas, usuario_grupo y eventos
                 $usuarioGrupos = $this->usuarioGrupoRepository->findByGrupoId($grupo->getId());
-                foreach ($usuarioGrupos as $usuarioGrupo) {
-                    $this->usuarioGrupoRepository->remove($usuarioGrupo, true);
-                }
+                $this->usuarioGrupoRepository->removeUsuarioGrupos($usuarioGrupos);
                 $clases = $this->claseRepository->findByGrupoId($grupo->getId());
                 foreach ($clases as $clase) {
                     $evento = $this->eventoRepository->findByClaseId($clase->getId());
                     $this->eventoRepository->remove($evento);
                 }
                 $this->claseRepository->removeClases($clases);
-                $this->grupoRepository->remove($grupo, true);
+                $this->grupoRepository->remove($grupo);
             }
         }
 
@@ -102,13 +102,15 @@ class GrupoService
                     $grupoAntiguo->setDiasPractica($grupoNuevo->getDiasPractica());
                 }
                 //Actualizamos la base de datos
-                $this->grupoRepository->save($grupoAntiguo, true);
+                $this->grupoRepository->save($grupoAntiguo);
             } else {
                 //Si no corresponde a ningún grupo, hay que añadirlo.
-                $this->grupoRepository->save($grupoNuevo, true);
+                $this->grupoRepository->save($grupoNuevo);
                 $gruposActualizados[] = $grupoNuevo;
             }
         }
+
+        $this->grupoRepository->flush();
 
         return $gruposActualizados;
     }
