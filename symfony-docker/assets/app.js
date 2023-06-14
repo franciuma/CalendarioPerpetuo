@@ -18,7 +18,7 @@ import 'bootstrap-datepicker/dist/css/bootstrap-datepicker.css';
 //importamos css del multiselect
 import 'bootstrap-multiselect/dist/css/bootstrap-multiselect.css';
 
-// Formulario de Calendario
+// Formulario calendario
 let contadorFechas = 0;
 //Array clave: valor con fecha: asignaturaId
 const arrayFechaAsignatura = [];
@@ -1293,22 +1293,31 @@ $(document).on('click', '.guardar-festivos-local', function() {
     mostrarPopUp("festivo/s local/es añadido/s");
 });
 
-//Formulario de titulación
+//Formulario titulación
 let idTitulacion = 0;
 $(document).on('click', '.aniadir-fila-titulacion', function() {
     idTitulacion++;
-    const fila = crearFilaTitulacion(idTitulacion);
+    const fila = crearFilaTitulacion();
     $('#titulacionesTable tbody').append(fila);
 });
 
-function crearFilaTitulacion() {
+//Editar titulacion
+if(window.location.pathname == "/editar/titulacion") {
+    //Obtenemos la titulación a editar
+    const titulacion = JSON.parse(document.getElementById('titulacion').dataset.titulacion);
+    idTitulacion++;
+    const fila = crearFilaTitulacion(titulacion);
+    $('#titulacionesTable tbody').append(fila);
+}
+
+function crearFilaTitulacion(titulacion) {
     const optionsCentro = obtenerCentroSelect();
     return $(`
         <tr class="fila-titulacion" id="titulacion${idTitulacion}">
-            <td><input type="text" class="form-control nombreTitul" name="nombreTitul" id="nombreTitul${idTitulacion}"></td>
-            <td><input type="text" class="form-control abrevTitul" name="abrevTitul" id="abrevTitul${idTitulacion}"></td>
+            <td><input type="text" class="form-control nombreTitul" name="nombreTitul" id="nombreTitul${idTitulacion}" value="${titulacion.nombre}"></td>
+            <td><input type="text" class="form-control abrevTitul" name="abrevTitul" id="abrevTitul${idTitulacion}" value="${titulacion.abreviatura}"></td>
             <td><select class="form-control centroTitul" name="centroTitul" id="centroTitul${idTitulacion}">
-            <option selected></option>
+            <option selected>${titulacion.centro}</option>
             ${optionsCentro}
             </select>
             </td>
@@ -1329,7 +1338,7 @@ function obtenerCentroSelect(){
     return options;
 }
 
-$(document).on('click', '.crear-titulacion', function() {
+$(document).on('click', '.crear-titulacion, .editar-titulacion', function() {
     // Obtener los valores de las filas de la tabla
     const titulaciones = [];
     let error;
@@ -1360,7 +1369,12 @@ $(document).on('click', '.crear-titulacion', function() {
     const titulacionesJSON = JSON.stringify(titulaciones);
 
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/manejar/posts/titulaciones', {titulacionesJSON: titulacionesJSON},'/post/titulacion');
+    if(window.location.pathname == "/editar/titulacion") {
+        const titulacion = JSON.parse(document.getElementById('titulacion').dataset.titulacion);
+        enviarPost('/manejar/posts/titulaciones', {titulacionesJSON: titulacionesJSON},'/post/titulacion/editado?titulacion='+titulacion.id);
+    } else {
+        enviarPost('/manejar/posts/titulaciones', {titulacionesJSON: titulacionesJSON},'/post/titulacion');
+    }
 });
 
 //Eliminar filas de tablas

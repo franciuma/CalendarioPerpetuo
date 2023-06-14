@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Titulacion;
 use App\Repository\CentroRepository;
 use App\Repository\TitulacionRepository;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -53,5 +54,36 @@ class TitulacionService
         $this->titulacionRepository->flush();
 
         return $titulaciones;
+    }
+
+    public function editarTitulacion(Titulacion $titulacionBd) {
+        $titulacionesJson = file_get_contents(__DIR__ . '/../resources/titulaciones.json');
+        $titulacionesArray = json_decode($titulacionesJson, true);
+
+        $titulacionNueva = $this->serializer->denormalize($titulacionesArray[0], 'App\Entity\Titulacion');
+
+        //Comparamos todas las propiedades del profesor nuevo y original
+        if($titulacionBd->getNombreTitulacion() != $titulacionNueva->getNombreTitulacion()) {
+            $titulacionBd->setNombreTitulacion($titulacionNueva->getNombreTitulacion());
+        }
+
+        if($titulacionBd->getAbreviatura() != $titulacionNueva->getAbreviatura()) {
+            $titulacionBd->setAbreviatura($titulacionNueva->getAbreviatura());
+        }
+
+        $centroDividido = explode("-", $titulacionesArray[0]["centro"]);
+        $nombreCentro = $centroDividido[0];
+        $provincia = $centroDividido[1];
+        $centroNuevo = $this->centroRepository->findOneByProvinciaCentro($provincia, $nombreCentro);
+
+        //Comparamos los centros
+        if($titulacionBd->getCentro()->getNombre() != $nombreCentro ||
+            $titulacionBd->getCentro()->getProvincia() != $provincia
+        ) {
+            $titulacionBd->setCentro($centroNuevo);
+        }
+
+        //Guardamos los cambios en la base de datos
+        $this->titulacionRepository->save($titulacionBd, true);
     }
 }

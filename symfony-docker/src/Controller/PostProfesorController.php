@@ -60,7 +60,6 @@ class PostProfesorController extends AbstractController
             $gruposNuevos = $this->grupoService->editarGrupos($grupos);
             //Obtenemos los grupos y el profesor actualizados
             $profesorUsuarioGrupo = $this->usuarioRepository->findOneById($profesorId);
-            $gruposActualizados = $this->usuarioRepository->findGruposByUsuarioId($profesorId);
             $this->usuarioGrupoService->getUsuarioGrupo($profesorUsuarioGrupo, $gruposNuevos);
         }
 
