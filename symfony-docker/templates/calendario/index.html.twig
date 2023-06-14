@@ -39,12 +39,23 @@
                                         {% set primerDia = 0 %}
                                     {% endif %}
 
-                                    {% if dia.EsNolectivo %}
-                                        <td class="text-danger" title="{{dia.evento.getNombreFestivo(dia.evento)|default('')}}">{{ dia.numDia }}</td>
+                                    {% if dia.esNoLectivo %}
+                                        {% set clase = "" %}
+                                        {% set eventoFestivo = "" %}
+                                        {% for evento in dia.eventos %}
+                                            {% set eventoFestivo = evento.getNombreFestivo() %}
+                                            {% if 'cuatrimestre' in eventoFestivo %}
+                                                {% set clase = "eventoCuatrimestre" %}
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        <td class="text-danger {{clase}}" title="{{eventoFestivo}}">{{ dia.getNumDia() }}</td>
                                     {% elseif dia.hayClase %}
-                                        <td class="fecha-clase" title="{{dia.evento.getNombreClase(dia.evento)|default('')}}">{{ dia.numDia }}</td>
+                                        <td class="fecha-clase" title="{% for evento in dia.eventos %}{{ evento.getNombreClase() ~ '\n' }}{% endfor %}">
+                                            {{ dia.getNumDia() }}
+                                        </td>
                                     {% else %}
-                                        <td>{{ dia.numDia }}</td>
+                                        <td>{{ dia.getNumDia() }}</td>
                                     {% endif %}
 
                                     {% set primerDia = primerDia+1 %}

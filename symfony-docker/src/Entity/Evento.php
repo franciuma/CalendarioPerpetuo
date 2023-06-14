@@ -18,9 +18,6 @@ class Evento
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'evento', cascade: ['persist'])]
-    private ?Dia $dia = null;
-
     #[ORM\ManyToOne]
     private ?FestivoNacional $festivoNacional = null;
 
@@ -33,6 +30,9 @@ class Evento
     #[ORM\ManyToOne]
     private ?FestivoCentro $festivoCentro = null;
 
+    #[ORM\ManyToOne(inversedBy: 'eventos')]
+    private ?Dia $dia = null;
+
     public function __construct(?EventoInterface $evento = null)
     {
         if ($evento instanceof FestivoNacional) {
@@ -41,7 +41,7 @@ class Evento
             $this->setFestivoLocal($evento);
         } elseif ($evento instanceof Clase){
             $this->setClase($evento);
-        } else {
+        } elseif ($evento instanceof FestivoCentro) {
             $this->setFestivoCentro($evento);
         }
     }
@@ -54,10 +54,13 @@ class Evento
     public function getNombreFestivo(): ?string
     {
         if ($this->festivoNacional) {
-            return $this->festivoNacional->getAbreviatura();
+            return $this->festivoNacional->getNombre();
         }
         if ($this->festivoLocal) {
-            return $this->festivoLocal->getAbreviatura();
+            return $this->festivoLocal->getNombre();
+        }
+        if($this->festivoCentro) {
+            return $this->festivoCentro->getNombre();
         }
 
         return null;

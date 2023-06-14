@@ -60,7 +60,9 @@ class ClaseService
             array_push($clases, $clase);
         }
 
-        $this->claseRepository->flush();
+        if($persistirBd == true) {
+            $this->claseRepository->flush();
+        }
 
         return $clases;
     }

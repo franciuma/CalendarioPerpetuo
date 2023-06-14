@@ -70,4 +70,20 @@ class FestivoCentroRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+
+    public function findOneFechaFinalCentro($fecha, $centroId): ?FestivoCentro
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.final = :fecha')
+            ->andWhere('f.centro = :centro')
+            ->andWhere('f.nombre LIKE :nombre')
+            ->setParameter('fecha', $fecha)
+            ->setParameter('centro',$centroId)
+            ->setParameter('nombre', '%cuatrimestre%')
+            ->orderBy('f.nombre', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }

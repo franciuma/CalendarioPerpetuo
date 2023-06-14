@@ -15,20 +15,40 @@ body {
     padding: 30px;
 }
 
+.calendario th {
+    background-color: lightgray;
+    font-size: 20px;
+    padding: 10px;
+}
+
 th {
     text-align: center;
 }
 
 .calendario td {
-    width: 5px;
+    width: 40px;
+    height: 40px;
     text-align: center;
-    padding: 2px;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
 }
 
 table {
     border-radius: 10px;
     background-color: lightcyan;
 }
+
+td.fecha-clase {
+    border-radius: 10px;
+    background-color: lightgreen;
+}
+
+td.eventoCuatrimestre {
+    background-color: lightblue;
+}
+
+//Formato previsualización calendario
 
 .datepicker td, .datepicker th {
     width: 40px;
@@ -45,11 +65,6 @@ table {
 
 #fechasTable .titulo {
     width: 300px;
-}
-
-td.fecha-clase {
-    border-radius: 10px;
-    background-color: lightgreen;
 }
 
 //Formato inputs formulario docente

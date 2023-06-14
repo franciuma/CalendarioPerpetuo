@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\DiaRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DiaRepository::class)]
@@ -28,15 +30,16 @@ class Dia
     #[ORM\Column(length: 255)]
     private ?string $nombreDiaDeLaSemana = null;
 
-    #[ORM\OneToOne(mappedBy: 'dia', cascade: ['persist', 'remove'])]
-    private ?Evento $evento = null;
-
     #[ORM\Column]
     private ?bool $hayClase = false;
+
+    #[ORM\OneToMany(mappedBy: 'dia', targetEntity: Evento::class, cascade: ['persist', 'remove'])]
+    private Collection $eventos;
 
     public function __construct(string $numDia)
     {
         $this->numDia = $numDia;
+        $this->eventos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -104,28 +107,6 @@ class Dia
         return $this;
     }
 
-    public function getEvento(): ?Evento
-    {
-        return $this->evento;
-    }
-
-    public function setEvento(?Evento $evento): self
-    {
-        // unset the owning side of the relation if necessary
-        if ($evento === null && $this->evento !== null) {
-            $this->evento->setDia(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($evento !== null && $evento->getDia() !== $this) {
-            $evento->setDia($this);
-        }
-
-        $this->evento = $evento;
-
-        return $this;
-    }
-
     public function hayClase(): ?bool
     {
         return $this->hayClase;
@@ -134,6 +115,36 @@ class Dia
     public function setHayClase(bool $hayClase): self
     {
         $this->hayClase = $hayClase;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Evento>
+     */
+    public function getEventos(): Collection
+    {
+        return $this->eventos;
+    }
+
+    public function addEvento(Evento $evento): self
+    {
+        if (!$this->eventos->contains($evento)) {
+            $this->eventos->add($evento);
+            $evento->setDia($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvento(Evento $evento): self
+    {
+        if ($this->eventos->removeElement($evento)) {
+            // set the owning side to null (unless already changed)
+            if ($evento->getDia() === $this) {
+                $evento->setDia(null);
+            }
+        }
 
         return $this;
     }

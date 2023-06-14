@@ -280,26 +280,28 @@ class CalendarioController extends AbstractController
         $usuario = self::obtenerUsuarioCalendario();
         $centro = $this->centroRepository->findOneByUsuario($usuario->getId());
         $festivoCentro = $this->festivoCentroRepository->findOneFechaCentro($dia->getFecha(), $centro->getId());
-        $centroNombre = $festivoCentro ? $centro->getNombre() : null;
+        $festivoCentroCuatrimestre = $this->festivoCentroRepository->findOneFechaFinalCentro($dia->getFecha(), $centro->getId());
+        $centroNombre = $festivoCentro || $festivoCentroCuatrimestre ? $centro->getNombre() : null;
 
         //Si es clase y pertenece al mismo calendario.
         if(count($clases) != 0) {
             foreach ($clases as $clase) {
                 if(($calendario->getId() == $clase->getCalendarioId())) {
                     $evento = new Evento($clase);
-                    $dia->setHayClase(true);
-                    $dia->setEvento($evento);
+                    $dia->addEvento($evento);
                 }
             }
+            $dia->setHayClase(true);
         } else if (
             $festivoNacional
             || ($festivoLocal && $this->provincia == $provinciafestivoLocal)
             || ($festivoCentro && $this->centro == $centroNombre)
+            || ($festivoCentroCuatrimestre && $this->centro == $centroNombre)
         ) {
             //Verificamos cual de los festivos no es nulo
-            $evento = new Evento($festivoLocal ?? $festivoNacional ?? $festivoCentro);
+            $evento = new Evento($festivoLocal ?? $festivoNacional ?? $festivoCentroCuatrimestre ?? $festivoCentro);
             $dia->setEsNoLectivo(true);
-            $dia->setEvento($evento);
+            $dia->addEvento($evento);
         } else if ($nombreDiaDeLaSemana == "Sab" || $nombreDiaDeLaSemana == "Dom") {
             $dia->setEsNoLectivo(true);
         }
@@ -352,16 +354,14 @@ class CalendarioController extends AbstractController
                 //Buscamos el día al que pertenece y ponemos que no hay clase
                 $dia = $this->diaRepository->findOneByFecha($claseActual->getFecha(), $calendario->getId());
                 //Buscamos el evento y lo borramos, en cascada se borrará la clase asociada
-                $evento = $dia->getEvento();
+                $evento = $this->eventoRepository->findByClaseId($claseActual->getId());
                 //Configuramos dia
                 $dia->setHayClase(false);
-                $dia->setEvento(null);
+                $dia->removeEvento($evento);
                 //Eliminamos el evento
                 $this->eventoRepository->remove($evento);
                 //Guardamos la información del día
                 $this->diaRepository->save($dia);
-                //Actualizamos la bd
-                $this->eventoRepository->flush();
             }
         }
 
@@ -379,13 +379,14 @@ class CalendarioController extends AbstractController
                 $evento = new Evento($claseEditada);
                 $dia = $this->diaRepository->findOneByFecha($claseEditada->getFecha(), $calendario->getId());
                 $dia->setHayClase(true);
-                $dia->setEvento($evento);
+                $dia->addEvento($evento);
                 //Persistimos el dia y la clase
                 $this->diaRepository->save($dia);
-                $this->claseRepository->save($claseEditada);
-                //Guardamos los cambios en la base de datos
-                $this->diaRepository->flush();
+                $this->claseRepository->save($claseEditada);                
             }
         }
+
+        //Actualizamos la bd
+        $this->diaRepository->flush();
     }
 }
