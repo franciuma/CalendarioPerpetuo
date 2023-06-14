@@ -705,6 +705,7 @@ function crearFilaGrupo() {
             <td><input type="text" class="form-control grupo" name="grupo" id="grupo${idGrupo}"></td>
             <td>
                 <select type="text" class="form-control asignatura" name="asignatura" id="asignatura${idGrupo}">
+                <option selected>-- Seleccione la asignatura --</option>
                 ${asignaturasOptions}
                 </select>
             </td>
@@ -802,6 +803,7 @@ $(document).on('click', '.crear-profesor, .editar-profesor', function() {
 
         const camposObligatorios = [
             { nombre: 'grupo', valor: letra },
+            { nombre: 'asignatura', valor: asignaturaNombre}
         ];
     
         if(manejarErroresVacios(camposObligatorios)) {
