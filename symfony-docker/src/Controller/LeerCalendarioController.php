@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\UsuarioService;
+use Symfony\Component\HttpFoundation\Request;
 
 class LeerCalendarioController extends AbstractController
 {
@@ -19,15 +20,23 @@ class LeerCalendarioController extends AbstractController
     }
 
     #[Route('/leer/calendario', name: 'app_leer_calendario')]
-    public function index(): Response
+    #[Route('/seleccionar/eliminar/calendario', name: 'app_seleccionar_eliminar_calendario')]
+    public function index(Request $request): Response
     {
         //Filtramos los profesores que tengan un calendario creado.
         $conCalendario = true;
         $profesores = $this->usuarioService->getAllProfesoresNombreCompleto($conCalendario);
 
+        if ($request->getPathInfo() == '/seleccionar/eliminar/calendario') {
+            $accion = "Eliminar";
+        } else {
+            $accion = "Ver";
+        }
+
         return $this->render('leer/calendario.html.twig', [
             'controller_name' => 'LeerCalendarioController',
-            'profesores' => $profesores
+            'profesores' => $profesores,
+            'accion' => $accion
         ]);
     }
 }

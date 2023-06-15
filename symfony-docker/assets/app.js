@@ -602,10 +602,17 @@ $(document).on('click', '.crear-calendario', function() {
 });
 
 //LEER un calendario
-$(document).on('click', '.ver-calendario', function() {
+$(document).on('click', '.Ver-calendario', function() {
     const nombreProfesor = $('#nombreleerProfesor').val();
     // Enviar el objeto JSON a través de una petición AJAX
     window.location.replace('/ver/calendario?usuario=' + nombreProfesor);
+});
+
+//ELIMINAR un calendario
+$(document).on('click', '.Eliminar-calendario', function() {
+    const nombreProfesor = $('#nombreleerProfesor').val();
+    // Enviar el objeto JSON a través de una petición AJAX
+    window.location.replace('/eliminar/calendario?usuario='+ nombreProfesor);
 });
 
 //Formulario profesor
