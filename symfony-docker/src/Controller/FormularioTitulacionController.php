@@ -40,14 +40,28 @@ class FormularioTitulacionController extends AbstractController
     }
 
     #[Route('/seleccionar/titulacion', name: 'app_seleccionar_titulacion')]
-    public function seleccionarTitulacion(): Response
+    #[Route('/lista/titulacion', name: 'app_lista_titulacion')]
+    public function seleccionarTitulacion(Request $request): Response
     {
+        $rutaActual = $request->getPathInfo();
+
         //Obtener las titulaciones
         $titulaciones = $this->titulacionRepository->findAll();
 
-        return $this->render('leer/titulacion.html.twig', [
-            'titulaciones' => $titulaciones
-        ]);
+        //Obtener los nombres de las titulaciones
+        $titulacionesArray = array_map(function($titulacion) {
+            return $titulacion->getNombreTitulacion()." - ".$titulacion->getCentro()->getProvincia();
+        }, $titulaciones);
+
+        if($rutaActual == '/seleccionar/titulacion') {
+            return $this->render('leer/titulacion.html.twig', [
+                'titulaciones' => $titulaciones
+            ]);
+        } else {
+            return $this->render('listar/titulacion.html.twig', [
+                'titulaciones' => $titulacionesArray
+            ]);
+        }
     }
 
     #[Route('/editar/titulacion', name: 'app_editar_titulacion')]
