@@ -39,6 +39,27 @@ services:
         autowire: true
         autoconfigure: true
 
+    App\Repository\CentroRepository:
+        class: App\Repository\CentroRepository
+        arguments:
+            - '@doctrine'
+        public: true
+        calls:
+            - [setRegistry, ['@doctrine']]
+
+    App\Repository\TitulacionRepository:
+        class: App\Repository\TitulacionRepository
+        arguments:
+            - '@doctrine'
+        public: true
+        calls:
+            - [setRegistry, ['@doctrine']]
+
+    App\Controller\FormularioTitulacionController:
+        arguments:
+            - '@App\Repository\CentroRepository'
+            - '@App\Repository\TitulacionRepository'
+
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:

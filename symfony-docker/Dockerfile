@@ -17,3 +17,9 @@ RUN apk add --no-cache \
 # Instala XEDBUG
 RUN pecl install -o -f xdebug-3.1.5 \
 && docker-php-ext-enable xdebug
+
+# Dependencias para intl
+RUN apk add --no-cache icu-dev icu-libs
+
+# Habilitar la extensión intl
+RUN docker-php-ext-install intl
