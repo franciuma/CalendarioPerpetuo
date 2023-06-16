@@ -11,34 +11,6 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
-    App\Service\FestivoNacionalService:
-        autowire: true
-        autoconfigure: true
-
-    App\Service\FestivoLocalService:
-        autowire: true
-        autoconfigure: true
-
-    App\Service\ClaseService:
-        autowire: true
-        autoconfigure: true
-
-    App\Service\UsuarioGrupoService:
-        autowire: true
-        autoconfigure: true
-
-    App\Service\FestivoCentroService:
-        autowire: true
-        autoconfigure: true
-
-    App\Entity\UsuarioGrupo:
-        autowire: true
-        autoconfigure: true
-
-    App\Interface\EventoInterface:
-        autowire: true
-        autoconfigure: true
-
     App\Repository\CentroRepository:
         class: App\Repository\CentroRepository
         arguments:

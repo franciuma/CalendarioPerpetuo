@@ -11,6 +11,11 @@ services:
     working_dir: /app
     networks:
       - internal
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
   
   webserver:
     image: nginx:latest
