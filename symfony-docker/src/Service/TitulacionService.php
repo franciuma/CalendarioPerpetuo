@@ -38,8 +38,8 @@ class TitulacionService
         foreach ($titulacionesArray as $titulacion) {
             //Buscamos el centro asociado a la titulación
             $centroDividido = explode("-", $titulacion["centro"]);
-            $nombreCentro = $centroDividido[0];
-            $provincia = $centroDividido[1];
+            $nombreCentro = trim($centroDividido[0]);
+            $provincia = trim($centroDividido[1]);
             $centro = $this->centroRepository->findOneByProvinciaCentro($provincia, $nombreCentro);
             //Denormalizamos la titulación
             $titulacion = $this->serializer->denormalize($titulacion, 'App\Entity\Titulacion');

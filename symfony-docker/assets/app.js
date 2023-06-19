@@ -1321,12 +1321,13 @@ function crearFilaTitulacion(titulacion) {
     const optionsCentro = obtenerCentroSelect();
     return $(`
         <tr class="fila-titulacion" id="titulacion${idTitulacion}">
-            <td><input type="text" class="form-control nombreTitul" name="nombreTitul" id="nombreTitul${idTitulacion}" value="${titulacion.nombre}"></td>
-            <td><input type="text" class="form-control abrevTitul" name="abrevTitul" id="abrevTitul${idTitulacion}" value="${titulacion.abreviatura}"></td>
-            <td><select class="form-control centroTitul" name="centroTitul" id="centroTitul${idTitulacion}">
-            <option selected>${titulacion.centro}</option>
-            ${optionsCentro}
-            </select>
+            <td><input type="text" class="form-control nombreTitul" name="nombreTitul" id="nombreTitul${idTitulacion}" value="${titulacion?.nombre ?? ''}"></td>
+            <td><input type="text" class="form-control abrevTitul" name="abrevTitul" id="abrevTitul${idTitulacion}" value="${titulacion?.abreviatura ?? ''}"></td>
+            <td>
+                <select class="form-control centroTitul" name="centroTitul" id="centroTitul${idTitulacion}">
+                    <option selected>${titulacion?.centro ?? ''}</option>
+                    ${optionsCentro}
+                </select>
             </td>
             <td><button class="btn btn-danger eliminar-titulacion">Eliminar</button></td>
         </tr>
@@ -1339,7 +1340,7 @@ function obtenerCentroSelect(){
     let options = "";
     //Los recorremos y agregamos las opciones
     for (var i = 0; i < centros.length; i++) {
-        options += `<option>${centros[i]}</option>`;
+        options += `<option>${centros[i].nombreProvincia}</option>`;
     }
 
     return options;

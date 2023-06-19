@@ -41,6 +41,6 @@ class EliminarCalendarioController extends AbstractController
         $calendario = $this->calendarioRepository->findOneByUsuario($usuario->getId());
         $this->calendarioController->eliminarCalendarioCompleto($calendario);
 
-        $this->redirectToRoute('app_menu_profesor');
+        return $this->redirectToRoute('app_menu_profesor');
     }
 }

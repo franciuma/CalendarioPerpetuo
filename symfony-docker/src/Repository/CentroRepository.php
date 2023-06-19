@@ -39,6 +39,14 @@ class CentroRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAllNombresProvincias(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select("CONCAT(c.nombre, ' - ', c.provincia) as nombreProvincia")
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Centro[] Returns an array of Centro objects
 //     */

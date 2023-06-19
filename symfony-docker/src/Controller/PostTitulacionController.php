@@ -24,7 +24,7 @@ class PostTitulacionController extends AbstractController
     #[Route('/post/titulacion/editado', name: 'app_post_titulacion_editado')]
     public function index(Request $request): Response
     {
-        if(($request->getPathInfo() == '/post/docente')) {
+        if(($request->getPathInfo() == '/post/titulacion')) {
             //Persistimos las titulaciones
             $this->titulacionService->getTitulaciones();
         } else {

@@ -35,7 +35,7 @@ class Clase implements EventoInterface
     private ?Calendario $calendario = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete:"CASCADE")]
     private ?Asignatura $asignatura = null;
 
     #[ORM\ManyToOne(inversedBy: 'clases')]

@@ -24,7 +24,7 @@ class Evento
     #[ORM\ManyToOne]
     private ?FestivoLocal $festivoLocal = null;
 
-    #[ORM\ManyToOne(cascade: ['remove'])]
+    #[ORM\ManyToOne(inversedBy: 'eventos', cascade:['remove'])]
     private ?Clase $clase = null;
 
     #[ORM\ManyToOne]
@@ -111,18 +111,6 @@ class Evento
         return $this;
     }
 
-    public function getClase(): ?Clase
-    {
-        return $this->clase;
-    }
-
-    public function setClase(?Clase $clase): self
-    {
-        $this->clase = $clase;
-
-        return $this;
-    }
-
     public function getFestivoCentro(): ?FestivoCentro
     {
         return $this->festivoCentro;
@@ -131,6 +119,18 @@ class Evento
     public function setFestivoCentro(?FestivoCentro $festivoCentro): self
     {
         $this->festivoCentro = $festivoCentro;
+
+        return $this;
+    }
+
+    public function getClase(): ?Clase
+    {
+        return $this->clase;
+    }
+
+    public function setClase(?Clase $clase): static
+    {
+        $this->clase = $clase;
 
         return $this;
     }

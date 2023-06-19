@@ -32,6 +32,7 @@ class UsuarioGrupoService
                 $usuarioGrupo = new UsuarioGrupo();
                 $usuarioGrupo->setUsuario($usuario);
                 $usuarioGrupo->setGrupo($grupoObjeto);
+                $grupoObjeto->addUsuarioGrupo($usuarioGrupo);
                 $this->usuarioGrupoRepository->save($usuarioGrupo);
             }
         }

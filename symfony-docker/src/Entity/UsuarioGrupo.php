@@ -14,26 +14,15 @@ class UsuarioGrupo
     private ?int $id = null;
 
     #[ORM\ManyToOne]
-    private ?Grupo $grupo = null;
-
-    #[ORM\ManyToOne]
     private ?Usuario $usuario = null;
+
+    #[ORM\ManyToOne(inversedBy: 'usuarioGrupos')]
+    #[ORM\JoinColumn(nullable: false, onDelete:"CASCADE")]
+    private ?Grupo $grupo = null;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getGrupo(): ?Grupo
-    {
-        return $this->grupo;
-    }
-
-    public function setGrupo(?Grupo $grupo): self
-    {
-        $this->grupo = $grupo;
-
-        return $this;
     }
 
     public function getUsuario(): ?Usuario
@@ -44,6 +33,18 @@ class UsuarioGrupo
     public function setUsuario(?Usuario $usuario): self
     {
         $this->usuario = $usuario;
+
+        return $this;
+    }
+
+    public function getGrupo(): ?Grupo
+    {
+        return $this->grupo;
+    }
+
+    public function setGrupo(?Grupo $grupo): static
+    {
+        $this->grupo = $grupo;
 
         return $this;
     }

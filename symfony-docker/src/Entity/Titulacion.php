@@ -18,7 +18,7 @@ class Titulacion
     #[ORM\Column(length: 255)]
     private ?string $nombreTitulacion = null;
 
-    #[ORM\OneToMany(mappedBy: 'titulacion', targetEntity: Asignatura::class)]
+    #[ORM\OneToMany(mappedBy: 'titulacion', targetEntity: Asignatura::class, cascade:['remove'])]
     private Collection $asignatura;
 
     #[ORM\Column(length: 255)]

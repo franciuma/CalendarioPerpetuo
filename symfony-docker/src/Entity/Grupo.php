@@ -20,7 +20,7 @@ class Grupo
     private ?string $letra = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete:"CASCADE")]
     private ?Asignatura $asignatura = null;
 
     #[ORM\Column(length: 255)]
@@ -35,9 +35,13 @@ class Grupo
     #[ORM\OneToMany(mappedBy: 'grupo', targetEntity: Clase::class)]
     private Collection $clases;
 
+    #[ORM\OneToMany(mappedBy: 'grupoD', targetEntity: UsuarioGrupo::class, orphanRemoval: true, cascade:["remove"])]
+    private Collection $usuarioGrupos;
+
     public function __construct()
     {
         $this->clases = new ArrayCollection();
+        $this->usuarioGrupos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -129,6 +133,36 @@ class Grupo
             // set the owning side to null (unless already changed)
             if ($clase->getGrupo() === $this) {
                 $clase->setGrupo(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UsuarioGrupo>
+     */
+    public function getUsuarioGrupos(): Collection
+    {
+        return $this->usuarioGrupos;
+    }
+
+    public function addUsuarioGrupo(UsuarioGrupo $usuarioGrupo): static
+    {
+        if (!$this->usuarioGrupos->contains($usuarioGrupo)) {
+            $this->usuarioGrupos->add($usuarioGrupo);
+            $usuarioGrupo->setGrupo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUsuarioGrupo(UsuarioGrupo $usuarioGrupo): static
+    {
+        if ($this->usuarioGrupos->removeElement($usuarioGrupo)) {
+            // set the owning side to null (unless already changed)
+            if ($usuarioGrupo->getGrupo() === $this) {
+                $usuarioGrupo->setGrupo(null);
             }
         }
 

@@ -17,7 +17,7 @@ class Leccion
     private ?string $titulo = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete:"CASCADE")]
     private ?Asignatura $asignatura = null;
 
     #[ORM\Column(length: 255)]
