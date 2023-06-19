@@ -24,7 +24,7 @@ class Evento
     #[ORM\ManyToOne]
     private ?FestivoLocal $festivoLocal = null;
 
-    #[ORM\ManyToOne(inversedBy: 'eventos', cascade:['remove'])]
+    #[ORM\ManyToOne(cascade:['remove'])]
     private ?Clase $clase = null;
 
     #[ORM\ManyToOne]
@@ -66,13 +66,23 @@ class Evento
         return null;
     }
 
-    public function getNombreClase(): ?string
+    public function getInfoClase(): ?string
     {
-        if($this->clase){
-            return $this->clase->getNombre();
+        $clase = $this->clase;
+        if($clase){
+            $asignatura = $clase->getAsignatura()->getAbreviatura() ?? $clase->getAsignatura()->getNombre();
+            $letra = $clase->getGrupo()->getLetra();
+            $horario = $clase->getGrupo()->getHorario();
+            $infoClase = $asignatura." grupo ".$letra." de ".$horario.": ".$clase->getNombre();
+            return $infoClase;
         }
 
         return null;
+    }
+
+    public function getEnlaceClase(): ?string
+    {
+        return $this->clase->getEnlace();
     }
 
     public function getDia(): ?Dia

@@ -51,8 +51,13 @@
 
                                         <td class="text-danger {{clase}}" title="{{eventoFestivo}}">{{ dia.getNumDia() }}</td>
                                     {% elseif dia.hayClase %}
-                                        <td class="fecha-clase" title="{% for evento in dia.eventos %}{{ evento.getNombreClase() ~ '\n' }}{% endfor %}">
-                                            {{ dia.getNumDia() }}
+                                        {% set eventoClase = "" %}
+                                        <td class="fecha-clase" title="{% for evento in dia.eventos %}{% set eventoClase = evento.getEnlaceClase() %}{{ evento.getInfoClase() ~ '\n' }}{% endfor %}">
+                                            {% if eventoClase != "" %}
+                                                <a href="{{eventoClase}}">{{ dia.getNumDia() }}</a>
+                                            {% else %}
+                                                {{ dia.getNumDia() }}
+                                            {% endif %}
                                         </td>
                                     {% else %}
                                         <td>{{ dia.getNumDia() }}</td>
