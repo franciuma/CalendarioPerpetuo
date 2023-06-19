@@ -75,4 +75,18 @@ class GrupoRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+
+    public function findByAsigLetraHorario($asignaturaId, $letra, $horario): Grupo
+    {
+        return $this->createQueryBuilder('g')
+            ->andWhere('g.asignatura = :asig')
+            ->andWhere('g.letra = :letra')
+            ->andWhere('g.horario = :horario')
+            ->setParameter('asig', $asignaturaId)
+            ->setParameter('letra', $letra)
+            ->setParameter('horario', $horario)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }

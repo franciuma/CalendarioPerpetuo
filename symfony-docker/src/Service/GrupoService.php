@@ -11,7 +11,7 @@ use App\Repository\UsuarioGrupoRepository;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
- * Clase utilizada para traducir JSON profesorGrupo y persistir grupos en la base de datos.
+ * Clase utilizada para traducir JSON usuarioGrupo y persistir grupos en la base de datos.
  */
 class GrupoService
 {
@@ -41,7 +41,7 @@ class GrupoService
 
     public function getGrupos($persistirBd)
     {
-        $grupoJSON = file_get_contents(__DIR__ . '/../resources/profesorGrupo.json');
+        $grupoJSON = file_get_contents(__DIR__ . '/../resources/usuarioGrupo.json');
         $gruposArray = json_decode($grupoJSON, true);
 
         $gruposDatos = $gruposArray['grupos'];
@@ -134,5 +134,30 @@ class GrupoService
                 return $grupoEditado;
             } 
         }
+    }
+
+    /**
+     * Busca del Json los grupos del usuario y los localiza en la base de datos para devolverlos en un array.
+     */
+    public function buscarGruposJson(): array
+    {
+        $grupoJSON = file_get_contents(__DIR__ . '/../resources/usuarioGrupo.json');
+        $gruposArray = json_decode($grupoJSON, true);
+
+        $gruposDatos = $gruposArray['grupos'];
+        $grupos = [];
+
+        foreach ($gruposDatos as $grupoDatos) {
+            $asignaturaNombre = $grupoDatos['asignaturaNombre'];
+            $asignaturaLetra = $grupoDatos['letra'];
+            $horario = $grupoDatos['horario'];
+            $asignatura = $this->asignaturaRepository->findOneByNombre($asignaturaNombre);
+            $grupo = $this->grupoRepository->findByAsigLetraHorario($asignatura->getId(), $asignaturaLetra, $horario);
+            $grupos[] = $grupo;
+        }
+
+        $this->grupoRepository->flush();
+
+        return $grupos;
     }
 }

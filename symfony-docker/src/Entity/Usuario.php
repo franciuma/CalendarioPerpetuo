@@ -13,7 +13,7 @@ class Usuario
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $nombre = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -30,6 +30,9 @@ class Usuario
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $despacho = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $dni = null;
 
     public function getId(): ?int
     {
@@ -104,6 +107,18 @@ class Usuario
     public function setDespacho(?string $despacho): self
     {
         $this->despacho = $despacho;
+
+        return $this;
+    }
+
+    public function getDni(): ?string
+    {
+        return $this->dni;
+    }
+
+    public function setDni(?string $dni): static
+    {
+        $this->dni = $dni;
 
         return $this;
     }

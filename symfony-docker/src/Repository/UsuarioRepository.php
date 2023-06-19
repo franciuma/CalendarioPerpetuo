@@ -116,6 +116,16 @@ class UsuarioRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findAllAlumnos(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.tipo = :val')
+            ->setParameter('val', 'Alumno')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function findAllProfesoresConCalendario(): array
     {
         return $this->createQueryBuilder('u')

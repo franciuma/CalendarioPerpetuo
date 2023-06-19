@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Usuario;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Repository\UsuarioRepository;
+use Exception;
 
 /**
  * Clase utilizada para traducir JSON usuarioGrupo y persistir un usuario en la base de datos.
@@ -23,16 +24,24 @@ class UsuarioService
         $this->usuarioRepository = $usuarioRepository;
     }
 
-    public function getProfesor()
+    public function getUsuario()
     {
-        $profesorJson = file_get_contents(__DIR__ . '/../resources/profesorGrupo.json');
-        $profesorArray = json_decode($profesorJson, true);
+        $usuarioJson = file_get_contents(__DIR__ . '/../resources/usuarioGrupo.json');
+        $usuarioArray = json_decode($usuarioJson, true);
 
-        $profesor = $this->serializer->denormalize($profesorArray['profesor'][0], 'App\Entity\Usuario');
+        if(isset($usuarioArray['profesor'][0])) {
+            $usuario = $this->serializer->denormalize($usuarioArray['profesor'][0], 'App\Entity\Usuario');
+        } else {
+            $usuario = $this->serializer->denormalize($usuarioArray['alumno'][0], 'App\Entity\Usuario');
+        }
 
-        $this->usuarioRepository->save($profesor,true);
+        if(is_null($usuario)) {
+            throw new Exception("Usuario nulo");
+        }
 
-        return $profesor;
+        $this->usuarioRepository->save($usuario,true);
+
+        return $usuario;
     }
 
     /**
@@ -40,7 +49,7 @@ class UsuarioService
      */
     public function editarProfesor(Usuario $profesor)
     {
-        $profesorJson = file_get_contents(__DIR__ . '/../resources/profesorGrupo.json');
+        $profesorJson = file_get_contents(__DIR__ . '/../resources/usuarioGrupo.json');
         $profesorArray = json_decode($profesorJson, true);
 
         $profesorNuevo = $this->serializer->denormalize($profesorArray['profesor'][0], 'App\Entity\Usuario');

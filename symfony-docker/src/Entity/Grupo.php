@@ -35,7 +35,7 @@ class Grupo
     #[ORM\OneToMany(mappedBy: 'grupo', targetEntity: Clase::class)]
     private Collection $clases;
 
-    #[ORM\OneToMany(mappedBy: 'grupoD', targetEntity: UsuarioGrupo::class, orphanRemoval: true, cascade:["remove"])]
+    #[ORM\OneToMany(mappedBy: 'grupo', targetEntity: UsuarioGrupo::class, orphanRemoval: true, cascade:["remove"])]
     private Collection $usuarioGrupos;
 
     public function __construct()

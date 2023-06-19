@@ -43,7 +43,7 @@ class PostProfesorController extends AbstractController
         $accion = "agregado";
         if(($request->getPathInfo() == '/post/docente')) {
             //Persistir el profesor del JSON a la bd
-            $profesor = $this->usuarioService->getProfesor();
+            $profesor = $this->usuarioService->getUsuario();
             //Persistir los grupos del JSON a la bd y grupoProfesor
             $grupos = $this->grupoService->getGrupos(true);
             //Persistir en la tabla UsuarioGrupo

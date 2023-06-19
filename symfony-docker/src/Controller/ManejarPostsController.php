@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ManejarPostsController extends AbstractController
 {
-    #[Route('/manejar/posts/docente', name: 'profesorGrupo')]
     #[Route('/manejar/posts/asignatura', name: 'asignaturas')]
     #[Route('/manejar/posts/clase', name: 'clases')]
     #[Route('/manejar/posts/centro', name: 'centro')]
@@ -19,6 +18,7 @@ class ManejarPostsController extends AbstractController
     #[Route('/manejar/posts/festivosnacionales', name: 'festivosnacionales')]
     #[Route('/manejar/posts/festivoslocales', name: 'festivoslocales')]
     #[Route('/manejar/posts/titulaciones', name: 'titulaciones')]
+    #[Route('/manejar/posts/usuarioGrupo', name: 'usuarioGrupo')]
     public function index(Request $request)
     {
         $entidad = $request->attributes->get('_route');
