@@ -51,20 +51,21 @@ class GrupoRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Grupo[] Returns an array of Grupo objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('g')
-//            ->andWhere('g.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('g.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return Grupo[] Returns an array of Grupo objects
+     */
+    public function findByTitulacionId($titulacionId): array
+    {
+        return $this->createQueryBuilder('g')
+            ->join('App\Entity\Asignatura','a','WITH','g.asignatura = a.id')
+            ->join('App\Entity\Titulacion','t','WITH','a.titulacion = t.id')
+            ->andWhere('t.id = :val')
+            ->setParameter('val', $titulacionId)
+            ->orderBy('g.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
     public function findOneById($grupoId): ?Grupo
     {

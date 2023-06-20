@@ -80,9 +80,6 @@ class CalendarioController extends AbstractController
         $this->eventoRepository = $eventoRepository;
     }
 
-    /**
-     * @Route("/calendario", name="calendar")
-     */
     #[Route('/calendario', name: 'app_calendario')]
     #[Route('/ver/calendario', name: 'app_ver_calendario')]
     #[Route('/trasladar/calendario', name: 'app_trasladar_calendario')]

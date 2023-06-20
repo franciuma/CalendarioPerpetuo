@@ -10,9 +10,24 @@
 		<div class="row">
 			<div class="col-md-6">
 				<h1 class="font-weight-bold">Creación de alumno</h1>
-				<form>
+				<form action="{{ path('app_formulario_alumno') }}" method="POST">
 					<div class="form-group">
-                        <label for="dniAlum">Dni</label>
+						<label for="titulAlum">Titulación y centro</label>
+						<select class="form-control" id="titulAlum" name="titulAlum">
+							{% if titulacionSeleccionada == "" %}
+								<option selected>-- Selecciona el nombre de tu centro --</option>
+							{% endif %}
+							{% for titulacion in titulaciones %}
+								{% if titulacion == titulacionSeleccionada %}
+									<option value="{{titulacion.id}}/{{titulacion.nombre}}" selected>{{ titulacion.nombre }}</option>
+								{% else %}
+									<option value="{{titulacion.id}}/{{titulacion.nombre}}">{{ titulacion.nombre }}</option>
+								{% endif %}
+							{% endfor %}
+						</select>
+						<button type="submit" class="btn btn-primary seleccionar-titulacion">seleccionar centro</button>
+						<br></br>
+						<label for="dniAlum">Dni</label>
 						<input type="text" class="form-control dniAlum" id="dniAlum">
 					</div>
 					<label for="labelnombreGrupos">Indique los grupos a los que pertenece:</label>
@@ -25,7 +40,7 @@
 						</thead>
 						<tbody></tbody>
 					</table>
-                    <button type="button" class="btn btn-primary aniadir-fila-alum">Añadir grupo</button>
+                    <button type="button" class="btn btn-primary aniadir-fila-alum" {{disponible}}>Añadir grupo</button>
 					<button type="button" class="btn btn-primary crear-alumno">Crear alumno</button>
 				</form>
 			</div>

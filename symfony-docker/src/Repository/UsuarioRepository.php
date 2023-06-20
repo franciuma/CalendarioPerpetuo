@@ -136,6 +136,16 @@ class UsuarioRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    public function findOneByDni($dni): ?Usuario
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.id = :val')
+            ->setParameter('val', $dni)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 //    /**
 //     * @return Usuario[] Returns an array of Usuario objects
 //     */

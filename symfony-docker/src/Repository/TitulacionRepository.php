@@ -44,6 +44,15 @@ class TitulacionRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAllTitulacionCentro(): array
+    {
+        return $this->createQueryBuilder('t')
+            ->select('t.id, t.nombreTitulacion, c.nombre')
+            ->innerJoin('t.centro', 'c')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Titulacion[] Returns an array of Titulacion objects
 //     */

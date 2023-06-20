@@ -3,16 +3,20 @@
 namespace App\Controller;
 
 use App\Repository\GrupoRepository;
+use App\Repository\TitulacionRepository;
 use App\Repository\UsuarioRepository;
 use App\Service\GrupoService;
 use App\Service\UsuarioGrupoService;
 use App\Service\UsuarioService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AlumnoController extends AbstractController
 {
+    private $titulacionSeleccionada = "";
+    private TitulacionRepository $titulacionRepository;
     private UsuarioService $usuarioService;
     private UsuarioRepository $usuarioRepository;
     private GrupoRepository $grupoRepository;
@@ -20,12 +24,14 @@ class AlumnoController extends AbstractController
     private UsuarioGrupoService $usuarioGrupoService;
 
     public function __construct(
+        TitulacionRepository $titulacionRepository,
         UsuarioService $usuarioService,
         GrupoRepository $grupoRepository,
         UsuarioRepository $usuarioRepository,
         GrupoService $grupoService,
         UsuarioGrupoService $usuarioGrupoService
         ){
+        $this->titulacionRepository = $titulacionRepository;
         $this->usuarioService = $usuarioService;
         $this->grupoRepository = $grupoRepository;
         $this->usuarioRepository = $usuarioRepository;
@@ -34,9 +40,42 @@ class AlumnoController extends AbstractController
     }
 
     #[Route('/formulario/alumno', name: 'app_formulario_alumno')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        //Obtenemos todos los alumnos
+        $disponible = "disabled";
+
+        //Obtener las titulaciones
+        $titulaciones = $this->titulacionRepository->findAll();
+
+        $titulacionesArray = array_map(function($titulacion) {
+            return [
+                'id' => $titulacion->getId(),
+                'nombre' => $titulacion->getNombreTitulacion()." - ".$titulacion->getCentro()->getNombre()." - ".$titulacion->getCentro()->getProvincia()
+            ];
+        }, $titulaciones);
+
+        $titulacionesJson = json_encode($titulacionesArray);
+
+        $gruposJson = json_encode("");
+        if ($request->isMethod('POST')) {
+            $disponible = "enabled";
+            $titulacion = explode("/",$request->request->get('titulAlum'));
+            $titulacionId = $titulacion[0];
+            $this->titulacionSeleccionada = $titulacion[1];
+            //Obtener todos los grupos
+            $grupos = $this->grupoRepository->findByTitulacionId($titulacionId);
+
+            //Mandamos los atributos que vamos a utilizar para grupo
+            $gruposArray = array_map(function($grupo) {
+                return [
+                    'id' => $grupo->getId(),
+                    'letra' => $grupo->getLetra()."-".$grupo->getAsignatura()->getNombre()."-".$grupo->getHorario()
+                ];
+            }, $grupos);
+            //creamos un json de los grupos para pasar al javascript
+            $gruposJson = json_encode($gruposArray);
+        }
+
         $alumnos = $this->usuarioRepository->findAllAlumnos();
         //Mandamos los atributos que vamos a utilizar para alumno
         $alumnosArray = array_map(function($alumno) {
@@ -48,22 +87,12 @@ class AlumnoController extends AbstractController
 
         $alumnosJson = json_encode($alumnosArray);
 
-        //Obtener todos los grupos
-        $grupos = $this->grupoRepository->findAll();
-
-        //Mandamos los atributos que vamos a utilizar para grupo
-        $gruposArray = array_map(function($grupo) {
-            return [
-                'id' => $grupo->getId(),
-                'letra' => $grupo->getLetra()."-".$grupo->getAsignatura()->getNombre()."-".$grupo->getHorario()
-            ];
-        }, $grupos);
-        //creamos un json de los grupos para pasar al javascript
-        $gruposJson = json_encode($gruposArray);
-
         return $this->render('formularios/alumno.html.twig', [
             'grupos' => $gruposJson,
             'alumnos' => $alumnosJson,
+            'titulaciones' => $titulacionesArray,
+            'disponible' => $disponible,
+            'titulacionSeleccionada' => $this->titulacionSeleccionada
         ]);
     }
 
@@ -76,7 +105,21 @@ class AlumnoController extends AbstractController
         $grupos = $this->grupoService->buscarGruposJson();
         //Añadir a usuario-grupo
         $this->usuarioGrupoService->getUsuarioGrupo($alumno, $grupos);
-        
+        //Añadir a matriculacion
+
         return $this->redirectToRoute('app_menu_alumno',["mensaje" => $mensaje]);
+    }
+
+    #[Route('/calendario/alumno', name: 'app_calendario_alumno')]
+    public function mostrarCalendario(Request $request): Response
+    {
+        if ($request->isMethod('POST')) {
+            $dni = $request->get("dniAlum");
+            $alumno = $this->usuarioRepository->findByDni($dni);
+            
+            
+        }
+
+        return $this->render('leer/alumno.html.twig', []);
     }
 }
