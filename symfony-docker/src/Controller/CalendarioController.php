@@ -19,8 +19,10 @@ use App\Repository\ClaseRepository;
 use App\Service\ClaseService;
 use App\Repository\UsuarioRepository;
 use App\Repository\EventoRepository;
+use App\Repository\UsuarioGrupoRepository;
 use App\Service\CalendarioService;
 use DateTime;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,6 +38,8 @@ class CalendarioController extends AbstractController
     private $usuario;
     private $anioAc;
     private $anioSig;
+    private $tipoUsuario;
+    private $clasesAlumno;
     private EventoRepository $eventoRepository;
     private AnioRepository $anioRepository;
     private CalendarioRepository $calendarioRepository;
@@ -49,6 +53,7 @@ class CalendarioController extends AbstractController
     private UsuarioRepository $usuarioRepository;
     private CalendarioService $calendarioService;
     private CentroRepository $centroRepository;
+    private UsuarioGrupoRepository $usuarioGrupoRepository;
 
     public function __construct(
         AnioRepository $anioRepository,
@@ -63,7 +68,8 @@ class CalendarioController extends AbstractController
         FestivoCentroRepository $festivoCentroRepository,
         CalendarioService $calendarioService,
         CentroRepository $centroRepository,
-        EventoRepository $eventoRepository
+        EventoRepository $eventoRepository,
+        UsuarioGrupoRepository $usuarioGrupoRepository
     ) {
         $this->anioRepository = $anioRepository;
         $this->calendarioRepository = $calendarioRepository;
@@ -78,6 +84,7 @@ class CalendarioController extends AbstractController
         $this->calendarioService = $calendarioService;
         $this->centroRepository = $centroRepository;
         $this->eventoRepository = $eventoRepository;
+        $this->usuarioGrupoRepository = $usuarioGrupoRepository;
     }
 
     #[Route('/calendario', name: 'app_calendario')]
@@ -91,10 +98,14 @@ class CalendarioController extends AbstractController
         $this->centro = $request->get('centro');
         $this->provincia = $request->get('provincia');
         $this->usuario = $request->get('usuario');
+        $this->tipoUsuario = "Profesor";
 
         $usuario = self::obtenerUsuarioCalendario();
         $calendario = $this->calendarioRepository->findOneByUsuario($usuario->getId());
         $centro = $this->centroRepository->findOneByNombre($this->centro);
+        //Actualizamos las variables globales
+        $this->centro = $centro;
+        $this->usuario = $usuario;
         //Si no se está leyendo un calendario
         if (!($request->getPathInfo() == '/ver/calendario')) {
             // Si no se ha creado el calendario
@@ -112,6 +123,45 @@ class CalendarioController extends AbstractController
                 self::editarClasesCalendario($calendario);
             }
         }
+
+        return $this->render('calendario/index.html.twig', [
+            'calendario' => $calendario,
+            'dias_semana' => $calendario->getDiasSemana()
+        ]);
+    }
+
+    /**
+     * Crea el calendario de un alumno
+     */
+    #[Route('/calendario/alumno', name: 'app_calendario_alumno')]
+    public function CalendarioAlumno(Request $request): Response
+    {
+        //Calcular los años actuales y anterior
+        self::calcularAnios($request);
+        //Obtenemos los datos del POST
+        $dni = $request->get("dni");
+        $alumno = $this->usuarioRepository->findOneByDni($dni);
+        $usuarioGrupos = $this->usuarioGrupoRepository->findUsuarioGrupoByUsuarioId($alumno->getId());
+        $centro = $usuarioGrupos[0]->getGrupo()->getAsignatura()->getTitulacion()->getCentro();
+        $this->tipoUsuario = "Alumno";
+        $this->centro = $centro;
+        $this->provincia = $centro->getProvincia();
+        $this->usuario = $alumno;
+
+        $clases = [];
+        foreach ($usuarioGrupos as $usuarioGrupo) {
+            $grupoAlumno = $usuarioGrupo->getGrupo()->getId();
+            $asignaturaAlumno = $usuarioGrupo->getGrupo()->getAsignatura()->getId();
+
+            $clases = array_merge($clases, $this->claseRepository->findByAsignaturaGrupo($asignaturaAlumno, $grupoAlumno));
+        }
+        $this->clasesAlumno = $clases;
+
+        if($centro == "") {
+            throw new Exception("El alumno no tiene grupos asociados");
+        }
+
+        $calendario = self::crearCalendarioCompleto($centro);
 
         return $this->render('calendario/index.html.twig', [
             'calendario' => $calendario,
@@ -138,8 +188,10 @@ class CalendarioController extends AbstractController
     public function crearCalendarioCompleto($centro)
     {
         //Creamos el calendario y lo obtenemos
-        $calendario = $this->calendarioService->getCalendario($this->usuario, $centro);
-        $this->claseService->getClases($calendario, true);
+        $calendario = $this->calendarioService->getCalendario($this->usuario, $centro, $this->tipoUsuario);
+        if($this->tipoUsuario == "Profesor") {
+            $this->claseService->getClases($calendario, true);
+        }
         //Crea los años del calendario
         $anios = self::creacionAnios($calendario);
         //Crea toda la estructura del calendario
@@ -187,8 +239,10 @@ class CalendarioController extends AbstractController
         $anio->setCalendario($calendario);
         $anioSig->setCalendario($calendario);
 
-        $this->anioRepository->save($anio);
-        $this->anioRepository->save($anioSig);
+        if($this->tipoUsuario == "Profesor") {
+            $this->anioRepository->save($anio);
+            $this->anioRepository->save($anioSig);
+        }
 
         array_push($anios, $anio);
         array_push($anios, $anioSig);
@@ -222,7 +276,9 @@ class CalendarioController extends AbstractController
             $ultimoDiaDeMes = intval(self::ultimoDiaMes($mesActual, $anio->getNumAnio()));
             $mes->setPrimerDia($primerDiaDeMes);
             $mes->setAnio($anio);
-            $this->mesRepository->save($mes);
+            if($this->tipoUsuario == "Profesor") {
+                $this->mesRepository->save($mes);
+            }
 
             for ($numDia = 1; $numDia <= $ultimoDiaDeMes; $numDia++) {
                 $dia = new Dia($numDia);
@@ -237,11 +293,15 @@ class CalendarioController extends AbstractController
 
                 $dia->setMes($mes);
                 //Almacenamos los días
-                $this->diaRepository->save($dia);
+                if($this->tipoUsuario == "Profesor") {
+                    $this->diaRepository->save($dia);
+                }
             }
         }
         //Persistimos todas las entidades guardadas
-        $this->diaRepository->flush();
+        if($this->tipoUsuario == "Profesor") {
+            $this->diaRepository->flush();
+        }
         $calendario->addAnio($anio);
     }
 
@@ -269,32 +329,38 @@ class CalendarioController extends AbstractController
      */
     public function colocarEventos(Dia $dia, $nombreDiaDeLaSemana, Calendario $calendario)
     {
-        $clases = $this->claseRepository->findByFecha($dia->getFecha(), $calendario->getId());
-        $festivoNacional = $this->festivoNacionalRepository->findOneFecha($dia->getFecha());
-        $festivoLocal = $this->festivoLocalRepository->findOneFecha($dia->getFecha());
-        $provinciafestivoLocal = $festivoLocal ? $festivoLocal->getProvincia() : null;
+        if($this->tipoUsuario == "Profesor") {
+            $clases = $this->claseRepository->findByFecha($dia->getFecha(), $calendario->getId());
+        } else {
+            $clases = [];
+            foreach ($this->clasesAlumno as $clase) {
+                if($clase->getFecha() == $dia->getFecha()) {
+                    $clases[] = $clase;
+                }
+            }
+        }
 
-        $usuario = self::obtenerUsuarioCalendario();
-        $centro = $this->centroRepository->findOneByUsuario($usuario->getId());
-        $festivoCentro = $this->festivoCentroRepository->findOneFechaCentro($dia->getFecha(), $centro->getId());
-        $festivoCentroCuatrimestre = $this->festivoCentroRepository->findOneFechaFinalCentro($dia->getFecha(), $centro->getId());
-        $centroNombre = $festivoCentro || $festivoCentroCuatrimestre ? $centro->getNombre() : null;
+        $festivoNacional = $this->festivoNacionalRepository->findOneFecha($dia->getFecha());
+        $festivoLocal = $this->festivoLocalRepository->findOneFechaProvincia($dia->getFecha(), $this->provincia);
+        //$provinciafestivoLocal = $festivoLocal ? $festivoLocal->getProvincia() : null;
+
+        //$usuario = self::obtenerUsuarioCalendario();
+        //$centro = $this->centroRepository->findOneByUsuario($usuario->getId());
+        $festivoCentro = $this->festivoCentroRepository->findOneFechaCentro($dia->getFecha(), $this->centro->getId());
+        $festivoCentroCuatrimestre = $this->festivoCentroRepository->findOneFechaFinalCentro($dia->getFecha(), $this->centro->getId());
+        //$centroNombre = $festivoCentro || $festivoCentroCuatrimestre ? $centro->getNombre() : null;
 
         //Si es clase y pertenece al mismo calendario.
         if(count($clases) != 0) {
             foreach ($clases as $clase) {
-                if(($calendario->getId() == $clase->getCalendarioId())) {
+                if(($calendario->getId() == $clase->getCalendarioId()) || $this->tipoUsuario == "Alumno") {
                     $evento = new Evento($clase);
                     $dia->addEvento($evento);
                 }
             }
             $dia->setHayClase(true);
-        } else if (
-            $festivoNacional
-            || ($festivoLocal && $this->provincia == $provinciafestivoLocal)
-            || ($festivoCentro && $this->centro == $centroNombre)
-            || ($festivoCentroCuatrimestre && $this->centro == $centroNombre)
-        ) {
+        } else if ($festivoNacional || $festivoLocal || $festivoCentro || $festivoCentroCuatrimestre)
+        {
             //Verificamos cual de los festivos no es nulo
             $evento = new Evento($festivoLocal ?? $festivoNacional ?? $festivoCentroCuatrimestre ?? $festivoCentro);
             $dia->setEsNoLectivo(true);
@@ -309,15 +375,19 @@ class CalendarioController extends AbstractController
      */
     public function obtenerUsuarioCalendario()
     {
-        //Obtenemos el usuario
-        $nombreCompleto = explode(" ", $this->usuario);
-        //Asignamos el nombre y apellidos
-        $apellidoPr = $nombreCompleto[count($nombreCompleto) - 2];
-        $apellidoSeg = $nombreCompleto[count($nombreCompleto) - 1];
-        $nombre = implode(" ", array_slice($nombreCompleto, 0, count($nombreCompleto) - 2));
+        if($this->tipoUsuario == "Profesor") {
+            //Obtenemos el usuario
+            $nombreCompleto = explode(" ", $this->usuario);
+            //Asignamos el nombre y apellidos
+            $apellidoPr = $nombreCompleto[count($nombreCompleto) - 2];
+            $apellidoSeg = $nombreCompleto[count($nombreCompleto) - 1];
+            $nombre = implode(" ", array_slice($nombreCompleto, 0, count($nombreCompleto) - 2));
 
-        //Obtenemos el usuario
-        $usuario = $this->usuarioRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
+            //Obtenemos el usuario
+            $usuario = $this->usuarioRepository->findOneByNombreApellidos($nombre, $apellidoPr, $apellidoSeg);
+        } else {
+            $usuario = $this->usuarioRepository->findOneByDni($this->usuario);
+        }
 
         return $usuario;
     }

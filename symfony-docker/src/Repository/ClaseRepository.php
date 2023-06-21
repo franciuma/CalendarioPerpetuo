@@ -87,6 +87,18 @@ class ClaseRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findByAsignaturaGrupo($asignaturaId, $grupoId): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.asignatura = :asig')
+            ->andWhere('c.grupo = :grupo')
+            ->setParameter('asig', $asignaturaId)
+            ->setParameter('grupo', $grupoId)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function findOneByNombre($nombre): ?Clase
     {
         return $this->createQueryBuilder('c')

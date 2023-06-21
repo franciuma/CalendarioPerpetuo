@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\GrupoRepository;
 use App\Repository\TitulacionRepository;
+use App\Repository\UsuarioGrupoRepository;
 use App\Repository\UsuarioRepository;
 use App\Service\GrupoService;
 use App\Service\UsuarioGrupoService;
@@ -21,6 +22,7 @@ class AlumnoController extends AbstractController
     private UsuarioRepository $usuarioRepository;
     private GrupoRepository $grupoRepository;
     private GrupoService $grupoService;
+    private UsuarioGrupoRepository $usuarioGrupoRepository;
     private UsuarioGrupoService $usuarioGrupoService;
 
     public function __construct(
@@ -28,6 +30,7 @@ class AlumnoController extends AbstractController
         UsuarioService $usuarioService,
         GrupoRepository $grupoRepository,
         UsuarioRepository $usuarioRepository,
+        UsuarioGrupoRepository $usuarioGrupoRepository,
         GrupoService $grupoService,
         UsuarioGrupoService $usuarioGrupoService
         ){
@@ -35,6 +38,7 @@ class AlumnoController extends AbstractController
         $this->usuarioService = $usuarioService;
         $this->grupoRepository = $grupoRepository;
         $this->usuarioRepository = $usuarioRepository;
+        $this->usuarioGrupoRepository = $usuarioGrupoRepository;
         $this->grupoService = $grupoService;
         $this->usuarioGrupoService = $usuarioGrupoService;
     }
@@ -50,11 +54,10 @@ class AlumnoController extends AbstractController
         $titulacionesArray = array_map(function($titulacion) {
             return [
                 'id' => $titulacion->getId(),
+                'idCentro' => $titulacion->getCentro()->getId(),
                 'nombre' => $titulacion->getNombreTitulacion()." - ".$titulacion->getCentro()->getNombre()." - ".$titulacion->getCentro()->getProvincia()
             ];
         }, $titulaciones);
-
-        $titulacionesJson = json_encode($titulacionesArray);
 
         $gruposJson = json_encode("");
         if ($request->isMethod('POST')) {
@@ -105,19 +108,16 @@ class AlumnoController extends AbstractController
         $grupos = $this->grupoService->buscarGruposJson();
         //Añadir a usuario-grupo
         $this->usuarioGrupoService->getUsuarioGrupo($alumno, $grupos);
-        //Añadir a matriculacion
 
         return $this->redirectToRoute('app_menu_alumno',["mensaje" => $mensaje]);
     }
 
-    #[Route('/calendario/alumno', name: 'app_calendario_alumno')]
+    #[Route('/seleccionar/alumno', name: 'app_seleccionar_alumno')]
     public function mostrarCalendario(Request $request): Response
     {
         if ($request->isMethod('POST')) {
             $dni = $request->get("dniAlum");
-            $alumno = $this->usuarioRepository->findByDni($dni);
-            
-            
+            return $this->redirectToRoute('app_calendario_alumno',["dni" => $dni]);
         }
 
         return $this->render('leer/alumno.html.twig', []);

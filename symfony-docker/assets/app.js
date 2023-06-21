@@ -1129,7 +1129,12 @@ $(document).on('click', '.previsualizar-calendario', function() {
 
 //Formulario editar calendario
 $(document).on('click', '.editar-calendario, .trasladar-calendario', function() {
-    const profesor = $('#nombreDelProfesor').val();
+    let profesor;
+    if($(this).hasClass('editar-calendario')) {
+        profesor = $('#nombreDelProfesorEditado').val();
+    } else {
+        profesor = $('#nombreDelProfesorTrasladado').val();
+    }
     //En caso de trasladar, recogemos el curso académico
     const curso = $('#cursoacademico').val();
     //Mandamos por AJAX a un controlador que nos devuelva el centro y provincia de un profesor en caso de editar un calendario

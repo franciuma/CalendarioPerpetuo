@@ -140,7 +140,7 @@ class UsuarioRepository extends ServiceEntityRepository
     public function findOneByDni($dni): ?Usuario
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('u.id = :val')
+            ->andWhere('u.dni = :val')
             ->setParameter('val', $dni)
             ->getQuery()
             ->getOneOrNullResult()

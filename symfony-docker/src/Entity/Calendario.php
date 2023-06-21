@@ -49,9 +49,11 @@ class Calendario
     #[ORM\ManyToOne(inversedBy: 'calendarios')]
     private ?Centro $centro = null;
 
-    public function __construct()
+    public function __construct(Usuario $usuario, Centro $centro)
     {
         $this->anios = new ArrayCollection();
+        $this->usuario = $usuario;
+        $this->centro = $centro;
     }
 
     public function getId(): ?int

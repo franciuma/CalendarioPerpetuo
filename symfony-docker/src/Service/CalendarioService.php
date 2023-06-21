@@ -24,16 +24,13 @@ class CalendarioService
         $this->usuarioRepository = $usuarioRepository;
     }
 
-    public function getCalendario($nombreUsuario, Centro $centro): Calendario
+    public function getCalendario($usuario, Centro $centro, $tipoUsuario): Calendario
     {
-        $calendario = new Calendario();
+        $calendario = new Calendario($usuario, $centro);
 
-        //En caso de que venga por profesor
-        $profesorSeleccionado = self::getProfesorSeleccionado($nombreUsuario);
-
-        $calendario->setUsuario($profesorSeleccionado);
-        $calendario->setCentro($centro);
-        $this->calendarioRepository->save($calendario,true);
+        if(!$this->calendarioRepository->findOneByUsuario($usuario->getId()) && $tipoUsuario == "Profesor") {
+            $this->calendarioRepository->save($calendario,true);
+        }
 
         return $calendario;
     }

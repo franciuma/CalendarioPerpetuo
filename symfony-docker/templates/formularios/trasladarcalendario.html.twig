@@ -15,8 +15,8 @@
 						<label for="labelCurso">Curso académico al que trasladar el calendario</label>
                         <input type="text" class="form-control" id="cursoacademico" placeholder="Ejemplo: 2023/2024">
 
-                        <label for="nombreDelProfesor">Docente</label>
-						<select class="form-control" id="nombreDelProfesor">
+                        <label for="nombreDelProfesorTrasladado">Docente</label>
+						<select class="form-control" id="nombreDelProfesorTrasladado">
 							<option selected>-- Selecciona el docente --</option>
 							{% for profesor in profesores %}
 								<option>{{ profesor }}</option>
