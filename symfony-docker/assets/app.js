@@ -586,7 +586,6 @@ $(document).on('click', '.crear-calendario', function() {
     const clasesJSON = JSON.stringify(clases);
 
     //Obtenemos el nombre del profesor via localStorage
-    //Meter un if a nombreProfesor para que si no es profesor sea alumno.
     const nombreProfesor = localStorage.getItem('profesor');
     const provincia = localStorage.getItem('provincia');
     const centro = localStorage.getItem('centro');
@@ -1164,7 +1163,9 @@ function editarCalendario(nombreCentroProvincia, profesor, curso)
     centro.push({nombre, provincia, profesor, editar, curso});
     const centroJSON = JSON.stringify(centro);
     //Si no hay curso se está editando, en otro caso se está trasladando.
-
+    localStorage.setItem('profesor',profesor);
+    localStorage.setItem('provincia',provincia);
+    localStorage.setItem('centro',nombre);
     if(!curso) {
         enviarPost('/manejar/posts/centro',{centroJSON: centroJSON}, '/formulario/editar/calendario');
     } else {
