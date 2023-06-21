@@ -22,7 +22,6 @@ class AlumnoController extends AbstractController
     private UsuarioRepository $usuarioRepository;
     private GrupoRepository $grupoRepository;
     private GrupoService $grupoService;
-    private UsuarioGrupoRepository $usuarioGrupoRepository;
     private UsuarioGrupoService $usuarioGrupoService;
 
     public function __construct(
@@ -30,7 +29,6 @@ class AlumnoController extends AbstractController
         UsuarioService $usuarioService,
         GrupoRepository $grupoRepository,
         UsuarioRepository $usuarioRepository,
-        UsuarioGrupoRepository $usuarioGrupoRepository,
         GrupoService $grupoService,
         UsuarioGrupoService $usuarioGrupoService
         ){
@@ -38,7 +36,6 @@ class AlumnoController extends AbstractController
         $this->usuarioService = $usuarioService;
         $this->grupoRepository = $grupoRepository;
         $this->usuarioRepository = $usuarioRepository;
-        $this->usuarioGrupoRepository = $usuarioGrupoRepository;
         $this->grupoService = $grupoService;
         $this->usuarioGrupoService = $usuarioGrupoService;
     }
