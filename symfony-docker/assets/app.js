@@ -1011,6 +1011,7 @@ function crearTablaLeccion(asignaturaId) {
         <td><select class="form-control modalidad" name="modalidad" id="modalidad${idLeccion}">
             <option>Teorica</option>
         </select></td>
+        <td><input type="text" class="form-control abrevtituloLecc" name="abrevtituloLecc" id="abrevtituloLecc${idLeccion}"></td>
         <td><button class="btn btn-danger eliminar-leccion">Eliminar</button></td>
         </tr>`;
     }
@@ -1026,6 +1027,7 @@ function crearTablaLeccion(asignaturaId) {
             <option>Practica</option>
         </select>
         </td>
+        <td><input type="text" class="form-control abrevtituloLecc" name="abrevtituloLecc" id="abrevtituloLecc${idLeccion}"></td>
         <td><button class="btn btn-danger eliminar-leccion">Eliminar</button></td>
         </tr>`;
     }
@@ -1037,8 +1039,9 @@ function crearTablaLeccion(asignaturaId) {
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Título de lección</th>
+                        <th>Título de sesión</th>
                         <th>Modalidad</th>
+                        <th>Abreviatura</th>
                         <th>Eliminar</th>
                     </tr>
                 </thead>
@@ -1089,7 +1092,8 @@ $(document).on('click', '.crear-asignatura', function() {
         $(this).next('div').find('.fila-leccion').each(function() {
             const titulo = $(this).find('.tituloLecc').val();
             const modalidad = $(this).find('.modalidad').val();
-            lecciones.push({ titulo, modalidad })
+            const abreviatura = $(this).find('.abrevtituloLecc').val();
+            lecciones.push({ titulo, modalidad, abreviatura })
         });
         asignaturas.push({ nombre, abreviatura, nombreTitulacion, cuatrimestre, lecciones });
         lecciones = [];
