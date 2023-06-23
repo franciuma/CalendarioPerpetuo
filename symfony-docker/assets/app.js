@@ -270,7 +270,6 @@ function calcularFechaCalendario(nombreFestivo) {
     const festivosCentro = JSON.parse(document.getElementById('festivosCentro').dataset.festivoscentro);
     const centro = document.getElementById('centro').dataset.centro;
     const curso = JSON.parse(document.getElementById('curso').dataset.curso);
-
     let festivosCentroFiltrado;
     if(curso != "") {
         //Filtramos para buscar el nombreFestivo que se requiere y el curso
@@ -749,7 +748,7 @@ function obtenerAsignaturasSelect() {
         if(window.location.pathname.includes("/calendario")) {
             options += `<option>${asignaturas[i].asignatura}</option>`;
         } else {
-            options += `<option>${asignaturas[i]}</option>`;
+            options += `<option>${asignaturas[i].asignatura} - ${asignaturas[i].centro}</option>`;
         }
     }
 
@@ -806,7 +805,8 @@ $(document).on('click', '.crear-profesor, .editar-profesor', function() {
     // Obtener los valores de las filas de la tabla
     $('#gruposTable tbody tr').each(function() {
         const letra = $(this).find('.grupo').val();
-        const asignaturaNombre = $(this).find('.asignatura').val();
+        const asignaturaNombreCentro = $(this).find('.asignatura').val();
+        const asignaturaNombre = asignaturaNombreCentro.split("-")[0];
         const horario = $(this).find('.horario').val();
         const diasTeoria = $(this).find('.diasTeoria').val();
         const diasPractica = $(this).find('.diasPractica').val();

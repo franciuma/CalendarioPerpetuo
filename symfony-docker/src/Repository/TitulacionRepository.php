@@ -90,4 +90,15 @@ class TitulacionRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+
+    public function findNombreBynombreTitulacion($nombreTitulacion): ?Titulacion
+    {
+        return $this->createQueryBuilder('t')
+            ->select('t.nombreTitulacion')
+            ->andWhere('t.nombreTitulacion = :val')
+            ->setParameter('val', $nombreTitulacion)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }

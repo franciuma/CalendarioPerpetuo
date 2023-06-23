@@ -68,4 +68,16 @@ class AsignaturaRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+
+    public function findOneByNombreTitulacion($nombre, $titulacionId): ?Asignatura
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.nombre = :val')
+            ->andWhere('a.titulacion = :valo')
+            ->setParameter('val', $nombre)
+            ->setParameter('valo', $titulacionId)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }

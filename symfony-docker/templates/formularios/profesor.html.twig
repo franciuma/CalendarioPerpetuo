@@ -34,6 +34,9 @@
 
 					</div>
 					<label for="labelnombreGrupos">Indique los grupos a los que da clase:</label>
+					<div class="alert alert-info" role="alert">
+						<b>Las asignaturas han de ser del mismo centro</b>
+					</div>
 					<table id="gruposTable" class="table">
 						<thead>
 							<tr>
@@ -67,7 +70,7 @@
 		<div class="modal-body">
 			<ul>
 			{% for asignatura in asignaturas %}
-				<li>{{ asignatura }}</li>
+				<li>{{ asignatura.asignatura }}</li>
 			{% endfor %}
     		</ul>
 		</div>

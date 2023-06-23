@@ -40,8 +40,11 @@ class FormularioProfesorController extends AbstractController
     {
         $asignaturas = $this->asignaturaRepository->findAll();
 
-        $titulosAsignaturas = array_map(function ($asignatura) {
-            return $asignatura->getNombre();
+        $asignaturasArray = array_map(function ($asignatura) {
+            return [
+                'asignatura' => $asignatura->getNombre(),
+                'centro' => $asignatura->getTitulacion()->getCentro()->getNombre()
+            ];
         }, $asignaturas);
 
         $profesores = $this->usuarioRepository->findAllProfesores();
@@ -56,7 +59,7 @@ class FormularioProfesorController extends AbstractController
 
         return $this->render('formularios/profesor.html.twig', [
             'controller_name' => 'FormularioProfesorController',
-            'asignaturas' => $titulosAsignaturas,
+            'asignaturas' => $asignaturasArray,
             'nombreProfesores' => $profesoresJson
         ]);
     }
@@ -123,12 +126,15 @@ class FormularioProfesorController extends AbstractController
         //creamos un json de los grupos para pasar al javascript
         $gruposJson = json_encode($gruposArray);
 
-        $titulosAsignaturas = array_map(function ($asignatura) {
-            return $asignatura->getNombre();
+        $asignaturasArray = array_map(function ($asignatura) {
+            return [
+                'asignatura' => $asignatura->getNombre(),
+                'centro' => $asignatura->getTitulacion()->getCentro()->getNombre()
+            ];
         }, $asignaturas);
 
         return $this->render('editar/profesor.html.twig', [
-            'asignaturas' => $titulosAsignaturas,
+            'asignaturas' => $asignaturasArray,
             'profesor' => $profesorObjeto,
             'grupos' => $gruposJson,
             'profesorid' => $profesorId
