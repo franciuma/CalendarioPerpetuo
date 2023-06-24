@@ -4,9 +4,18 @@ when@dev:
         intercept_redirects: false
 
     framework:
-        profiler:
-            only_exceptions: false
-            collect_serializer_data: true
+        profiler: null
+
+
+# when@dev:
+#    web_profiler:
+#        toolbar: true
+#        intercept_redirects: false
+
+#    framework:
+#        profiler:
+#            only_exceptions: false
+#            collect_serializer_data: false
 
 when@test:
     web_profiler:
