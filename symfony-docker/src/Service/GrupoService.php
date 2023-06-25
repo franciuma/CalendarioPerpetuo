@@ -63,6 +63,42 @@ class GrupoService
         return $grupos;
     }
 
+    public function editarGruposAlumnos(array $grupos)
+    {
+        $gruposNuevos = self::getGrupos(false);
+        $gruposActualizados = [];
+
+        //Recorremos los grupos antiguos, y comparamos con los nuevos.
+        //Si no existe ningún grupo antiguo en los nuevos, se borra la relación usuarioGrupo.
+        foreach ($grupos as $grupo)
+        {
+            $grupoExistente = $this->buscarGrupo($grupo, $gruposNuevos, "borrar");
+            if(!$grupoExistente) {
+                //Si el grupo no está en los nuevos, es porque se ha borrado
+                $usuarioGrupos = $this->usuarioGrupoRepository->findByGrupoId($grupo->getId());
+                $this->usuarioGrupoRepository->removeUsuarioGrupos($usuarioGrupos);
+            }
+        }
+
+        foreach ($gruposNuevos as $grupoNuevo) {
+            // Buscamos el grupo en la bd
+            $grupoAntiguo = $this->buscarGrupo($grupoNuevo, $grupos, "editar");
+
+            //Si no corresponde a ningún grupo, hay que buscarlo y enlazarlo.
+            if(!$grupoAntiguo) {
+                $grupoNuevo = $this->grupoRepository->findByAsigLetraHorario(
+                    $grupoNuevo->getAsignatura()->getId(),
+                    $grupoNuevo->getLetra(),
+                    $grupoNuevo->getHorario()
+                );
+
+                $gruposActualizados[] = $grupoNuevo;
+            }
+        }
+
+        return $gruposActualizados;
+    }
+
     public function editarGrupos(array $grupos)
     {
         $gruposNuevos = self::getGrupos(false);

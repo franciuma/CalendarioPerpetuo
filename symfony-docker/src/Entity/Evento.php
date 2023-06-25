@@ -73,7 +73,8 @@ class Evento
             $asignatura = $clase->getAsignatura()->getAbreviatura() ?? $clase->getAsignatura()->getNombre();
             $letra = $clase->getGrupo()->getLetra();
             $horario = $clase->getGrupo()->getHorario();
-            $infoClase = $asignatura." grupo ".$letra." de ".$horario.": ".$clase->getNombre();
+            $modalidad = $clase->getModalidad();
+            $infoClase = $asignatura." grupo ".$letra." de ".$horario.", ".$modalidad.": ".$clase->getNombre();
             return $infoClase;
         }
 

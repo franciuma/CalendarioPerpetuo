@@ -419,7 +419,7 @@ function crearFilaCalendario(fechaStringFormato, asignaturaId, grupoLetra, horar
     `);
 }
 
-function obtenerGrupoSelect(){
+function obtenerGrupoSelect(tipo){
     const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
     let options = "";
     //Los recorremos y agregamos las opciones
@@ -619,6 +619,13 @@ if(window.location.pathname == "/editar/docente") {
     //Obtenemos los grupos y creamos sus filas
     const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
     crearFilasExistentesGrupo(grupos);
+}
+
+//Si se está editando un alumno
+if(window.location.pathname == "/editar/alumno") {
+    //Obtenemos los grupos y creamos sus filas
+    const grupos = JSON.parse(document.getElementById('gruposAlumno').dataset.grupos);
+    crearFilasExistentesGrupoAlum(grupos);
 }
 
 $(document).on('click', '.aniadir-fila-prof, .aniadir-fila-alum', function() {
@@ -905,7 +912,8 @@ $(document).on('click', '.crear-alumno, .editar-alumno', function() {
 
     // Enviar el objeto JSON a través de una petición AJAX
     if(window.location.pathname == "/editar/alumno") {
-        enviarPost('/manejar/posts/usuarioGrupo',{usuarioGrupoJSON: usuarioGrupoJSON},'/post/docente/editado?profesor=');
+        const alumnoId = document.getElementById('alumnoid').dataset.alumnoid;
+        enviarPost('/manejar/posts/usuarioGrupo',{usuarioGrupoJSON: usuarioGrupoJSON},'/post/alumno/editado?alumno='+alumnoId);
     } else {
         enviarPost('/manejar/posts/usuarioGrupo',{usuarioGrupoJSON: usuarioGrupoJSON},'/post/alumno');
     }
@@ -925,6 +933,27 @@ function crearFilaGrupoAlum() {
             <td><button class="btn btn-danger eliminar-grupo">Eliminar</button></td>
         </tr>
     `);
+}
+
+function crearFilasExistentesGrupoAlum(grupos) {
+    const gruposOptions = obtenerGrupoSelect("editar alumno");
+    let fila;
+
+    grupos.forEach(grupo => {
+        idGrupo++;
+        fila = $(`
+        <tr id="grupo${idGrupo}">
+            <td>
+                <select type="text" class="form-control grupoAlum" name="grupoAlum" id="grupoAlum${idGrupo}" disabled>
+                <option selected>${grupo.letra}</option>
+                ${gruposOptions}
+                </select>
+            </td>
+            <td><button class="btn btn-danger eliminar-grupo">Eliminar</button></td>
+        </tr>
+    `);
+    $('#gruposTable tbody').append(fila);
+    });
 }
 
 //Formulario Asignatura
@@ -1011,7 +1040,7 @@ function crearTablaLeccion(asignaturaId) {
         <td><select class="form-control modalidad" name="modalidad" id="modalidad${idLeccion}">
             <option>Teorica</option>
         </select></td>
-        <td><input type="text" class="form-control abrevtituloLecc" name="abrevtituloLecc" id="abrevtituloLecc${idLeccion}"></td>
+        <td><input type="text" class="form-control abrevtituloLecc" name="abrevtituloLecc" id="abrevtituloLecc${idLeccion}" placeholder="Opcional"></td>
         <td><button class="btn btn-danger eliminar-leccion">Eliminar</button></td>
         </tr>`;
     }
@@ -1027,7 +1056,7 @@ function crearTablaLeccion(asignaturaId) {
             <option>Practica</option>
         </select>
         </td>
-        <td><input type="text" class="form-control abrevtituloLecc" name="abrevtituloLecc" id="abrevtituloLecc${idLeccion}"></td>
+        <td><input type="text" class="form-control abrevtituloLecc" name="abrevtituloLecc" id="abrevtituloLecc${idLeccion}" placeholder="Opcional"></td>
         <td><button class="btn btn-danger eliminar-leccion">Eliminar</button></td>
         </tr>`;
     }

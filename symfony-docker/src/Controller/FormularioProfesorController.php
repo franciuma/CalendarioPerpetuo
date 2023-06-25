@@ -159,6 +159,5 @@ class FormularioProfesorController extends AbstractController
                 'profesores' => $profesores
             ]);
         }
-        
     }
 }

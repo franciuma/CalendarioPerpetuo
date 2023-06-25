@@ -20,6 +20,7 @@ class AlumnoController extends AbstractController
     private TitulacionRepository $titulacionRepository;
     private UsuarioService $usuarioService;
     private UsuarioRepository $usuarioRepository;
+    private UsuarioGrupoRepository $usuarioGrupoRepository;
     private GrupoRepository $grupoRepository;
     private GrupoService $grupoService;
     private UsuarioGrupoService $usuarioGrupoService;
@@ -30,7 +31,8 @@ class AlumnoController extends AbstractController
         GrupoRepository $grupoRepository,
         UsuarioRepository $usuarioRepository,
         GrupoService $grupoService,
-        UsuarioGrupoService $usuarioGrupoService
+        UsuarioGrupoService $usuarioGrupoService,
+        UsuarioGrupoRepository $usuarioGrupoRepository
         ){
         $this->titulacionRepository = $titulacionRepository;
         $this->usuarioService = $usuarioService;
@@ -38,6 +40,7 @@ class AlumnoController extends AbstractController
         $this->usuarioRepository = $usuarioRepository;
         $this->grupoService = $grupoService;
         $this->usuarioGrupoService = $usuarioGrupoService;
+        $this->usuarioGrupoRepository = $usuarioGrupoRepository;
     }
 
     #[Route('/formulario/alumno', name: 'app_formulario_alumno')]
@@ -96,6 +99,85 @@ class AlumnoController extends AbstractController
         ]);
     }
 
+    #[Route('/seleccionar/alumno', name: 'app_seleccionar_alumno')]
+    #[Route('/seleccionar/editar/alumno', name: 'app_seleccionar_editar_alumno')]
+    public function mostrarCalendario(Request $request): Response
+    {
+        if($request->getPathInfo() == '/seleccionar/alumno') {
+            $accion = "Ver calendario";
+            $controlador = "app_seleccionar_alumno";
+        } else {
+            $accion = "Editar alumno";
+            $controlador = "app_seleccionar_editar_alumno";
+        }
+
+        if ($request->isMethod('POST')) {
+            $dni = $request->get("dniAlum");
+
+            if($accion == "Ver calendario") {
+                return $this->redirectToRoute('app_calendario_alumno',["dni" => $dni]);
+            } else {
+                return $this->redirectToRoute('app_editar_alumno',["dni" => $dni]);
+            }
+        }
+
+        return $this->render('leer/alumno.html.twig', [
+            'accion' => $accion,
+            'controlador' => $controlador
+        ]);
+    }
+
+    /**
+     * Editar un alumno
+     */
+    #[Route('/editar/alumno', name: 'app_editar_alumno')]
+    public function editarAlumno(Request $request): Response
+    {
+        $dni = $request->get("dni");
+        $alumno = $this->usuarioRepository->findOneByDni($dni);
+        $alumnoId = $alumno->getId();
+
+        $alumnoGrupos = $this->usuarioGrupoRepository->findUsuarioGrupoByUsuarioId($alumno->getId());
+
+        $gruposAlumnoArray = array_map(function($alumnoGrupo) {
+            $titulacion = $alumnoGrupo->getGrupo()->getAsignatura()->getTitulacion();
+            $grupo = $alumnoGrupo->getGrupo();
+            return [
+                'id' => $alumnoGrupo->getId(),
+                'idCentro' => $titulacion->getCentro()->getId(),
+                'letra' => $grupo->getLetra()."-".$grupo->getAsignatura()->getNombre()."-".$grupo->getHorario()
+            ];
+        }, $alumnoGrupos);
+
+        $titulacion = $alumnoGrupos[0]->getGrupo()->getAsignatura()->getTitulacion();
+        $centro = $titulacion->getCentro();
+        $provincia = $centro->getProvincia();
+        $nombreCompleto = $titulacion->getNombreTitulacion()." - ".$centro->getNombre()." - ".$provincia;
+
+        //Obtener todos los grupos
+        $grupos = $this->grupoRepository->findByTitulacionId($titulacion->getId());
+
+        //Mandamos los atributos que vamos a utilizar para grupo
+        $gruposArray = array_map(function($grupo) {
+            return [
+                'id' => $grupo->getId(),
+                'letra' => $grupo->getLetra()."-".$grupo->getAsignatura()->getNombre()."-".$grupo->getHorario()
+            ];
+        }, $grupos);
+        //creamos un json de los grupos para pasar al javascript
+        $gruposJson = json_encode($gruposArray);
+
+        $gruposAlumnoJson = json_encode($gruposAlumnoArray);
+
+        return $this->render('editar/alumno.html.twig', [
+            "alumno" => $alumno,
+            "alumnoid" => $alumnoId,
+            "titulacion" => $nombreCompleto,
+            "gruposAlumno" => $gruposAlumnoJson,
+            "grupos" => $gruposJson
+        ]);
+    }
+
     #[Route('/post/alumno', name: 'app_post_alumno')]
     public function post(): Response
     {
@@ -109,14 +191,17 @@ class AlumnoController extends AbstractController
         return $this->redirectToRoute('app_menu_alumno',["mensaje" => $mensaje]);
     }
 
-    #[Route('/seleccionar/alumno', name: 'app_seleccionar_alumno')]
-    public function mostrarCalendario(Request $request): Response
+    #[Route('/post/alumno/editado', name: 'app_post_alumno_editado')]
+    public function postEditado(Request $request): Response
     {
-        if ($request->isMethod('POST')) {
-            $dni = $request->get("dniAlum");
-            return $this->redirectToRoute('app_calendario_alumno',["dni" => $dni]);
-        }
+        $mensaje = "Usuario editado correctamente";
+        $alumnoId = $request->get('alumno');
+        $alumno = $this->usuarioRepository->findOneById($alumnoId);
 
-        return $this->render('leer/alumno.html.twig', []);
+        $grupos = $this->usuarioRepository->findGruposByUsuarioId($alumnoId);
+        $gruposNuevos = $this->grupoService->editarGruposAlumnos($grupos);
+        $this->usuarioGrupoService->getUsuarioGrupo($alumno, $gruposNuevos);
+
+        return $this->redirectToRoute('app_menu_alumno',["mensaje" => $mensaje]);
     }
 }
