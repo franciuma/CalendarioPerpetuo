@@ -101,14 +101,19 @@ class AlumnoController extends AbstractController
 
     #[Route('/seleccionar/alumno', name: 'app_seleccionar_alumno')]
     #[Route('/seleccionar/editar/alumno', name: 'app_seleccionar_editar_alumno')]
+    #[Route('/seleccionar/eliminar/alumno', name: 'app_seleccionar_eliminar_alumno')]
     public function mostrarCalendario(Request $request): Response
     {
-        if($request->getPathInfo() == '/seleccionar/alumno') {
+        $url = $request->getPathInfo();
+        if($url == '/seleccionar/alumno') {
             $accion = "Ver calendario";
             $controlador = "app_seleccionar_alumno";
-        } else {
+        } else if($url == '/seleccionar/editar/alumno'){
             $accion = "Editar alumno";
             $controlador = "app_seleccionar_editar_alumno";
+        } else {
+            $accion = "Eliminar alumno";
+            $controlador = "app_seleccionar_eliminar_alumno";
         }
 
         if ($request->isMethod('POST')) {
@@ -116,8 +121,10 @@ class AlumnoController extends AbstractController
 
             if($accion == "Ver calendario") {
                 return $this->redirectToRoute('app_calendario_alumno',["dni" => $dni]);
-            } else {
+            } else if($accion == "Editar alumno"){
                 return $this->redirectToRoute('app_editar_alumno',["dni" => $dni]);
+            } else {
+                return $this->redirectToRoute('app_eliminar_alumno',["dni" => $dni]);
             }
         }
 
@@ -201,6 +208,21 @@ class AlumnoController extends AbstractController
         $grupos = $this->usuarioRepository->findGruposByUsuarioId($alumnoId);
         $gruposNuevos = $this->grupoService->editarGruposAlumnos($grupos);
         $this->usuarioGrupoService->getUsuarioGrupo($alumno, $gruposNuevos);
+
+        return $this->redirectToRoute('app_menu_alumno',["mensaje" => $mensaje]);
+    }
+
+    #[Route('/eliminar/alumno', name: 'app_eliminar_alumno')]
+    public function eliminarAlumno(Request $request): Response
+    {
+        $mensaje = "Usuario eliminado correctamente";
+        $alumnoDni = $request->get('dni');
+        $alumno = $this->usuarioRepository->findOneByDni($alumnoDni);
+
+        $usuarioGrupos = $this->usuarioGrupoRepository->findUsuarioGrupoByUsuarioId($alumno->getId());
+        $this->usuarioGrupoRepository->removeUsuarioGrupos($usuarioGrupos);
+        $this->usuarioRepository->remove($alumno);
+        $this->usuarioGrupoRepository->flush();
 
         return $this->redirectToRoute('app_menu_alumno',["mensaje" => $mensaje]);
     }
