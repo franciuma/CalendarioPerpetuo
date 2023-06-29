@@ -16,12 +16,13 @@
                         <h4 class="menu-title">Asignaturas</h4>
                         <ul>
                             <li><a href="{{ path('app_formulario_asignatura') }}">Crear asignaturas</a></li>
+                            <li><a href="{{ path('app_seleccionar_editar_asignatura') }}">Editar asignatura</a></li>
                         </ul>
                     </li>
                     <li class="flex-fill">
                         <h4 class="menu-title">Docente y grupo</h4>
                         <ul>
-                            <li><a href="{{ path('app_seleccionar_profesor') }}">Editar docente y grupos</a></li>
+                            <li><a href="{{ path('app_seleccionar_profesor') }}">Editar docente / Gestionar grupos</a></li>
                         </ul>
                     </li>
                     <li class="flex-fill">
@@ -38,6 +39,12 @@
             </div>
         </div>
     </div>
+
+	<script>
+	{% if mensaje %}
+	Swal.fire('¡Éxito!', '{{ mensaje }}', 'success');
+	{% endif %}
+    </script>
 
 	<footer class="footer mt-auto py-3">
         <div class="container">

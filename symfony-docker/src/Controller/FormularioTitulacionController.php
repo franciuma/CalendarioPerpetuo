@@ -146,9 +146,9 @@ class FormularioTitulacionController extends AbstractController
         $centros = $this->centroRepository->findAll();
 
         $centrosArray = array_map(function($centro) {
-            return $centro->getNombre()."-".$centro->getProvincia();
+            return ['nombreProvincia' => $centro->getNombre()."-".$centro->getProvincia()];
         }, $centros);
-        
+
         //creamos un json de los grupos para pasar al javascript
         $centrosArrayJson = json_encode($centrosArray);
     

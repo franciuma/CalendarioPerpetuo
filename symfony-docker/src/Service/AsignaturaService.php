@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Asignatura;
 use App\Repository\AsignaturaRepository;
 use App\Repository\TitulacionRepository;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -45,5 +46,39 @@ class AsignaturaService
             }
         }
         $this->asignaturaRepository->flush();
+    }
+
+    /**
+     * Edita una asignatura
+     */
+    public function editarAsignatura(Asignatura $asignatura): Asignatura
+    {
+        $asignaturaJson = file_get_contents(__DIR__ . '/../resources/asignaturas.json');
+        $asignaturaArray = json_decode($asignaturaJson, true);
+        $asignaturaJson = $asignaturaArray['asignaturas'][0];
+
+        $asignaturaNueva = $this->serializer->denormalize($asignaturaJson, 'App\Entity\Asignatura');
+
+        //Comparamos todas las propiedades de la asignatura nueva y original
+        if($asignatura->getNombre() != $asignaturaNueva->getNombre()) {
+            $asignatura->setNombre($asignaturaNueva->getNombre());
+        }
+
+        if($asignatura->getCuatrimestre() != $asignaturaNueva->getCuatrimestre()) {
+            $asignatura->setCuatrimestre($asignaturaNueva->getCuatrimestre());
+        }
+
+        if($asignatura->getAbreviatura() != $asignaturaNueva->getAbreviatura()) {
+            $asignatura->setAbreviatura($asignaturaNueva->getAbreviatura());
+        }
+
+        $titulacion = $asignaturaJson["nombreTitulacion"];
+        $titulacionDividida = explode("-",$titulacion);
+        $titulacionObjeto = $this->titulacionRepository->findOneByAbreviaturaProvincia($titulacionDividida[0], $titulacionDividida[1]);
+        if($asignatura->getTitulacion()->getId() != $titulacionObjeto->getId()) {
+            $asignatura->setTitulacion($titulacionObjeto);
+        }
+
+        return $asignatura;
     }
 }

@@ -956,6 +956,63 @@ function crearFilasExistentesGrupoAlum(grupos) {
     });
 }
 
+//Si se está editando una asignatura
+if(window.location.pathname == "/editar/asignatura") {
+    //Obtenemos la asignatura y lecciones y creamos sus filas
+    const asignatura = JSON.parse(document.getElementById('asignatura').dataset.asignatura);
+    const lecciones = JSON.parse(document.getElementById('lecciones').dataset.lecciones);
+    crearFilasExistentesAsignatura(asignatura, lecciones);
+}
+
+function crearFilasExistentesAsignatura(asignatura, lecciones) {
+    const idAsignatura = JSON.parse(document.getElementById('asignaturaid').dataset.asignaturaid);
+    const titulacionEscogida = asignatura.titulacion;
+    const optionTitulacion = obtenerTitulacionSelect();
+    const optionTitulacionFiltrado = optionTitulacion.replace(`<option>${titulacionEscogida}</option>`, "");
+    let filasLeccion = "";
+    let filaAsignatura;
+    let idLeccion = 0;
+
+    filaAsignatura = $(`
+        <tr class="fila-asignatura" id="asignatura${idAsignatura}">
+            <td><input type="text" class="form-control nombreAsig" name="nombreAsig" id="nombreAsignatura${idAsignatura}" value="${asignatura.asignatura}"></td>
+            <td><input type="text" class="form-control abrevAsig" name="abrevAsig" id="abrevAsignatura${idAsignatura}" value="${asignatura.abreviatura}"></td>
+            <td>
+            <select class="form-control cuatrimestre" name="cuatrimestre" id="cuatrimestre${idAsignatura}">
+                <option ${asignatura.cuatrimestre === 'Primero' ? 'selected' : ''}>Primero</option>
+                <option ${asignatura.cuatrimestre === 'Segundo' ? 'selected' : ''}>Segundo</option>
+            </select>
+            </td>
+            <td>
+                <select class="form-control ntitulacion" name="ntitulacion" id="ntitulacion${idAsignatura}">
+                <option selected>${asignatura.titulacion}</option>
+                ${optionTitulacionFiltrado}
+                </select>
+            </td>
+        </tr>
+    `);
+
+    for (let i = 0; i < lecciones.length; i++) {
+        idLeccion++;
+        filasLeccion += `<tr id="tabla${idAsignatura}leccion${idLeccion}" class="fila-leccion">
+        <td><input type="text" class="form-control tituloLecc" name="tituloLecc" id="tituloLeccion${idLeccion}" value="${lecciones[i].titulo}"></td>
+        <td>
+            <select class="form-control modalidad" name="modalidad" id="modalidad${idLeccion}">
+                <option ${lecciones[i].modalidad === 'Teoria' ? 'selected' : ''}>Teoria</option>
+                <option ${lecciones[i].modalidad === 'Practica' ? 'selected' : ''}>Practica</option>
+            </select>
+        </td>
+        <td><input type="text" class="form-control abrevtituloLecc" name="abrevtituloLecc" id="abrevtituloLecc${idLeccion}" value="${lecciones[i].abreviatura ? lecciones[i].abreviatura : ''}"
+        ></td>
+        </tr>`;
+    }
+
+    idLeccion = 0;
+
+    $("#asignaturasTable tbody").append(filaAsignatura);
+    $("#leccionesTable tbody").append(filasLeccion);
+}
+
 //Formulario Asignatura
 let idAsignatura = 0;
 $(document).on('click', '.aniadir-fila-asig', function() {
@@ -1097,8 +1154,8 @@ $(document).on('click', '.eliminar-leccion', function() {
 });
 
 //Creamos el POST del formulario asignatura
-$(document).on('click', '.crear-asignatura', function() {
-
+$(document).on('click', '.crear-asignatura, .editar-asignatura', function() {
+    const crearAsignatura = $(this).hasClass('crear-asignatura');
     // Obtener los valores de las filas de la tabla
     const asignaturas = [];
     let lecciones = [];
@@ -1118,12 +1175,21 @@ $(document).on('click', '.crear-asignatura', function() {
             return;
         }
 
-        $(this).next('div').find('.fila-leccion').each(function() {
-            const titulo = $(this).find('.tituloLecc').val();
-            const modalidad = $(this).find('.modalidad').val();
-            const abreviatura = $(this).find('.abrevtituloLecc').val();
-            lecciones.push({ titulo, modalidad, abreviatura })
-        });
+        if(crearAsignatura) {
+            $(this).next('div').find('.fila-leccion').each(function() {
+                const titulo = $(this).find('.tituloLecc').val();
+                const modalidad = $(this).find('.modalidad').val();
+                const abreviatura = $(this).find('.abrevtituloLecc').val();
+                lecciones.push({ titulo, modalidad, abreviatura })
+            });
+        } else {
+            $('#leccionesTable tbody tr').each(function() {
+                const titulo = $(this).find('.tituloLecc').val();
+                const modalidad = $(this).find('.modalidad').val();
+                const abreviatura = $(this).find('.abrevtituloLecc').val();
+                lecciones.push({ titulo, modalidad, abreviatura })
+            });
+        }
         asignaturas.push({ nombre, abreviatura, nombreTitulacion, cuatrimestre, lecciones });
         lecciones = [];
     });
@@ -1135,8 +1201,12 @@ $(document).on('click', '.crear-asignatura', function() {
     // Convertir el objeto a JSON
     const asignaturasJSON = JSON.stringify(asignaturas);
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/manejar/posts/asignatura',{asignaturasJSON: asignaturasJSON},'/post/asignatura');
-
+    if(window.location.pathname == "/editar/asignatura") {
+        const asignaturaId = JSON.parse(document.getElementById('asignaturaid').dataset.asignaturaid);
+        enviarPost('/manejar/posts/asignatura', {asignaturasJSON: asignaturasJSON},'/post/asignatura/editada?asignatura='+asignaturaId);
+    } else {
+        enviarPost('/manejar/posts/asignatura',{asignaturasJSON: asignaturasJSON},'/post/asignatura');
+    }
 });
 
 //Formulario centro

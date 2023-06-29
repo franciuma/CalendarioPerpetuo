@@ -16,15 +16,15 @@ class Leccion
     #[ORM\Column(length: 255)]
     private ?string $titulo = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false, onDelete:"CASCADE")]
-    private ?Asignatura $asignatura = null;
-
     #[ORM\Column(length: 255)]
     private ?string $modalidad = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $abreviatura = null;
+
+    #[ORM\ManyToOne(inversedBy: 'lecciones')]
+    #[ORM\JoinColumn(nullable: false, onDelete:"CASCADE")]
+    private ?Asignatura $asignatura = null;
 
     public function getId(): ?int
     {
@@ -39,18 +39,6 @@ class Leccion
     public function setTitulo(string $titulo): self
     {
         $this->titulo = $titulo;
-
-        return $this;
-    }
-
-    public function getAsignatura(): ?Asignatura
-    {
-        return $this->asignatura;
-    }
-
-    public function setAsignatura(?Asignatura $asignatura): self
-    {
-        $this->asignatura = $asignatura;
 
         return $this;
     }
@@ -75,6 +63,18 @@ class Leccion
     public function setAbreviatura(?string $abreviatura): static
     {
         $this->abreviatura = $abreviatura;
+
+        return $this;
+    }
+
+    public function getAsignatura(): ?Asignatura
+    {
+        return $this->asignatura;
+    }
+
+    public function setAsignatura(?Asignatura $asignatura): static
+    {
+        $this->asignatura = $asignatura;
 
         return $this;
     }

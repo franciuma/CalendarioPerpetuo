@@ -30,22 +30,29 @@ class LeccionService
         $this->titulacionRepository = $titulacionRepository;
     }
 
-    public function getLecciones(): void
+    /**
+     * Edita lecciones de una asignatura
+     */
+    public function editarLecciones($lecciones)
     {
         $asignaturasJson = file_get_contents(__DIR__ . '/../resources/asignaturas.json');
         $asignaturasArray = json_decode($asignaturasJson, true);
+        $leccionesArray = $asignaturasArray['asignaturas'][0]['lecciones'];
+        $leccionesNuevas = $this->serializer->denormalize($leccionesArray, 'App\Entity\Leccion[]');
 
-        foreach ($asignaturasArray['asignaturas'] as $asignatura) {
-            $leccionesAsignatura = $this->serializer->denormalize($asignatura['lecciones'], 'App\Entity\Leccion[]');
-            $titulacionDividida = explode("-",$asignatura["nombreTitulacion"]);
+        for ($i=0; $i < count($leccionesNuevas); $i++) {
 
-            foreach ($leccionesAsignatura as $leccion) {
-                $titulacionObjeto = $this->titulacionRepository->findOneByAbreviaturaProvincia($titulacionDividida[0], $titulacionDividida[1]);
-                $asignaturaLeccion = $this->asignaturaRepository->findOneByNombreTitulacion($asignatura['nombre'], $titulacionObjeto->getId());
-                $leccion->setAsignatura($asignaturaLeccion);
-                $this->leccionRepository->save($leccion);
+            if($leccionesNuevas[$i]->getTitulo() != $lecciones[$i]->getTitulo()) {
+                $lecciones[$i]->setTitulo($leccionesNuevas[$i]->getTitulo());
+            }
+
+            if($leccionesNuevas[$i]->getModalidad() != $lecciones[$i]->getModalidad()) {
+                $lecciones[$i]->setModalidad($leccionesNuevas[$i]->getModalidad());
+            }
+
+            if($leccionesNuevas[$i]->getAbreviatura() != $lecciones[$i]->getAbreviatura()) {
+                $lecciones[$i]->setAbreviatura($leccionesNuevas[$i]->getAbreviatura());
             }
         }
-        $this->leccionRepository->flush();
     }
 }
