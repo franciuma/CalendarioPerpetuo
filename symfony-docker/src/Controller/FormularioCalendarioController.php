@@ -75,8 +75,20 @@ class FormularioCalendarioController extends AbstractController
 
         $leccionesJson = json_encode($leccionesArray);
 
-        //Obtener las asignaturas por nombre totales:
-        $asignaturas = $this->asignaturaRepository->findAll();
+        $centroJson = file_get_contents(__DIR__ . '/../resources/centro.json');
+        $centroArray = json_decode($centroJson, true);
+        $nombreProfesor = $centroArray[0]['profesor'];
+        //Obtenemos profesor introducido en la base de datos
+        $profesor = $this->calendarioService->getProfesorSeleccionado($nombreProfesor);
+
+        //Obtener las asignaturas del docente:
+        $gruposProfesor = $this->usuarioRepository->findGruposByUsuario($profesor->getNombre(), $profesor->getPrimerApellido(), $profesor->getSegundoApellido());
+        $asignaturas = [];
+        foreach ($gruposProfesor as $gruposProfesor) {
+            $asignaturas[] = $gruposProfesor->getAsignatura();
+        }
+
+        $asignaturas = array_unique($asignaturas);
 
         $asignaturasArray = array_map(function($asignatura) {
             return [
@@ -87,12 +99,6 @@ class FormularioCalendarioController extends AbstractController
 
         //creamos un json de las asignaturas para pasar al javascript
         $asignaturasJson = json_encode($asignaturasArray);
-
-        $centroJson = file_get_contents(__DIR__ . '/../resources/centro.json');
-        $centroArray = json_decode($centroJson, true);
-        $nombreProfesor = $centroArray[0]['profesor'];
-        //Obtenemos profesor introducido en la base de datos
-        $profesor = $this->calendarioService->getProfesorSeleccionado($nombreProfesor);
 
         $clasesJson = "";
         $cursoJson = json_encode(self::calcularCursoActual());

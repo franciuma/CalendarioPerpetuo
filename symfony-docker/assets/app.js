@@ -544,6 +544,11 @@ function crearFecha(fechaStringFormato) {
     return new Date(anio + 2000, mes - 1, dia);
 }
 
+//Al darle a añadir clases, se selecciona el datepicker
+$(document).on('click', '.aniadir-clase-calendario', function() {
+    $('#datepickerInput').datepicker('show');
+});
+
 //Creamos el POST del formulario
 $(document).on('click', '.crear-calendario', function() {
     // Obtener grupos

@@ -27,7 +27,7 @@ class Asignatura
     #[ORM\Column(length: 255)]
     private ?string $abreviatura = null;
 
-    #[ORM\OneToMany(mappedBy: 'asignatura', targetEntity: Leccion::class, orphanRemoval: true, cascade: ["persist"])]
+    #[ORM\OneToMany(mappedBy: 'asignatura', targetEntity: Leccion::class, orphanRemoval: true, cascade: ["persist", "remove"])]
     private Collection $lecciones;
 
     public function __construct()
