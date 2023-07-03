@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Actualizar festivos
+{% block title %}Actualizar periodos de centro
 {% endblock %}
 
 {% block body %}
@@ -9,10 +9,10 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6">
-				<h1 class="font-weight-bold">Actualizar festivos de centro</h1>
+				<h1 class="font-weight-bold">Actualizar periodos de centro</h1>
 				<form action="{{ path('app_actualizar_festivos_centro_admin') }}" method="POST">
 					<div class="form-group">
-						<label for="labelCurso">Curso académico al que trasladar los festivos</label>
+						<label for="labelCurso">Curso académico al que trasladar los periodos</label>
                         <input type="text" class="form-control" id="cursoacademico" name="cursoacademico" placeholder="Ejemplo: 2023/2024">
                         <label for="nombreCentroFestivo">Escoge el centro: </label>
 						<select class="form-control nombreCentroFestivo" id="nombreCentroFestivo" name="centro">
@@ -22,7 +22,7 @@
 							{% endfor %}
 						</select>
                     </div>
-					<button type="submit" class="btn btn-primary actualizar-festivos">Actualizar festivos</button>
+					<button type="submit" class="btn btn-primary actualizar-festivos">Actualizar periodos</button>
 				</form>
 			</div>
 		</div>
