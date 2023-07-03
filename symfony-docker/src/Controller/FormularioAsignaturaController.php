@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\AsignaturaRepository;
+use App\Repository\EventoRepository;
 use App\Repository\TitulacionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,13 +14,16 @@ class FormularioAsignaturaController extends AbstractController
 {
     private TitulacionRepository $titulacionRepository;
     private AsignaturaRepository $asignaturaRepository;
+    private EventoRepository $eventoRepository;
 
     public function __construct( 
         TitulacionRepository $titulacionRepository,
-        AsignaturaRepository $asignaturaRepository
+        AsignaturaRepository $asignaturaRepository,
+        EventoRepository $eventoRepository
     )
     {
         $this->titulacionRepository = $titulacionRepository;
+        $this->eventoRepository = $eventoRepository;
         $this->asignaturaRepository = $asignaturaRepository;
     }
 
@@ -35,20 +39,49 @@ class FormularioAsignaturaController extends AbstractController
     }
 
     #[Route('/seleccionar/editar/asignatura', name: 'app_seleccionar_editar_asignatura')]
+    #[Route('/seleccionar/eliminar/asignatura', name: 'app_seleccionar_eliminar_asignatura')]
     public function seleccionar(Request $request): Response
     {
+        $url = $request->getPathInfo();
+        if($url == '/seleccionar/editar/asignatura') {
+            $accion = "Editar asignatura";
+            $controlador = "app_seleccionar_editar_asignatura";
+        } else {
+            $accion = "Eliminar asignatura";
+            $controlador = "app_seleccionar_eliminar_asignatura";
+        }
+
         $asignaturas = $this->asignaturaRepository->findAll();
 
         if($request->isMethod('POST')) {
             $asignaturaId = $request->get('idAsig');
 
-            return $this->redirectToRoute('app_editar_asignatura',['id' => $asignaturaId]);
+            if($accion == "Editar asignatura") {
+                return $this->redirectToRoute('app_editar_asignatura',['id' => $asignaturaId]);
+            } else {
+                return $this->redirectToRoute('app_eliminar_asignatura',['id' => $asignaturaId]);
+            }
         }
 
         return $this->render('leer/asignatura.html.twig', [
-            'controller_name' => 'FormularioAsignaturaController',
+            'controlador' => $controlador,
+            'accion' => $accion,
             'asignaturas' => $asignaturas
         ]);
+    }
+
+    #[Route('/eliminar/asignatura', name: 'app_eliminar_asignatura')]
+    public function eliminar(Request $request) {
+        $asignaturaId = $request->get('id');
+        $asignatura = $this->asignaturaRepository->find($asignaturaId);
+        // Borramos los eventos asociados a las asignaturas
+        $eventos = $this->eventoRepository->findByAsignatura($asignaturaId);
+        $this->eventoRepository->removeEventos($eventos);
+        // Borramos la asignatura
+        $this->asignaturaRepository->remove($asignatura, true);
+
+        $mensaje = "Asignatura borrada correctamente";
+        return $this->redirectToRoute('app_menu_profesor',["mensaje" => $mensaje]);
     }
 
     #[Route('/editar/asignatura', name: 'app_editar_asignatura')]

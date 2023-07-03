@@ -119,7 +119,7 @@ class CalendarioController extends AbstractController
                 //Creamos el calendario completo con los años nuevos.
                 $calendario = self::crearCalendarioCompleto($centro);
             } else {
-                //Editamos el calendario existente        
+                //Editamos el calendario existente
                 self::editarClasesCalendario($calendario);
             }
         }

@@ -11,12 +11,15 @@
 			<div class="col-md-6">
 				<h1 class="font-weight-bold">Eliminar titulación</h1>
 				<form action="{{ path('app_eliminar_titulacion') }}" method="POST">
-						<select class="form-control" id="nombreDeTitul" name="nombreDeTitul">
-							<option selected>-- Selecciona el nombre de la titulacion --</option>
-							{% for titulacion in titulaciones %}
-								<option value="{{titulacion.id}}">{{ titulacion.nombreTitulacion }}</option>
-							{% endfor %}
-						</select>
+					<div class="alert alert-info" role="alert">
+						Esta acción eliminará la titulación y podría afectar a los calendarios asociados.
+					</div>
+					<select class="form-control" id="nombreDeTitul" name="nombreDeTitul">
+						<option selected>-- Selecciona el nombre de la titulacion --</option>
+						{% for titulacion in titulaciones %}
+							<option value="{{titulacion.id}}">{{ titulacion.nombreTitulacion }}</option>
+						{% endfor %}
+					</select>
 					<button type="submit" class="btn btn-primary">Eliminar titulación</button>
 				</form>
 			</div>

@@ -11,7 +11,9 @@
 			<div class="col-md-6">
 				<h1 class="font-weight-bold">Eliminar docente</h1>
 				<form action="{{ path('app_eliminar_profesor') }}" method="POST">
-						<label for="nombreDelProfesor">Selecciona el docente</label>
+						<div class="alert alert-info" role="alert">
+							Esta acción eliminará el docente y podría afectar a los calendarios asociados.
+						</div>
 						<select class="form-control" id="nombreDelProfesor" name="profesorSeleccionado">
 							<option selected>-- Selecciona el nombre del docente --</option>
 							{% for profesor in profesores %}

@@ -61,6 +61,18 @@ class EventoRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findByAsignatura($asignaturaId): array
+    {
+        return $this->createQueryBuilder('e')
+            ->join('App\Entity\Clase','cl','WITH','cl.id = e.clase')
+            ->andWhere('cl.asignatura = :val')
+            ->setParameter('val', $asignaturaId)
+            ->orderBy('e.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     /**
      * @return Evento[] Returns an array of Evento objects
      */
