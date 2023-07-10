@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{accion}}
+{% endblock %}
+
+{% block body %}
+	{{ parent() }}
+	<!DOCTYPE html>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<h1 class="font-weight-bold">{{accion}}</h1>
+				<form action="{{ path('app_seleccionar_editar_centro') }}" method="post">
+					<div class="form-group">
+						<label for="nombreDeCentro">Escoge el centro: </label>
+						<select class="form-control nombreDeCentro" id="nombreDeCentro" name="centro">
+							<option selected>-- Selecciona el centro --</option>
+							{% for centro in centros %}
+								<option>{{ centro }}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<button type="submit" class="btn btn-primary">{{accion}}</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<footer class="footer mt-auto py-3">
+        <div class="container">
+            <div class="text-left">
+                <a href="{{ path('app_menu_administrador') }}" class="btn btn-primary">Volver al menú administrador</a>
+            </div>
+        </div>
+    </footer>
+{% endblock %}

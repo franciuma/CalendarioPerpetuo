@@ -39,6 +39,11 @@ class CentroRepository extends ServiceEntityRepository
         }
     }
 
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
+    }
+
     public function findAllNombresProvincias(): array
     {
         return $this->createQueryBuilder('c')
