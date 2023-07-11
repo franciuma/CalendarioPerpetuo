@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\CentroRepository;
+use App\Repository\FestivoCentroRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,19 +23,22 @@ class CentroController extends AbstractController
     private FestivoLocalService $festivoLocalService;
     private CentroService $centroService;
     private CentroRepository $centroRepository;
+    private FestivoCentroRepository $festivoCentroRepository;
 
     public function __construct(
         UsuarioService $usuarioService,
         FestivoCentroService $festivoCentroService,
         FestivoLocalService $festivoLocalService,
         CentroService $centroService,
-        CentroRepository $centroRepository
+        CentroRepository $centroRepository,
+        FestivoCentroRepository $festivoCentroRepository
     )
     {
         $this->centroRepository = $centroRepository;
         $this->festivoCentroService = $festivoCentroService;
         $this->usuarioService = $usuarioService;
         $this->festivoLocalService = $festivoLocalService;
+        $this->festivoCentroRepository = $festivoCentroRepository;
         $this->centroService = $centroService;
     }
 
@@ -66,12 +70,16 @@ class CentroController extends AbstractController
     }
 
     #[Route('/seleccionar/editar/centro/admin', name: 'app_seleccionar_editar_centro')]
+    #[Route('/seleccionar/eliminar/centro/admin', name: 'app_seleccionar_eliminar_centro')]
     public function seleccionarCentro(Request $request, SessionInterface $session): Response
     {
         $url = $request->getPathInfo();
         if($url == '/seleccionar/editar/centro/admin') {
             $accion = "Editar centro";
-            $controlador = 'app_editar_centro';
+            $controlador = 'app_seleccionar_editar_centro';
+        } else {
+            $accion = "Eliminar centro";
+            $controlador = 'app_seleccionar_eliminar_centro';
         }
         $centros = $this->festivoCentroService->getNombreCentroProvincia();
 
@@ -82,13 +90,16 @@ class CentroController extends AbstractController
             $centroObjetoId = $centroObjeto->getId();
             if($accion == "Editar centro") {
                 $session->set('centroId', $centroObjetoId);
-                return $this->redirectToRoute($controlador, ['centroId' => $centroObjetoId]);
+                return $this->redirectToRoute('app_editar_centro', ['centroId' => $centroObjetoId]);
+            } else {
+                return $this->redirectToRoute('app_eliminar_centro', ['centroId' => $centroObjetoId]);
             }
         }
 
         return $this->render('leer/centro.html.twig', [
             'centros' => $centros,
             'accion' => $accion,
+            'controlador' => $controlador
         ]);
     }
 
@@ -160,6 +171,44 @@ class CentroController extends AbstractController
         $centroAntiguo->setProvincia($nombreProvincia);
         $this->centroRepository->flush();
 
+        return $this->redirectToRoute('app_menu_administrador');
+    }
+
+    #[Route('/eliminar/centro/admin', name: 'app_eliminar_centro')]
+    public function eliminarCentro(Request $request): Response
+    {
+        $centroId = $request->get('centroId');
+        $centroObjeto = $this->centroRepository->find($centroId);
+        $centroNombre = $centroObjeto->getNombre();
+        $centroProvincia = $centroObjeto->getProvincia();
+
+        // Lee el contenido actual del archivo JSON
+        $rutaArchivo = '/app/src/resources/festivosCentro.json';
+        $contenidoJson = file_get_contents($rutaArchivo);
+
+        // Decodifica el contenido JSON en un array asociativo
+        $festivosCentroArray = json_decode($contenidoJson, true);
+        $centrosArray = array_keys($festivosCentroArray);
+
+        foreach ($centrosArray as $centro) {
+            if($centro == 'festivosCentro'.$centroNombre.'-'.$centroProvincia) {
+                // Eliminar el centro
+                unset($festivosCentroArray[$centro]);
+            }
+        }
+
+        //Buscamos los festivos del centro para borrarlos
+        $festivosCentro = $this->festivoCentroRepository->findByCentroId($centroId);
+        $this->festivoCentroRepository->removeFestivosCentro($festivosCentro);
+
+        // Codifica los datos actualizados a JSON
+        $contenidoActualizado = json_encode($festivosCentroArray, JSON_PRETTY_PRINT);
+
+        // Guarda los cambios en el archivo JSON
+        file_put_contents($rutaArchivo, $contenidoActualizado);
+
+        //Borramos el centro
+        $this->centroRepository->remove($centroObjeto, true);
         return $this->redirectToRoute('app_menu_administrador');
     }
 

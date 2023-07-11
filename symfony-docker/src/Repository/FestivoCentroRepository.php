@@ -44,20 +44,25 @@ class FestivoCentroRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return FestivoCentro[] Returns an array of FestivoCentro objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('f.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function removeFestivosCentro(array $festivosCentro): void
+    {
+        foreach ($festivosCentro as $festivoCentro) {
+            $this->getEntityManager()->remove($festivoCentro);
+        }
+    }
+
+    /**
+     * @return FestivoCentro[] Returns an array of FestivoCentro objects
+     */
+    public function findByCentroId($centroId): array
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.centro = :val')
+            ->setParameter('val', $centroId)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
     public function findOneFechaCentro($fecha, $centroId): ?FestivoCentro
     {

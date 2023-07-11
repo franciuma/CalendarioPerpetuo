@@ -10,7 +10,12 @@
 		<div class="row">
 			<div class="col-md-6">
 				<h1 class="font-weight-bold">{{accion}}</h1>
-				<form action="{{ path('app_seleccionar_editar_centro') }}" method="post">
+				<form action="{{ path(controlador) }}" method="post">
+					{% if accion == "Eliminar centro" %}
+						<div class="alert alert-info" role="alert">
+							Esta acción eliminará el centro y podría afectar a los calendarios asociados.
+						</div>
+					{% endif %}
 					<div class="form-group">
 						<label for="nombreDeCentro">Escoge el centro: </label>
 						<select class="form-control nombreDeCentro" id="nombreDeCentro" name="centro">

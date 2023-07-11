@@ -6,6 +6,7 @@
 
 {% block body %}
     {{ parent() }}
+    {% include 'navbarAdministrador.html.twig' %}
 
     <div class="container">
         <div class="row">
@@ -26,7 +27,7 @@
                         <ul>
                             <li><a href="{{ path('app_formulario_titulacion') }}">Crear titulaciones</a></li>
                             <li><a href="{{ path('app_seleccionar_titulacion') }}">Editar titulaciones</a></li>
-                            <li><a href="{{ path('app_lista_titulacion') }}">Lista titulaciones</a></li>
+                            <li><a href="{{ path('app_lista_titulacion') }}">Listar titulaciones</a></li>
                             <li><a href="{{ path('app_eliminar_titulacion') }}">Eliminar titulaciones</a></li>
                         </ul>
                     </li>
@@ -52,10 +53,10 @@
                             <li class="flex-fill">
                                 <h4 class="menu-title">Centro</h4>
                                 <ul>
-                                    <li><a href="{{ path('app_crear_centro_admin') }}">Crear un centro</a></li>
-                                    <li><a href="{{ path('app_seleccionar_editar_centro') }}">Editar un centro</a></li>
-                                    <li><a href="{{ path('app_formulario_profesor') }}">Lista de centros</a></li>
-                                    <li><a href="{{ path('app_formulario_profesor') }}">Eliminar un centro</a></li>
+                                    <li><a href="{{ path('app_crear_centro_admin') }}">Crear centro</a></li>
+                                    <li><a href="{{ path('app_seleccionar_editar_centro') }}">Editar centro</a></li>
+                                    <li><a href="{{ path('app_formulario_profesor') }}">Listar centros</a></li>
+                                    <li><a href="{{ path('app_seleccionar_eliminar_centro') }}">Eliminar centro</a></li>
                                     <li><a href="{{ path('app_aniadir_festivo_centro_admin') }}">Añadir periodo</a></li>
                                     <li><a href="{{ path('app_actualizar_festivos_centro_admin') }}">Actualizar periodo</a></li>
                                 </ul>

@@ -21,10 +21,10 @@ class Centro
     #[ORM\Column(length: 255)]
     private ?string $provincia = null;
 
-    #[ORM\OneToMany(mappedBy: 'centro', targetEntity: Calendario::class)]
+    #[ORM\OneToMany(mappedBy: 'centro', targetEntity: Calendario::class, cascade: ['remove'])]
     private Collection $calendarios;
 
-    #[ORM\OneToMany(mappedBy: 'centro', targetEntity: Titulacion::class)]
+    #[ORM\OneToMany(mappedBy: 'centro', targetEntity: Titulacion::class, cascade: ['remove'])]
     private Collection $titulaciones;
 
     public function __construct()
