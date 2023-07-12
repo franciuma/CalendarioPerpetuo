@@ -183,3 +183,25 @@ select.centroTitul {
     background-color: white;
     color: black;
 }
+
+//Menús navbar administrador
+.btn-icon img{
+    width: 128px;
+    height: 128px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+
+//Boton editar
+.btn-warning-light {
+    color: white;
+    background-color: #FFB300;
+    border-color: black;
+}
+
+.btn-warning-light:hover {
+    color: white;
+    background-color: #dabe69;
+    border-color: black;
+}

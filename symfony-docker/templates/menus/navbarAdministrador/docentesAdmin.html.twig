@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Docentes
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    {% include 'navbarAdministrador.html.twig' %}
+    {% include 'botonesCrud.html.twig' with {
+        'nombre': 'docente',
+        'nombrePlural':'docentes',
+        'pathCrear': path('app_formulario_profesor'),
+        'pathVer': path('app_lista_profesor'),
+        'pathEditar': path('app_seleccionar_profesor'),
+        'pathEliminar': path('app_eliminar_profesor')
+    } %}
+{% endblock %}

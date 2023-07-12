@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Asignaturas
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    {% include 'navbarDocente.html.twig' %}
+    {% include 'botonesCrud.html.twig' with {
+        'nombre': 'asignatura',
+        'nombrePlural': 'asignaturas',
+        'pathCrear': path('app_formulario_asignatura'),
+        'pathVer': path('app_lista_profesor'),
+        'pathEditar': path('app_seleccionar_editar_asignatura'),
+        'pathEliminar': path('app_seleccionar_eliminar_asignatura')
+    } %}
+{% endblock %}

@@ -1,0 +1,40 @@
+<div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="row g-5 mt-4">
+                    <div class="col-6">
+                        <a href="{{ pathCrear }}" class="btn btn-success btn-block btn-lg border-dark">
+                            <div class="d-flex flex-column align-items-center btn-icon">
+                                <img src="/img/crear.png" alt="Crear">
+                                Crear {{nombre}}
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{{ pathVer }}" class="btn btn-primary btn-block btn-lg border-dark">
+                            <div class="d-flex flex-column align-items-center btn-icon">
+                                <img src="/img/leer.png" alt="Ver">
+                                Ver {{nombrePlural}}
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{{ pathEditar }}" class="btn btn-warning-light btn-block btn-lg border-dark">
+                            <div class="d-flex flex-column align-items-center btn-icon">
+                                <img src="/img/editar.png" alt="Editar">
+                                Editar {{nombre}}
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{{ pathEliminar }}" class="btn btn-danger btn-block btn-lg border-dark">
+                            <div class="d-flex flex-column align-items-center btn-icon">
+                                <img src="/img/eliminar.png" alt="Eliminar">
+                                Eliminar {{nombre}}
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

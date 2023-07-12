@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Lista de titulaciones
+    Lista de asignaturas
 {% endblock %}
 
 {% block body %}
@@ -9,13 +9,13 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6">
-                <h1 class="font-weight-bold">Lista de titulaciones</h1>
+                <h1 class="font-weight-bold">Lista de asignaturas</h1>
                 <ul>
-                    {% if titulaciones is empty %}
-                        <li>No hay titulaciones registradas</li>
+                    {% if asignaturas is empty %}
+                        <li>No hay asignaturas registradas</li>
                     {% else %}
-                        {% for titulacion in titulaciones %}
-                            <li>{{ titulacion }}</li>
+                        {% for asignatura in asignaturas %}
+                            <li>{{ asignatura }}</li>
                         {% endfor %}
                     {% endif %}
                 </ul>
@@ -26,7 +26,7 @@
     <footer class="footer mt-auto py-3">
         <div class="container">
             <div class="text-left">
-                <a href="{{ path('app_menu_titulaciones_admin') }}" class="btn btn-primary">Volver al menú</a>
+                <a href="{{ path('app_menu_profesor') }}" class="btn btn-primary">Volver al menú docente</a>
             </div>
         </div>
     </footer>

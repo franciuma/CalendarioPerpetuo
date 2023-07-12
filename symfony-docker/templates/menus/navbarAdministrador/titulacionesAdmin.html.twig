@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Titulaciones
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    {% include 'navbarAdministrador.html.twig' %}
+    {% include 'botonesCrud.html.twig' with {
+        'nombre': 'titulación',
+        'nombrePlural': 'titulaciones',
+        'pathCrear': path('app_formulario_titulacion'),
+        'pathVer': path('app_lista_titulacion'),
+        'pathEditar': path('app_seleccionar_titulacion'),
+        'pathEliminar': path('app_eliminar_titulacion')
+    } %}
+{% endblock %}
