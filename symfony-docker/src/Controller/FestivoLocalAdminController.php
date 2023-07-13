@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AniadirFestivoLocalAdminController extends AbstractController
+class FestivoLocalAdminController extends AbstractController
 {
     private $provinciaSeleccionada;
     private FestivoLocalService $festivoLocalService;
@@ -39,7 +39,6 @@ class AniadirFestivoLocalAdminController extends AbstractController
 
         $provincias = $this->festivoLocalService->getProvincias();
         return $this->render('crear/festivolocal.html.twig', [
-            'controller_name' => 'AniadirFestivoLocalAdminController',
             'provincias' => $provincias,
             'provinciaSeleccionada' => $this->provinciaSeleccionada,
             'disponible' => $verFestivosDisponible,

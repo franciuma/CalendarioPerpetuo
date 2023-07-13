@@ -18,15 +18,6 @@ class MenuController extends AbstractController
         ]);
     }
 
-    #[Route('/menu/docente', name: 'app_menu_profesor')]
-    public function docente(Request $request): Response
-    {
-        $mensaje = $request->get("mensaje");
-        return $this->render('menus/profesor.html.twig', [
-            'mensaje' => $mensaje
-        ]);
-    }
-
     #[Route('/menu/alumno', name: 'app_menu_alumno')]
     public function alumno(Request $request): Response
     {
@@ -69,5 +60,29 @@ class MenuController extends AbstractController
     public function titulacionesAdmin(): Response
     {
         return $this->render('menus/navbarAdministrador/titulacionesAdmin.html.twig');
+    }
+
+    #[Route('/menu/periodos/nacionales/admin', name: 'app_menu_periodos_nacionales_admin')]
+    public function periodosNacionalesAdmin(): Response
+    {
+        return $this->render('menus/navbarAdministrador/periodosNacionalesAdmin.html.twig');
+    }
+
+    #[Route('/menu/periodos/locales/admin', name: 'app_menu_periodos_locales_admin')]
+    public function periodosLocalesAdmin(): Response
+    {
+        return $this->render('menus/navbarAdministrador/periodosLocalesAdmin.html.twig');
+    }
+
+    #[Route('/menu/periodos/centro/admin', name: 'app_menu_periodos_centro_admin')]
+    public function periodosCentroAdmin(): Response
+    {
+        return $this->render('menus/navbarAdministrador/periodosCentroAdmin.html.twig');
+    }
+
+    #[Route('/menu/centro/admin', name: 'app_menu_centro_admin')]
+    public function centroAdmin(): Response
+    {
+        return $this->render('menus/navbarAdministrador/centroAdmin.html.twig');
     }
 }

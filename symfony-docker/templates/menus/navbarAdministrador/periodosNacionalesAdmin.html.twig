@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Periodos no lectivos nacionales
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    {% include 'navbarAdministrador.html.twig' %}
+    {% include 'botonesCrud.html.twig' with {
+        'nombre': 'periodo nacional',
+        'nombrePlural':'periodos nacionales',
+        'pathCrear': path('app_aniadir_festivo_nacional_admin'),
+        'pathVer': path('app_lista_profesor'),
+        'pathEditar': path('app_seleccionar_profesor'),
+        'pathEliminar': path('app_actualizar_festivos_nacionales_admin')
+    } %}
+{% endblock %}

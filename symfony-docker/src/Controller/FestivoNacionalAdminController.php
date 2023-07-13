@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AniadirFestivoNacionalAdminController extends AbstractController
+class FestivoNacionalAdminController extends AbstractController
 {
     private FestivoNacionalService $festivoNacionalService;
 
@@ -22,7 +22,6 @@ class AniadirFestivoNacionalAdminController extends AbstractController
     {
         $festivosNacionales = $this->festivoNacionalService->getFestivosNacionales(self::calcularAnios());
         return $this->render('crear/festivonacional.html.twig', [
-            'controller_name' => 'AniadirFestivoNacionalAdminController',
             'festivosNacionales' => $festivosNacionales
         ]);
     }

@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 
-class AniadirFestivoCentroAdminController extends AbstractController
+class FestivoCentroAdminController extends AbstractController
 {
     private FestivoCentroService $festivoCentroService;
     private $centroSeleccionado = "";
@@ -40,7 +40,6 @@ class AniadirFestivoCentroAdminController extends AbstractController
         $festivosCentro = $this->festivoCentroService->getNombreCentroProvincia();
 
         return $this->render('crear/festivocentro.html.twig', [
-            'controller_name' => 'AniadirFestivoCentroAdminController',
             'festivosCentro' => $festivosCentro,
             'centroSeleccionado' => $this->centroSeleccionado,
             'disponible' => $verFestivosDisponible,

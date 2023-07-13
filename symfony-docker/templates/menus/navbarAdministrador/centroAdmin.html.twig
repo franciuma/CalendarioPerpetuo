@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Gestionar centros
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    {% include 'navbarAdministrador.html.twig' %}
+    {% include 'botonesCrud.html.twig' with {
+        'nombre': 'centro',
+        'nombrePlural':'centros',
+        'pathCrear': path('app_crear_centro_admin'),
+        'pathVer': path('app_formulario_profesor'),
+        'pathEditar': path('app_seleccionar_editar_centro'),
+        'pathEliminar': path('app_seleccionar_eliminar_centro')
+    } %}
+{% endblock %}
