@@ -1,26 +1,25 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary navbar-dark bg-primary">
   <div class="container-fluid">
-    <a class="navbar-brand" href="{{ path('app_menu_profesor') }}">Menú docente</a>
+    <a class="navbar-brand" href="{{ path('app_menu_calendario_docente') }}">Menú docente</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item dropdown active">
+          <a class="nav-link dropdown-toggle" href="{{path('app_menu_calendario_docente')}}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Calendario
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{path('app_menu_calendario_docente')}}">Gestionar</a></li>
+            <li><a class="dropdown-item" href="{{path('app_trasladar')}}">Trasladar de año</a></li>
+          </ul>
+        </li>
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="{{path('app_menu_asignaturas_docente')}}">Asignaturas</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{{path('app_menu_titulaciones_admin')}}">Titulaciones</a>
-        </li>
-        <li class="nav-item dropdown active">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Periodos no lectivos
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Nacional</a></li>
-            <li><a class="dropdown-item" href="#">Local</a></li>
-            <li><a class="dropdown-item" href="#">Centro</a></li>
-          </ul>
+          <a class="nav-link active" aria-current="page" href="{{ path('app_seleccionar_profesor') }}">Docente/Grupos</a>
         </li>
       </ul>
       <form class="d-flex">

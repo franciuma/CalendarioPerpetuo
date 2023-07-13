@@ -88,14 +88,14 @@ class FormularioCalendarioController extends AbstractController
             $asignaturas[] = $gruposProfesor->getAsignatura();
         }
 
-        $asignaturas = array_unique($asignaturas);
-
         $asignaturasArray = array_map(function($asignatura) {
             return [
                 'id' => $asignatura->getId(),
                 'asignatura' => $asignatura->getNombre()
             ];
         }, $asignaturas);
+
+        $asignaturasArray = array_unique($asignaturasArray, SORT_REGULAR);
 
         //creamos un json de las asignaturas para pasar al javascript
         $asignaturasJson = json_encode($asignaturasArray);

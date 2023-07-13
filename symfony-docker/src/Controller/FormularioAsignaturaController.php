@@ -81,7 +81,7 @@ class FormularioAsignaturaController extends AbstractController
         $this->asignaturaRepository->remove($asignatura, true);
 
         $mensaje = "Asignatura borrada correctamente";
-        return $this->redirectToRoute('app_menu_profesor',["mensaje" => $mensaje]);
+        return $this->redirectToRoute('app_menu_calendario_docente',["mensaje" => $mensaje]);
     }
 
     #[Route('/editar/asignatura', name: 'app_editar_asignatura')]

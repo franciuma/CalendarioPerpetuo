@@ -56,6 +56,6 @@ class PostAsignaturaController extends AbstractController
         //Guardamos los cambios en la base de datos
         $this->asignaturaRepository->save($asignatura, true);
 
-        return $this->redirectToRoute('app_menu_profesor',["mensaje" => $mensaje]);
+        return $this->redirectToRoute('app_menu_calendario_docente',["mensaje" => $mensaje]);
     }
 }

@@ -49,6 +49,15 @@ class MenuController extends AbstractController
         return $this->render('menus/navbarProfesor/asignaturasDocente.html.twig');
     }
 
+    #[Route('/menu/calendario/docente', name: 'app_menu_calendario_docente')]
+    public function calendarioDocente(Request $request): Response
+    {
+        $mensaje = $request->get("mensaje");
+        return $this->render('menus/navbarProfesor/calendarioDocente.html.twig', [
+            'mensaje' => $mensaje
+        ]);
+    }
+
     //Menú administrador
     #[Route('/menu/docentes/admin', name: 'app_menu_docentes_admin')]
     public function docentesAdmin(): Response

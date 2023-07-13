@@ -8,8 +8,8 @@
 	<!DOCTYPE html>
 	<div class="container">
 		<div class="row">
-			<div class="col-md-6">
-				<h1 class="font-weight-bold">Seleccionar docente</h1>
+			<div class="col-md-7">
+				<h1 class="font-weight-bold">Editar docente / Gestionar grupos</h1>
 				<form action="{{ path('app_editar_profesor') }}" method="POST">
 						<select class="form-control" id="nombreDelProfesor" name="profesorSeleccionado">
 							<option selected>-- Selecciona el nombre del docente --</option>
@@ -26,7 +26,7 @@
 	<footer class="footer mt-auto py-3">
         <div class="container">
             <div class="text-left">
-                <a href="{{ path('app_menu_administrador') }}" class="btn btn-primary">Volver al menú administrador</a>
+                <a href="{{ path('app_menu_docentes_admin') }}" class="btn btn-primary">Volver al menú</a>
             </div>
         </div>
     </footer>

@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Calendario
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    {% include 'navbarDocente.html.twig' %}
+    {% include 'botonesCrud.html.twig' with {
+        'nombre': 'calendario',
+        'nombrePlural': 'calendarios',
+        'pathCrear': path('app_formulario_centro'),
+        'pathVer': path('app_leer_calendario'),
+        'pathEditar': path('app_editar_calendario'),
+        'pathEliminar': path('app_seleccionar_eliminar_calendario')
+    } %}
+
+    <script>
+	{% if mensaje %}
+        Swal.fire('¡Éxito!', '{{ mensaje }}', 'success');
+	{% endif %}
+    </script>
+{% endblock %}
