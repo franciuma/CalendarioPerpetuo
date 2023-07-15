@@ -89,6 +89,7 @@ class CalendarioController extends AbstractController
 
     #[Route('/calendario', name: 'app_calendario')]
     #[Route('/ver/calendario', name: 'app_ver_calendario')]
+    #[Route('/ver/calendario/alumno', name: 'app_ver_calendario_alumno')]
     #[Route('/trasladar/calendario', name: 'app_trasladar_calendario')]
     public function index(Request $request): Response
     {
@@ -107,13 +108,14 @@ class CalendarioController extends AbstractController
         $this->centro = $centro;
         $this->usuario = $usuario;
         //Si no se está leyendo un calendario
-        if (!($request->getPathInfo() == '/ver/calendario')) {
+        $url = $request->getPathInfo();
+        if (!($url == '/ver/calendario') && !($url == '/ver/calendario/alumno')) {
             // Si no se ha creado el calendario
             if (!$calendario) {
                 //Creamos el calendario completo
                 $calendario = self::crearCalendarioCompleto($centro);
             //Si se está trasladando el calendario
-            } else if($request->getPathInfo() == '/trasladar/calendario'){
+            } else if($url == '/trasladar/calendario'){
                 //Borramos el antiguo calendario completamente
                 self::eliminarCalendarioCompleto($calendario);
                 //Creamos el calendario completo con los años nuevos.
@@ -124,9 +126,15 @@ class CalendarioController extends AbstractController
             }
         }
 
+        $tipo = 'Docente';
+        if($url == '/ver/calendario/alumno') {
+            $tipo = 'Alumno';
+        }
+
         return $this->render('calendario/index.html.twig', [
             'calendario' => $calendario,
-            'dias_semana' => $calendario->getDiasSemana()
+            'dias_semana' => $calendario->getDiasSemana(),
+            'tipo' => $tipo
         ]);
     }
 
@@ -141,6 +149,16 @@ class CalendarioController extends AbstractController
         //Obtenemos los datos del POST
         $dni = $request->get("dni");
         $alumno = $this->usuarioRepository->findOneByDni($dni);
+
+        if(!$alumno) {
+            $mensaje = "El alumno introducido no existe";
+            return $this->redirectToRoute('app_menu_alumno',[
+                "principal"=>"Error",
+                "mensaje" => $mensaje,
+                "estado" => "error"
+            ]);
+        }
+
         $usuarioGrupos = $this->usuarioGrupoRepository->findUsuarioGrupoByUsuarioId($alumno->getId());
         $centro = $usuarioGrupos[0]->getGrupo()->getAsignatura()->getTitulacion()->getCentro();
         $this->tipoUsuario = "Alumno";
@@ -165,7 +183,8 @@ class CalendarioController extends AbstractController
 
         return $this->render('calendario/index.html.twig', [
             'calendario' => $calendario,
-            'dias_semana' => $calendario->getDiasSemana()
+            'dias_semana' => $calendario->getDiasSemana(),
+            'tipo' => 'Alumno'
         ]);
     }
 

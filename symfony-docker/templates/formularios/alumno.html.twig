@@ -25,10 +25,10 @@
 								{% endif %}
 							{% endfor %}
 						</select>
-						<button type="submit" class="btn btn-primary seleccionar-titulacion">seleccionar centro</button>
+						<button type="submit" class="btn btn-primary seleccionar-titulacion">Confirmar centro</button>
 						<br></br>
 						<label for="dniAlum">Dni</label>
-						<input type="text" class="form-control dniAlum" id="dniAlum">
+						<input type="text" class="form-control dniAlum" id="dniAlum" {{disponible}} placeholder="Ejemplo: 12345678A">
 					</div>
 					<label for="labelnombreGrupos">Indique los grupos a los que pertenece:</label>
 					<table id="gruposTable" class="table">

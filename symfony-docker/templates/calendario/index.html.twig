@@ -76,7 +76,11 @@
 	<footer class="footer mt-auto py-3">
         <div class="container">
             <div class="text-left">
-                <a href="{{ path('app_menu_calendario_docente') }}" class="btn btn-primary">Volver al menú docente</a>
+                {% if tipo == "Alumno" %}
+                    <a href="{{ path('app_menu_alumno') }}" class="btn btn-primary">Volver al menú</a>
+                {% else %}
+                    <a href="{{ path('app_menu_calendario_docente') }}" class="btn btn-primary">Volver al menú</a>
+                {% endif %}
             </div>
         </div>
     </footer>

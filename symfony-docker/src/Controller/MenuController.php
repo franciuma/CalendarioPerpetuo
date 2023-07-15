@@ -18,19 +18,24 @@ class MenuController extends AbstractController
         ]);
     }
 
-    #[Route('/menu/alumno', name: 'app_menu_alumno')]
-    public function alumno(Request $request): Response
-    {
-        $mensaje = $request->get("mensaje");
-        return $this->render('menus/alumno.html.twig', [
-            'mensaje' => $mensaje
-        ]);
-    }
-
     #[Route('/menu', name: 'app_menu_principal')]
     public function principal(): Response
     {
         return $this->render('menus/principal.html.twig');
+    }
+
+    //Menú alumnos
+    #[Route('/menu/alumno', name: 'app_menu_alumno')]
+    public function calendarioAlumno(Request $request): Response
+    {
+        $mensaje = $request->get("mensaje");
+        $estado = $request->get("estado");
+        $msjPrincipal = $request->get("principal");
+        return $this->render('menus/navbarAlumno/calendarioAlumno.html.twig', [
+            'mensaje' => $mensaje,
+            'msjPrincipal' => $msjPrincipal,
+            'estado' => $estado
+        ]);
     }
 
     //Menú docente

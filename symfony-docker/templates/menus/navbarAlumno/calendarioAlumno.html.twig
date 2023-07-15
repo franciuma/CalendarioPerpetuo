@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Calendario
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    {% include 'navbarAlumno.html.twig' %}
+    {% include 'botonesCrud.html.twig' with {
+        'nombre': 'alumno',
+        'nombrePlural': 'calendario',
+        'pathCrear': path('app_formulario_alumno'),
+        'pathVer': path('app_seleccionar_alumno'),
+        'pathEditar': path('app_seleccionar_editar_alumno'),
+        'pathEliminar': path('app_seleccionar_eliminar_alumno')
+    } %}
+
+    <script>
+	{% if mensaje %}
+		Swal.fire('{{ msjPrincipal }}', '{{ mensaje }}', '{{ estado }}');
+	{% endif %}
+    </script>
+{% endblock %}

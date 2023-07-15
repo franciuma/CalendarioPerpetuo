@@ -16,6 +16,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AlumnoController extends AbstractController
 {
+    const ERROR = "error";
+    const SUCCESS = "success";
+    const EXITO = "Éxito";
+    const FALLO = "Error";
     private $titulacionSeleccionada = "";
     private TitulacionRepository $titulacionRepository;
     private UsuarioService $usuarioService;
@@ -142,6 +146,16 @@ class AlumnoController extends AbstractController
     {
         $dni = $request->get("dni");
         $alumno = $this->usuarioRepository->findOneByDni($dni);
+
+        if(!$alumno) {
+            $mensaje = "El alumno introducido no existe";
+            return $this->redirectToRoute('app_menu_alumno',[
+                "principal"=>self::FALLO,
+                "mensaje" => $mensaje,
+                "estado" => self::ERROR
+            ]);
+        }
+
         $alumnoId = $alumno->getId();
 
         $alumnoGrupos = $this->usuarioGrupoRepository->findUsuarioGrupoByUsuarioId($alumno->getId());
@@ -188,20 +202,24 @@ class AlumnoController extends AbstractController
     #[Route('/post/alumno', name: 'app_post_alumno')]
     public function post(): Response
     {
-        $mensaje = "Usuario añadido correctamente";
+        $mensaje = "Alumno añadido correctamente";
         $alumno = $this->usuarioService->getUsuario();
         //Buscar grupos
         $grupos = $this->grupoService->buscarGruposJson();
         //Añadir a usuario-grupo
         $this->usuarioGrupoService->getUsuarioGrupo($alumno, $grupos);
 
-        return $this->redirectToRoute('app_menu_alumno',["mensaje" => $mensaje]);
+        return $this->redirectToRoute('app_menu_alumno',[
+            "principal"=>self::EXITO,
+            "mensaje" => $mensaje,
+            "estado" => self::SUCCESS
+            ]);
     }
 
     #[Route('/post/alumno/editado', name: 'app_post_alumno_editado')]
     public function postEditado(Request $request): Response
     {
-        $mensaje = "Usuario editado correctamente";
+        $mensaje = "Alumno editado correctamente";
         $alumnoId = $request->get('alumno');
         $alumno = $this->usuarioRepository->findOneById($alumnoId);
 
@@ -209,21 +227,38 @@ class AlumnoController extends AbstractController
         $gruposNuevos = $this->grupoService->editarGruposAlumnos($grupos);
         $this->usuarioGrupoService->getUsuarioGrupo($alumno, $gruposNuevos);
 
-        return $this->redirectToRoute('app_menu_alumno',["mensaje" => $mensaje]);
+        return $this->redirectToRoute('app_menu_alumno',[
+            "principal"=>self::EXITO,
+            "mensaje" => $mensaje,
+            "estado" => self::SUCCESS
+        ]);
     }
 
     #[Route('/eliminar/alumno', name: 'app_eliminar_alumno')]
     public function eliminarAlumno(Request $request): Response
     {
-        $mensaje = "Usuario eliminado correctamente";
+        $mensaje = "Alumno eliminado correctamente";
         $alumnoDni = $request->get('dni');
         $alumno = $this->usuarioRepository->findOneByDni($alumnoDni);
+
+        if(!$alumno) {
+            $mensaje = "El alumno introducido no existe";
+            return $this->redirectToRoute('app_menu_alumno',[
+                "principal"=>self::FALLO,
+                "mensaje" => $mensaje,
+                "estado" => self::ERROR
+            ]);
+        }
 
         $usuarioGrupos = $this->usuarioGrupoRepository->findUsuarioGrupoByUsuarioId($alumno->getId());
         $this->usuarioGrupoRepository->removeUsuarioGrupos($usuarioGrupos);
         $this->usuarioRepository->remove($alumno);
         $this->usuarioGrupoRepository->flush();
 
-        return $this->redirectToRoute('app_menu_alumno',["mensaje" => $mensaje]);
+        return $this->redirectToRoute('app_menu_alumno',[
+            "principal"=>self::EXITO,
+            "mensaje" => $mensaje,
+            "estado" => self::SUCCESS
+        ]);
     }
 }

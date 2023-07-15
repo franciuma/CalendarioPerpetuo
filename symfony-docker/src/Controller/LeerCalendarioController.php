@@ -20,23 +20,29 @@ class LeerCalendarioController extends AbstractController
     }
 
     #[Route('/leer/calendario', name: 'app_leer_calendario')]
+    #[Route('/leer/calendario/alumno', name: 'app_leer_calendario_alumno')]
     #[Route('/seleccionar/eliminar/calendario', name: 'app_seleccionar_eliminar_calendario')]
     public function index(Request $request): Response
     {
+        $usuario = "Docente";
         //Filtramos los profesores que tengan un calendario creado.
         $conCalendario = true;
         $profesores = $this->usuarioService->getAllProfesoresNombreCompleto($conCalendario);
 
-        if ($request->getPathInfo() == '/seleccionar/eliminar/calendario') {
+        $url = $request->getPathInfo();
+        if ($url == '/seleccionar/eliminar/calendario') {
             $accion = "Eliminar";
+        } else if($url == '/leer/calendario/alumno'){
+            $accion = "Ver";
+            $usuario = "Alumno";
         } else {
             $accion = "Ver";
         }
 
         return $this->render('leer/calendario.html.twig', [
-            'controller_name' => 'LeerCalendarioController',
             'profesores' => $profesores,
-            'accion' => $accion
+            'accion' => $accion,
+            'usuario' => $usuario
         ]);
     }
 }

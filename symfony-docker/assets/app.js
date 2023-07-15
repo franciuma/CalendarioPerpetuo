@@ -606,8 +606,14 @@ $(document).on('click', '.crear-calendario', function() {
 //LEER un calendario
 $(document).on('click', '.Ver-calendario', function() {
     const nombreProfesor = $('#nombreleerProfesor').val();
+    //Leemos la url actual
+    const urlActual = window.location.pathname;
     // Enviar el objeto JSON a través de una petición AJAX
-    window.location.replace('/ver/calendario?usuario=' + nombreProfesor);
+    if(urlActual.includes("alumno")) {
+        window.location.replace('/ver/calendario/alumno?usuario=' + nombreProfesor);
+    } else {
+        window.location.replace('/ver/calendario?usuario=' + nombreProfesor);
+    }
 });
 
 //ELIMINAR un calendario
