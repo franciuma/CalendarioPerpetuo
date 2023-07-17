@@ -96,8 +96,16 @@ class FormularioProfesorController extends AbstractController
     }
 
     #[Route('/editar/docente', name: 'app_editar_profesor')]
+    #[Route('/editar/docente/admin', name: 'app_editar_profesor_admin')]
     public function editarProfesor(Request $request): Response
     {
+        $url = $request->getPathInfo();
+        $usuario = "Docente";
+
+        if($url == "/editar/docente/admin") {
+            $usuario = "Administrador";
+        }
+
         $asignaturas = $this->asignaturaRepository->findAll();
         $profesor = $request->request->get('profesorSeleccionado');
         $nombreCompleto = explode(" ", $profesor);
@@ -137,27 +145,40 @@ class FormularioProfesorController extends AbstractController
             'asignaturas' => $asignaturasArray,
             'profesor' => $profesorObjeto,
             'grupos' => $gruposJson,
-            'profesorid' => $profesorId
+            'profesorid' => $profesorId,
+            'usuario' => $usuario
         ]);
     }
 
     #[Route('/seleccionar/docente', name: 'app_seleccionar_profesor')]
+    #[Route('/seleccionar/docente/admin', name: 'app_seleccionar_profesor_admin')]
     #[Route('/lista/docente', name: 'app_lista_profesor')]
     public function seleccionarProfesor(Request $request): Response
     {
-        $rutaActual = $request->getPathInfo();
+        $url = $request->getPathInfo();
+        $usuario = "Administrador";
+        $controlador = 'app_editar_profesor_admin';
 
         $conCalendario = false;
         $profesores = $this->usuarioService->getAllProfesoresNombreCompleto($conCalendario);
 
-        if($rutaActual == '/seleccionar/docente') {
-            return $this->render('leer/profesor.html.twig', [
-                'profesores' => $profesores
-            ]);
-        } else {
+        if($url == '/seleccionar/docente') {
+            $usuario = "Docente";
+            $controlador = 'app_editar_profesor';
+        }
+
+        if($url == '/lista/docente') {
             return $this->render('listar/profesor.html.twig', [
-                'profesores' => $profesores
+                'profesores' => $profesores,
+                'usuario' => $usuario,
+                'controlador' => $controlador
             ]);
         }
+
+        return $this->render('leer/profesor.html.twig', [
+            'profesores' => $profesores,
+            'usuario' => $usuario,
+            'controlador' => $controlador
+        ]);
     }
 }

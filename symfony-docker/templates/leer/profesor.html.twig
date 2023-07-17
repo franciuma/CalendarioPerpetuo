@@ -10,7 +10,7 @@
 		<div class="row">
 			<div class="col-md-7">
 				<h1 class="font-weight-bold">Editar docente / Gestionar grupos</h1>
-				<form action="{{ path('app_editar_profesor') }}" method="POST">
+				<form action="{{ path(controlador) }}" method="POST">
 						<select class="form-control" id="nombreDelProfesor" name="profesorSeleccionado">
 							<option selected>-- Selecciona el nombre del docente --</option>
 							{% for profesor in profesores %}
@@ -26,7 +26,11 @@
 	<footer class="footer mt-auto py-3">
         <div class="container">
             <div class="text-left">
-                <a href="{{ path('app_menu_docentes_admin') }}" class="btn btn-primary">Volver al menú</a>
+				{% if usuario == "Administrador" %}
+					<a href="{{ path('app_menu_docentes_admin') }}" class="btn btn-primary">Volver al menú</a>
+				{% else %}
+					<a href="{{ path('app_menu_calendario_docente') }}" class="btn btn-primary">Volver al menú</a>
+				{% endif %}
             </div>
         </div>
     </footer>
