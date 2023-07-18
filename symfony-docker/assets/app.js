@@ -852,12 +852,19 @@ $(document).on('click', '.crear-profesor, .editar-profesor', function() {
     };
     const usuarioGrupoJSON = JSON.stringify(datos);
 
+    const urlActual = window.location.pathname;
     // Enviar el objeto JSON a través de una petición AJAX
-    if(window.location.pathname == "/editar/docente") {
+    let usuario = "";
+    if(urlActual.includes("admin")) {
+        usuario = "/admin";
+    }
+
+    // Enviar el objeto JSON a través de una petición AJAX
+    if(window.location.pathname == "/editar/docente"+usuario) {
         const profesorId = document.getElementById('profesorid').dataset.profesorid;
-        enviarPost('/manejar/posts/usuarioGrupo',{usuarioGrupoJSON: usuarioGrupoJSON},'/post/docente/editado?profesor='+profesorId);
+        enviarPost('/manejar/posts/usuarioGrupo',{usuarioGrupoJSON: usuarioGrupoJSON},'/post/docente/editado'+usuario+'?profesor='+profesorId);
     } else {
-        enviarPost('/manejar/posts/usuarioGrupo',{usuarioGrupoJSON: usuarioGrupoJSON},'/post/docente');
+        enviarPost('/manejar/posts/usuarioGrupo',{usuarioGrupoJSON: usuarioGrupoJSON},'/post/docente'+usuario);
     }
 });
 

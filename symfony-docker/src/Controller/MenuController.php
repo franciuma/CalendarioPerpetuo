@@ -11,10 +11,11 @@ class MenuController extends AbstractController
 {
 
     #[Route('/menu/administrador', name: 'app_menu_administrador')]
-    public function admin(): Response
+    public function admin(Request $request): Response
     {
+        $mensaje = $request->get("mensaje");
         return $this->render('menus/administrador.html.twig', [
-            'controller_name' => 'MenuAdministradorController',
+            'mensaje' => $mensaje
         ]);
     }
 
@@ -40,9 +41,12 @@ class MenuController extends AbstractController
 
     //Menú docente
     #[Route('/menu/asignaturas/docente', name: 'app_menu_asignaturas_docente')]
-    public function asignaturasDocente(): Response
+    public function asignaturasDocente(Request $request): Response
     {
-        return $this->render('menus/navbarProfesor/asignaturasDocente.html.twig');
+        $mensaje = $request->get("mensaje");
+        return $this->render('menus/navbarProfesor/asignaturasDocente.html.twig',[
+            'mensaje' => $mensaje
+        ]);
     }
 
     #[Route('/menu/calendario/docente', name: 'app_menu_calendario_docente')]

@@ -5,26 +5,38 @@ namespace App\Controller;
 use App\Repository\AsignaturaRepository;
 use App\Repository\EventoRepository;
 use App\Repository\TitulacionRepository;
+use App\Service\AsignaturaService;
+use App\Service\LeccionService;
+use App\Service\TitulacionService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class FormularioAsignaturaController extends AbstractController
+class AsignaturaController extends AbstractController
 {
     private TitulacionRepository $titulacionRepository;
     private AsignaturaRepository $asignaturaRepository;
     private EventoRepository $eventoRepository;
+    private AsignaturaService $asignaturaService;
+    private LeccionService $leccionService;
+    private TitulacionService $titulacionService;
 
     public function __construct( 
         TitulacionRepository $titulacionRepository,
         AsignaturaRepository $asignaturaRepository,
-        EventoRepository $eventoRepository
+        EventoRepository $eventoRepository,
+        AsignaturaService $asignaturaService,
+        LeccionService $leccionService,
+        TitulacionService $titulacionService
     )
     {
         $this->titulacionRepository = $titulacionRepository;
         $this->eventoRepository = $eventoRepository;
         $this->asignaturaRepository = $asignaturaRepository;
+        $this->asignaturaService = $asignaturaService;
+        $this->leccionService = $leccionService;
+        $this->titulacionService = $titulacionService;
     }
 
     #[Route('/formulario/asignatura', name: 'app_formulario_asignatura')]
@@ -81,7 +93,7 @@ class FormularioAsignaturaController extends AbstractController
         $this->asignaturaRepository->remove($asignatura, true);
 
         $mensaje = "Asignatura borrada correctamente";
-        return $this->redirectToRoute('app_menu_calendario_docente',["mensaje" => $mensaje]);
+        return $this->redirectToRoute('app_menu_asignaturas_docente',["mensaje" => $mensaje]);
     }
 
     #[Route('/editar/asignatura', name: 'app_editar_asignatura')]
@@ -147,5 +159,32 @@ class FormularioAsignaturaController extends AbstractController
         return $this->render('listar/asignatura.html.twig', [
             'asignatura' => $asignaturas,
         ]);
+    }
+
+    #[Route('/post/asignatura', name: 'app_post_asignatura')]
+    public function postCreada(): Response
+    {
+        $mensaje = "Asignatura/s creada correctamente";
+        //Persistir las titulaciones y devolver array de objetos Titulacion
+        $this->titulacionService->getTitulaciones();
+        //Persistir las asignaturas del JSON a la bd
+        $this->asignaturaService->getAsignaturas();
+
+        return $this->redirectToRoute('app_menu_asignaturas_docente',["mensaje" => $mensaje]);
+    }
+
+    #[Route('/post/asignatura/editada', name: 'app_post_asignatura_editada')]
+    public function postEditada(Request $request): Response
+    {
+        $asignaturaId = $request->get('asignatura');
+        $asignatura = $this->asignaturaRepository->find($asignaturaId);
+        $this->asignaturaService->editarAsignatura($asignatura);
+        $this->leccionService->editarLecciones($asignatura->getLecciones());
+        $mensaje = "Asignatura editada correctamente";
+
+        //Guardamos los cambios en la base de datos
+        $this->asignaturaRepository->save($asignatura, true);
+
+        return $this->redirectToRoute('app_menu_asignaturas_docente',["mensaje" => $mensaje]);
     }
 }

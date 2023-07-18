@@ -29,6 +29,7 @@ class EliminarCalendarioController extends AbstractController
     #[Route('/eliminar/calendario', name: 'app_eliminar_calendario')]
     public function index(Request $request)
     {
+        $mensaje = "Calendario eliminado correctamente";
         $usuarioCompleto = $request->get('usuario');
         //Asignamos el nombre y apellidos
         $nombreCompleto = explode(" ", $usuarioCompleto);
@@ -41,6 +42,6 @@ class EliminarCalendarioController extends AbstractController
         $calendario = $this->calendarioRepository->findOneByUsuario($usuario->getId());
         $this->calendarioController->eliminarCalendarioCompleto($calendario);
 
-        return $this->redirectToRoute('app_menu_calendario_docente');
+        return $this->redirectToRoute('app_menu_calendario_docente', ["mensaje" => $mensaje]);
     }
 }
