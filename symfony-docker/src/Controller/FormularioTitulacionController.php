@@ -8,6 +8,7 @@ use App\Repository\CentroRepository;
 use App\Repository\ClaseRepository;
 use App\Repository\EventoRepository;
 use App\Repository\TitulacionRepository;
+use App\Service\TitulacionService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,11 +21,13 @@ class FormularioTitulacionController extends AbstractController
     private EventoRepository $eventoRepository;
     private ClaseRepository $claseRepository;
     private AsignaturaRepository $asignaturaRepository;
+    private TitulacionService $titulacionService;
 
     public function __construct(
         AsignaturaRepository $asignaturaRepository,
         CentroRepository $centroRepository,
         TitulacionRepository $titulacionRepository,
+        TitulacionService $titulacionService,
         EventoRepository $eventoRepository,
         ClaseRepository $claseRepository
     ) {
@@ -32,6 +35,7 @@ class FormularioTitulacionController extends AbstractController
         $this->centroRepository = $centroRepository;
         $this->claseRepository = $claseRepository;
         $this->titulacionRepository = $titulacionRepository;
+        $this->titulacionService = $titulacionService;
         $this->eventoRepository = $eventoRepository;
     }
 
@@ -78,7 +82,6 @@ class FormularioTitulacionController extends AbstractController
     #[Route('/eliminar/titulacion', name: 'app_eliminar_titulacion')]
     public function eliminarTitulacion(Request $request): Response
     {
-        $mensaje = "";
         if ($request->isMethod('POST')) {
             // Obtener id de la titulación escogida
             $titulacionId = $request->get('nombreDeTitul');
@@ -113,13 +116,13 @@ class FormularioTitulacionController extends AbstractController
             $this->titulacionRepository->remove($titulacionObjeto);
             $this->titulacionRepository->flush();
             $mensaje = "Titulación eliminada correctamente";
+            return $this->redirectToRoute('app_menu_titulaciones_admin',["mensaje" => $mensaje]);
         }
         //Obtener las titulaciones
         $titulaciones = $this->titulacionRepository->findAll();
 
         return $this->render('eliminar/titulacion.html.twig', [
-            'titulaciones' => $titulaciones,
-            'mensaje' => $mensaje
+            'titulaciones' => $titulaciones
         ]);
     }
 
@@ -158,5 +161,22 @@ class FormularioTitulacionController extends AbstractController
             'centros' => $centrosArrayJson
         ]);
     }
-    
+
+    #[Route('/post/titulacion', name: 'app_post_titulacion')]
+    #[Route('/post/titulacion/editado', name: 'app_post_titulacion_editado')]
+    public function post(Request $request): Response
+    {
+        if(($request->getPathInfo() == '/post/titulacion')) {
+            $mensaje = "Titulación/es creada/s correctamente";
+            //Persistimos las titulaciones
+            $this->titulacionService->getTitulaciones();
+        } else {
+            $mensaje = "Titulación editada correctamente";
+            $titulacionId = $request->get('titulacion');
+            $titulacionObjeto = $this->titulacionRepository->find($titulacionId);
+            $this->titulacionService->editarTitulacion($titulacionObjeto);
+        }
+
+        return $this->redirectToRoute('app_menu_titulaciones_admin',["mensaje" => $mensaje]);
+    }
 }

@@ -1317,11 +1317,6 @@ $(document).on('click', '.seleccionar-festivos-centro', function() {
     });
 });
 
-$(document).on('click', '.actualizar-festivos', function() {
-    // Mostrar el popup de centro seleccionado
-    alertaPersonalizada('Actualizado', 'Periodos no lectivos actualizados', 'success');
-});
-
 let idFestivoCentro = 0;
 $(document).on('click', '.aniadir-festivos-centro', function() {
     idFestivoCentro++;
@@ -1452,7 +1447,7 @@ $(document).on('click', '.guardar-festivos-nacional', function() {
     const festivosnacionalesJSON = JSON.stringify(festivosNacionales);
 
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/manejar/posts/festivosnacionales', {festivosnacionalesJSON: festivosnacionalesJSON},'/menu/administrador');
+    enviarPost('/manejar/posts/festivosnacionales', {festivosnacionalesJSON: festivosnacionalesJSON},'/menu/periodos/nacionales/admin');
 
     // Mostrar el popup de añadido festivo centro correctamente
     mostrarPopUp("festivo/s nacional/es añadido/s");

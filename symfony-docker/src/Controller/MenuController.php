@@ -72,21 +72,30 @@ class MenuController extends AbstractController
     }
 
     #[Route('/menu/periodos/nacionales/admin', name: 'app_menu_periodos_nacionales_admin')]
-    public function periodosNacionalesAdmin(): Response
+    public function periodosNacionalesAdmin(Request $request): Response
     {
-        return $this->render('menus/navbarAdministrador/periodosNacionalesAdmin.html.twig');
+        $mensaje = $request->get("mensaje");
+        return $this->render('menus/navbarAdministrador/periodosNacionalesAdmin.html.twig', [
+            'mensaje' => $mensaje
+        ]);
     }
 
     #[Route('/menu/periodos/locales/admin', name: 'app_menu_periodos_locales_admin')]
-    public function periodosLocalesAdmin(): Response
+    public function periodosLocalesAdmin(Request $request): Response
     {
-        return $this->render('menus/navbarAdministrador/periodosLocalesAdmin.html.twig');
+        $mensaje = $request->get("mensaje");
+        return $this->render('menus/navbarAdministrador/periodosLocalesAdmin.html.twig', [
+            'mensaje' => $mensaje
+        ]);
     }
 
     #[Route('/menu/periodos/centro/admin', name: 'app_menu_periodos_centro_admin')]
-    public function periodosCentroAdmin(): Response
+    public function periodosCentroAdmin(Request $request): Response
     {
-        return $this->render('menus/navbarAdministrador/periodosCentroAdmin.html.twig');
+        $mensaje = $request->get("mensaje");
+        return $this->render('menus/navbarAdministrador/periodosCentroAdmin.html.twig', [
+            'mensaje' => $mensaje
+        ]);
     }
 
     #[Route('/menu/centro/admin', name: 'app_menu_centro_admin')]

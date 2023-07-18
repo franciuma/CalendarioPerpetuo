@@ -34,10 +34,12 @@ class ActualizarFestivosController extends AbstractController
     public function index(Request $request): Response
     {
         if ($request->isMethod('POST')) {
+            $mensaje = "Periodos no lectivos actualizados";
             $curso = $request->get('cursoacademico');
             $cursoFormato = explode("/",$curso);
 
             $this->festivoNacionalService->getFestivosNacionales([$cursoFormato[0], $cursoFormato[1]]);
+            return $this->redirectToRoute('app_menu_periodos_nacionales_admin', ['mensaje' => $mensaje]);
         }
         return $this->render('editar/actualizarfestivosnacionales.html.twig', [
         ]);
@@ -48,10 +50,12 @@ class ActualizarFestivosController extends AbstractController
     {
         $provincias = $this->festivoLocalService->getProvincias();
         if ($request->isMethod('POST')) {
+            $mensaje = "Periodos no lectivos actualizados";
             $curso = $request->get('cursoacademico');
             $cursoFormato = explode("/",$curso);
             $provincia = $request->get('provincia');
             $this->festivoLocalService->getFestivosLocales($provincia, [$cursoFormato[0], $cursoFormato[1]]);
+            return $this->redirectToRoute('app_menu_periodos_locales_admin', ['mensaje' => $mensaje]);
         }
         return $this->render('editar/actualizarfestivoslocales.html.twig', [
             'provincias' => $provincias
@@ -63,12 +67,14 @@ class ActualizarFestivosController extends AbstractController
     {
         $centros = $this->festivoCentroService->getNombreCentroProvincia();
         if ($request->isMethod('POST')) {
+            $mensaje = "Periodos no lectivos actualizados";
             $curso = $request->get('cursoacademico');
             $cursoFormato = explode("/",$curso);
             $centro = $request->get('centro');
             $centroFormato = explode("-",$centro);
             $centroObjeto = $this->centroRepository->findOneByProvinciaCentro($centroFormato[1], $centroFormato[0]);
             $this->festivoCentroService->getFestivosCentro($centroObjeto, [$cursoFormato[0], $cursoFormato[1]]);
+            return $this->redirectToRoute('app_menu_periodos_centro_admin', ['mensaje' => $mensaje]);
         }
         return $this->render('editar/actualizarfestivoscentro.html.twig', [
             'centros' => $centros

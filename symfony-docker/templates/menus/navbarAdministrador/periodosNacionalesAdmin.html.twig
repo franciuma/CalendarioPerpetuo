@@ -15,4 +15,10 @@
         'pathEditar': path('app_seleccionar_profesor'),
         'pathEliminar': path('app_actualizar_festivos_nacionales_admin')
     } %}
+
+    <script>
+	{% if mensaje %}
+        Swal.fire('¡Éxito!', '{{ mensaje }}', 'success');
+	{% endif %}
+    </script>
 {% endblock %}
