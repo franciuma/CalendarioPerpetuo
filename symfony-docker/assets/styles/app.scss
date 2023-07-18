@@ -4,6 +4,7 @@ body {
     background-color: lightblue;
 }
 
+//Calendario
 .bordered {
     border: 1px solid black;
 }
@@ -219,4 +220,14 @@ select.centroTitul {
     color: white;
     background-color: #dabe69;
     border-color: black;
+}
+
+//Menú principal
+.btn-menu {
+    padding: 30px 40px;
+    font-size: 30px;
+}
+
+.mb-menu {
+    margin-bottom: 150px;
 }

@@ -6,16 +6,34 @@
 
 {% block body %}
     {{ parent() }}
-
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <h1 class="font-weight-bold">Menú principal</h1>
-                <ul class="menu-list">
-                    <li><a href="{{ path('app_menu_alumno') }}">Entrar como alumno</a></li>
-                    <li><a href="{{ path('app_menu_calendario_docente') }}">Entrar como docente</a></li>
-                    <li><a href="{{ path('app_menu_administrador') }}">Entrar como administrador</a></li>
-                </ul>
+    <div class="col-md-12 text-center mb-menu">
+        <h1 class="display-4">Menú Principal</h1>
+    </div>
+    <div class="container-fluid h-90 d-flex flex-column justify-content-center">
+        <div class="row mb-5">
+            <div class="col-md-4 d-flex align-items-center justify-content-center">
+                <a href={{ path('app_menu_alumno') }} class="btn btn-light btn-menu border-dark">
+                    <div class="d-flex flex-column align-items-center btn-icon">
+                        <img src="/img/alumno.png" alt="Crear">
+                        Menú alumno
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 d-flex align-items-center justify-content-center">
+                <a href="{{ path('app_menu_calendario_docente') }}" class="btn btn-light btn-menu border-dark">
+                    <div class="d-flex flex-column align-items-center btn-icon">
+                        <img src="/img/docente.png" alt="Crear">
+                        Menú docente
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 d-flex align-items-center justify-content-center">
+                <a href="{{ path('app_menu_administrador') }}" class="btn btn-light btn-menu border-dark">
+                    <div class="d-flex flex-column align-items-center btn-icon">
+                        <img src="/img/admin.png" alt="Crear">
+                        Menú administrador
+                    </div>
+                </a>
             </div>
         </div>
     </div>
