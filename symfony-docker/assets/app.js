@@ -1602,6 +1602,56 @@ $(document).on('click', '.eliminar-festivo-local, .eliminar-grupo, .eliminar-asi
     fila.remove();
 });
 
+//Claves para el menú docente y administrador
+$(document).on('click', '.menu-profesor, .menu-admin', function() {
+    let contrasenia;
+    let usuario;
+
+    if($(this).hasClass('menu-profesor')) {
+        contrasenia = "Docente";
+        usuario = "Docente";
+    } else {
+        contrasenia = "Admin";
+        usuario = "Admin";
+    }
+
+    Swal.fire({
+        title: 'Clave',
+        input: 'password',
+        inputAttributes: {
+            autocapitalize: 'off',
+            placeholder: 'Clave'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Entrar',
+        cancelButtonText: 'Cancelar',
+        preConfirm: (clave) => {
+            if (clave == contrasenia && usuario == "Docente") {
+                window.location.replace("/menu/calendario/docente");
+                return Swal.fire({
+                    icon: 'success',
+                    title: 'Clave válida',
+                    text: '¡Bienvenido al menú docente!',
+                });
+            } else if (clave == contrasenia && usuario == "Admin") {
+                window.location.replace("/menu/docentes/admin");
+                return Swal.fire({
+                    icon: 'success',
+                    title: 'Clave válida',
+                    text: '¡Bienvenido al menú administrador!',
+                });
+            } else {
+                return Swal.fire({
+                    icon: 'error',
+                    title: 'Clave incorrecta',
+                    text: 'Por favor, ponga la clave correcta.',
+                });
+            }
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    });
+});
+
 function manejarErroresVacios(camposObligatorios, excepcion)
 {
     for (const campo of camposObligatorios) {
