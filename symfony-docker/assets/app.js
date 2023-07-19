@@ -402,7 +402,7 @@ function crearFilaCalendario(fechaStringFormato, asignaturaId, grupoLetra, horar
                 <select ${inactivo} class="form-control modalidad" name="modalidad" id="modalidad${fechaStringFormato}">
                     <option ${esPractica ? '' : 'selected'}></option>
                     <option ${esPractica === true ? 'selected' : ''}>Practica</option>
-                    <option ${esPractica === false ? 'selected' : ''}>Teoria</option>
+                    <option ${esPractica === false ? 'selected' : ''}>Teorica</option>
                 </select>
             </td>
             <td>
@@ -1016,7 +1016,7 @@ function crearFilasExistentesAsignatura(asignatura, lecciones) {
         <td><input type="text" class="form-control tituloLecc" name="tituloLecc" id="tituloLeccion${idLeccion}" value="${lecciones[i].titulo}"></td>
         <td>
             <select class="form-control modalidad" name="modalidad" id="modalidad${idLeccion}">
-                <option ${lecciones[i].modalidad === 'Teoria' ? 'selected' : ''}>Teoria</option>
+                <option ${lecciones[i].modalidad === 'Teorica' ? 'selected' : ''}>Teorica</option>
                 <option ${lecciones[i].modalidad === 'Practica' ? 'selected' : ''}>Practica</option>
             </select>
         </td>

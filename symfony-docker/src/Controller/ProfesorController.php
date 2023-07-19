@@ -224,9 +224,9 @@ class ProfesorController extends AbstractController
         }
 
         if($url == '/post/docente/editado/admin' || '/post/docente/admin') {
-            return $this->redirectToRoute('app_menu_docentes_admin', ["mensaje" => $mensaje]);
-        } else {
             return $this->redirectToRoute('app_menu_calendario_docente', ["mensaje" => $mensaje]);
+        } else {
+            return $this->redirectToRoute('app_menu_docentes_admin', ["mensaje" => $mensaje]);
         }
     }
 }

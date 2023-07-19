@@ -271,7 +271,7 @@ class CalendarioController extends AbstractController
 
     /**
      * Crea los meses, años y días del calendario y los persiste a la bd.
-     * Es básicamente la estructura del calendario.
+     * Es la estructura del calendario.
      */
     public function creacionCalendario($anios, Calendario $calendario): void
     {
@@ -334,7 +334,7 @@ class CalendarioController extends AbstractController
     }
 
     /**
-     * Función que calcula el día de la semana del mes correspondiente en un año determinado.
+     * Función que calcula el día de la semana de un mes determinado en un año determinado.
      * El formato devuelto es un número del 0 al 6, correspondiendo el 0 al lunes y el 6 al domingo.
      */
     public function calcularDiaDeLaSemana($dia, $mes, $anio)
@@ -358,16 +358,11 @@ class CalendarioController extends AbstractController
                 }
             }
         }
-
         $festivoNacional = $this->festivoNacionalRepository->findOneFecha($dia->getFecha());
         $festivoLocal = $this->festivoLocalRepository->findOneFechaProvincia($dia->getFecha(), $this->provincia);
-        //$provinciafestivoLocal = $festivoLocal ? $festivoLocal->getProvincia() : null;
 
-        //$usuario = self::obtenerUsuarioCalendario();
-        //$centro = $this->centroRepository->findOneByUsuario($usuario->getId());
         $festivoCentro = $this->festivoCentroRepository->findOneFechaCentro($dia->getFecha(), $this->centro->getId());
         $festivoCentroCuatrimestre = $this->festivoCentroRepository->findOneFechaFinalCentro($dia->getFecha(), $this->centro->getId());
-        //$centroNombre = $festivoCentro || $festivoCentroCuatrimestre ? $centro->getNombre() : null;
 
         //Si es clase y pertenece al mismo calendario.
         if(count($clases) != 0) {
