@@ -32,7 +32,7 @@ class Grupo
     #[ORM\Column(type: Types::JSON)]
     private array $dias_practica = [];
 
-    #[ORM\OneToMany(mappedBy: 'grupo', targetEntity: Clase::class)]
+    #[ORM\OneToMany(mappedBy: 'grupo', targetEntity: Clase::class, cascade:["remove"])]
     private Collection $clases;
 
     #[ORM\OneToMany(mappedBy: 'grupo', targetEntity: UsuarioGrupo::class, orphanRemoval: true, cascade:["remove"])]
