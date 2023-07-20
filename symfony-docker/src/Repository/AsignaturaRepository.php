@@ -83,10 +83,14 @@ class AsignaturaRepository extends ServiceEntityRepository
 
     public function findAllNombre(): array
     {
-        return $this->createQueryBuilder('a')
+        $resultado = $this->createQueryBuilder('a')
         ->select('a.nombre')
         ->getQuery()
-        ->getOneOrNullResult()
+        ->getResult()
     ;
+
+        return array_map(static function($asignatura) {
+            return $asignatura['nombre'];
+        }, $resultado);
     }
 }

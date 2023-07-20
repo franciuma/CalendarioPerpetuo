@@ -163,7 +163,6 @@ class ProfesorController extends AbstractController
 
     #[Route('/seleccionar/docente', name: 'app_seleccionar_profesor')]
     #[Route('/seleccionar/docente/admin', name: 'app_seleccionar_profesor_admin')]
-    #[Route('/lista/docente', name: 'app_lista_profesor')]
     public function seleccionarProfesor(Request $request): Response
     {
         $url = $request->getPathInfo();
@@ -176,14 +175,6 @@ class ProfesorController extends AbstractController
         if($url == '/seleccionar/docente') {
             $usuario = "Docente";
             $controlador = 'app_editar_profesor';
-        }
-
-        if($url == '/lista/docente') {
-            return $this->render('listar/profesor.html.twig', [
-                'profesores' => $profesores,
-                'usuario' => $usuario,
-                'controlador' => $controlador
-            ]);
         }
 
         return $this->render('leer/profesor.html.twig', [

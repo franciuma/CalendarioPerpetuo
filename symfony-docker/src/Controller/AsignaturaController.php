@@ -152,15 +152,6 @@ class AsignaturaController extends AbstractController
         return $titulacionesArrayJson;
     }
 
-    #[Route('/listar/asignatura', name: 'app_listar_asignatura')]
-    public function listarAsig(): Response
-    {
-        $asignaturas = $this->asignaturaRepository->findAllNombre();
-        return $this->render('listar/asignatura.html.twig', [
-            'asignatura' => $asignaturas,
-        ]);
-    }
-
     #[Route('/post/asignatura', name: 'app_post_asignatura')]
     public function postCreada(): Response
     {

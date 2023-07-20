@@ -111,4 +111,17 @@ class CentroRepository extends ServiceEntityRepository
         ->getOneOrNullResult()
     ;
     }
+
+    public function findAllNombre(): array
+    {
+        $resultado = $this->createQueryBuilder('c')
+        ->select('c.nombre')
+        ->getQuery()
+        ->getResult()        
+    ;
+
+        return array_map(static function($centro) {
+            return $centro['nombre'];
+        }, $resultado);
+    }
 }

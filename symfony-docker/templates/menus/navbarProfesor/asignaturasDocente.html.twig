@@ -11,9 +11,15 @@
         'nombre': 'asignatura',
         'nombrePlural': 'asignaturas',
         'pathCrear': path('app_formulario_asignatura'),
-        'pathVer': path('app_lista_profesor'),
         'pathEditar': path('app_seleccionar_editar_asignatura'),
+        'pathVer': 'modal',
         'pathEliminar': path('app_seleccionar_eliminar_asignatura')
+    } %}
+
+    {% include 'modalListar.html.twig' with {
+        'nombre': 'asignatura',
+        'nombrePlural': 'asignaturas',
+        'lista': asignaturaLista
     } %}
 
     <script>

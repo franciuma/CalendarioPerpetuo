@@ -11,9 +11,15 @@
         'nombre': 'periodo nacional',
         'nombrePlural':'periodos nacionales',
         'pathCrear': path('app_aniadir_festivo_nacional_admin'),
-        'pathVer': path('app_lista_profesor'),
+        'pathVer': 'modal',
         'pathEditar': path('app_seleccionar_profesor'),
         'pathEliminar': path('app_actualizar_festivos_nacionales_admin')
+    } %}
+
+    {% include 'modalListar.html.twig' with {
+        'nombre': 'festivo nacional',
+        'nombrePlural': 'festivos nacionales',
+        'lista': festivosNacionalesLista
     } %}
 
     <script>

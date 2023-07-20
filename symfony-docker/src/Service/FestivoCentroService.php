@@ -132,4 +132,26 @@ class FestivoCentroService
 
         return $nombresFestivoCentro;
     }
+
+    /**
+     * Devuelve los festivos de los centros
+     */
+    public function getFestivosCentroNombres(): array
+    {
+        $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosCentro.json');
+        $festivosArrayJson = json_decode($festivosJson, true);
+        $festivosArray = [];
+
+        // Itera sobre los datos y agrega los nombres de los centros y festivos al array resultante
+        foreach ($festivosArrayJson as $centro => $festivos) {
+            $nombreCentro = str_replace('festivosCentro', '', $centro);
+            $nombreCentro = str_replace('-', ' ', $nombreCentro);
+            $festivosArray[] = $nombreCentro . ':';
+            foreach ($festivos as $festivo) {
+                $festivosArray[] = $festivo['nombre'];
+            }
+        }
+
+        return $festivosArray;
+    }
 }

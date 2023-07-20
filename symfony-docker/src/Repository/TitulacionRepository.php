@@ -101,4 +101,17 @@ class TitulacionRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+
+    public function findAllNombre(): array
+    {
+        $resultado = $this->createQueryBuilder('t')
+        ->select('t.nombreTitulacion')
+        ->getQuery()
+        ->getResult()        
+    ;
+
+        return array_map(static function($titulacion) {
+            return $titulacion['nombreTitulacion'];
+        }, $resultado);
+    }
 }

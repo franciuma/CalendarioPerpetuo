@@ -8,18 +8,18 @@
     {{ parent() }}
     {% include 'navbarAdministrador.html.twig' %}
     {% include 'botonesCrud.html.twig' with {
-        'nombre': 'periodo de centro',
-        'nombrePlural':'periodos de centro',
-        'pathCrear': path('app_aniadir_festivo_centro_admin'),
+        'nombre': 'localidad',
+        'nombrePlural':'localidades',
+        'pathCrear': path('app_crear_localidad_admin'),
         'pathVer': 'modal',
         'pathEditar': path('app_seleccionar_profesor'),
         'pathEliminar': path('app_actualizar_festivos_nacionales_admin')
     } %}
 
     {% include 'modalListar.html.twig' with {
-        'nombre': 'festivo centro',
-        'nombrePlural': 'festivos centro',
-        'lista': festivosCentroLista
+        'nombre': 'localidad',
+        'nombrePlural': 'localidades',
+        'lista': localidadLista
     } %}
 
     <script>

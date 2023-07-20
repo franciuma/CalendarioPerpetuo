@@ -8,12 +8,18 @@
     {{ parent() }}
     {% include 'navbarAdministrador.html.twig' %}
     {% include 'botonesCrud.html.twig' with {
-        'nombre': 'localidad',
-        'nombrePlural':'localidades',
-        'pathCrear': path('app_crear_localidad_admin'),
-        'pathVer': path('app_lista_profesor'),
+        'nombre': 'periodo local',
+        'nombrePlural':'periodos locales',
+        'pathCrear': path('app_aniadir_festivo_local_admin'),
+        'pathVer': 'modal',
         'pathEditar': path('app_seleccionar_profesor'),
         'pathEliminar': path('app_actualizar_festivos_nacionales_admin')
+    } %}
+
+    {% include 'modalListar.html.twig' with {
+        'nombre': 'festivo local',
+        'nombrePlural': 'festivos locales',
+        'lista': festivosLocalesLista
     } %}
 
     <script>

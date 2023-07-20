@@ -11,8 +11,14 @@
         'nombre': 'docente',
         'nombrePlural':'docentes',
         'pathCrear': path('app_formulario_profesor'),
-        'pathVer': path('app_lista_profesor'),
+        'pathVer': 'modal',
         'pathEditar': path('app_seleccionar_profesor_admin'),
         'pathEliminar': path('app_eliminar_profesor')
+    } %}
+
+    {% include 'modalListar.html.twig' with {
+        'nombre': 'docente',
+        'nombrePlural': 'docentes',
+        'lista': profesorLista
     } %}
 {% endblock %}

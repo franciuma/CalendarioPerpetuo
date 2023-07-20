@@ -11,8 +11,14 @@
         'nombre': 'titulación',
         'nombrePlural': 'titulaciones',
         'pathCrear': path('app_formulario_titulacion'),
-        'pathVer': path('app_lista_titulacion'),
+        'pathVer': 'modal',
         'pathEditar': path('app_seleccionar_titulacion'),
         'pathEliminar': path('app_eliminar_titulacion')
+    } %}
+
+    {% include 'modalListar.html.twig' with {
+        'nombre': 'titulación',
+        'nombrePlural': 'titulaciones',
+        'lista': titulacionLista
     } %}
 {% endblock %}

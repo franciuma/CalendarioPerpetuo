@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class FormularioTitulacionController extends AbstractController
+class TitulacionController extends AbstractController
 {
     private CentroRepository $centroRepository;
     private TitulacionRepository $titulacionRepository;
@@ -55,28 +55,14 @@ class FormularioTitulacionController extends AbstractController
     }
 
     #[Route('/seleccionar/titulacion', name: 'app_seleccionar_titulacion')]
-    #[Route('/lista/titulacion', name: 'app_lista_titulacion')]
     public function seleccionarTitulacion(Request $request): Response
     {
-        $rutaActual = $request->getPathInfo();
-
         //Obtener las titulaciones
         $titulaciones = $this->titulacionRepository->findAll();
 
-        //Obtener los nombres de las titulaciones
-        $titulacionesArray = array_map(function($titulacion) {
-            return $titulacion->getNombreTitulacion()." - ".$titulacion->getCentro()->getProvincia();
-        }, $titulaciones);
-
-        if($rutaActual == '/seleccionar/titulacion') {
-            return $this->render('leer/titulacion.html.twig', [
-                'titulaciones' => $titulaciones
-            ]);
-        } else {
-            return $this->render('listar/titulacion.html.twig', [
-                'titulaciones' => $titulacionesArray
-            ]);
-        }
+        return $this->render('leer/titulacion.html.twig', [
+            'titulaciones' => $titulaciones
+        ]);
     }
 
     #[Route('/eliminar/titulacion', name: 'app_eliminar_titulacion')]

@@ -80,4 +80,21 @@ class FestivoNacionalService
             $this->festivoNacionalRepository->save($festivoIntermedio);
         }
     }
+
+    /**
+     * Devuelve los festivos nacionales de España
+     */
+    public function getFestivosNacionalesNombres(): array
+    {
+        $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosNacionales.json');
+        $festivosArrayJson = json_decode($festivosJson, true);
+        $festivosArray = [];
+
+        $festivosNacionales = $festivosArrayJson['festivosNacionales-España'];
+        foreach ($festivosNacionales as $festivo) {
+            $festivosArray[] = $festivo['nombre'];
+        }
+
+        return $festivosArray;
+    }
 }

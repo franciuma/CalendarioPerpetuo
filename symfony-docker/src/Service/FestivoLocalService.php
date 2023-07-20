@@ -111,4 +111,25 @@ class FestivoLocalService
 
         return $nombresFestivoCentro;
     }
+
+    /**
+     * Devuelve los festivos localidad/provincia
+     */
+    public function getFestivosLocalesNombres(): array
+    {
+        $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosLocales.json');
+        $festivosArrayJson = json_decode($festivosJson, true);
+        $festivosArray = [];
+
+        // Itera sobre los datos y agrega los nombres de las localidades y festivos al array resultante
+        foreach ($festivosArrayJson as $localidad => $festivos) {
+            $nombreProvincia = str_replace('festivosLocales', '', $localidad);
+            $festivosArray[] = $nombreProvincia . ':';
+            foreach ($festivos as $festivo) {
+                $festivosArray[] = $festivo['nombre'];
+            }
+        }
+
+        return $festivosArray;
+    }
 }

@@ -11,8 +11,15 @@
         'nombre': 'centro',
         'nombrePlural':'centros',
         'pathCrear': path('app_crear_centro_admin'),
-        'pathVer': path('app_formulario_profesor'),
+        'pathVer': 'modal',
         'pathEditar': path('app_seleccionar_editar_centro'),
         'pathEliminar': path('app_seleccionar_eliminar_centro')
     } %}
+
+    {% include 'modalListar.html.twig' with {
+        'nombre': 'centro',
+        'nombrePlural': 'centros',
+        'lista': centroLista
+    } %}
+
 {% endblock %}

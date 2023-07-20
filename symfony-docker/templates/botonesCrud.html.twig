@@ -10,14 +10,25 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-6">
+                    {% if pathVer == "modal" %}
+                        <div class="col-6">
+                        <button class="btn btn-primary btn-block btn-lg border-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <div class="d-flex flex-column align-items-center btn-icon">
+                                <img src="/img/leer.png" alt="Ver">
+                                Ver {{nombrePlural}}
+                            </div>
+                        </button>
+                        </div>
+                    {% else %}
+                        <div class="col-6">
                         <a href="{{ pathVer }}" class="btn btn-primary btn-block btn-lg border-dark">
                             <div class="d-flex flex-column align-items-center btn-icon">
                                 <img src="/img/leer.png" alt="Ver">
                                 Ver {{nombrePlural}}
                             </div>
                         </a>
-                    </div>
+                        </div>
+                    {% endif %}
                     <div class="col-6">
                         <a href="{{ pathEditar }}" class="btn btn-warning-light btn-block btn-lg border-dark">
                             <div class="d-flex flex-column align-items-center btn-icon">
