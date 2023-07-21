@@ -66,7 +66,6 @@ class ProfesorController extends AbstractController
         $profesoresJson = json_encode($profesoresArray);
 
         return $this->render('formularios/profesor.html.twig', [
-            'controller_name' => 'FormularioProfesorController',
             'asignaturas' => $asignaturasArray,
             'nombreProfesores' => $profesoresJson
         ]);
@@ -214,7 +213,7 @@ class ProfesorController extends AbstractController
             $this->usuarioGrupoService->getUsuarioGrupo($profesorUsuarioGrupo, $gruposNuevos);
         }
 
-        if($url == '/post/docente/editado/admin' || '/post/docente/admin') {
+        if($url == '/post/docente/editado') {
             return $this->redirectToRoute('app_menu_calendario_docente', ["mensaje" => $mensaje]);
         } else {
             return $this->redirectToRoute('app_menu_docentes_admin', ["mensaje" => $mensaje]);

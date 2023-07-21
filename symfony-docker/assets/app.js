@@ -626,7 +626,7 @@ $(document).on('click', '.Eliminar-calendario', function() {
 //Formulario profesor
 let idGrupo = 0;
 //Si se está editando un profesor
-if(window.location.pathname == "/editar/docente") {
+if(window.location.pathname == "/editar/docente" || window.location.pathname == "/editar/docente/admin") {
     //Obtenemos los grupos y creamos sus filas
     const grupos = JSON.parse(document.getElementById('grupos').dataset.grupos);
     crearFilasExistentesGrupo(grupos);
@@ -1608,10 +1608,10 @@ $(document).on('click', '.menu-profesor, .menu-admin', function() {
     let usuario;
 
     if($(this).hasClass('menu-profesor')) {
-        contrasenia = "Docente";
+        contrasenia = "";
         usuario = "Docente";
     } else {
-        contrasenia = "Admin";
+        contrasenia = "";
         usuario = "Admin";
     }
 
