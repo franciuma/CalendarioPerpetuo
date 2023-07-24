@@ -91,6 +91,42 @@ class FestivoNacionalService
         }
     }
 
+    public function eliminarFestivoCompleto($nombreFestivo): void
+    {
+        $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosNacionales.json');
+        $festivosArray = json_decode($festivosJson, true);
+
+        // Buscar el festivo con el nombre especificado y obtener su índice en el array
+        $indiceFestivo = null;
+        foreach ($festivosArray['festivosNacionales-España'] as $indice => $festivo) {
+            if ($festivo['nombre'] === $nombreFestivo) {
+                $indiceFestivo = $indice;
+                break;
+            }
+        }
+
+        // Si se encontró el festivo, eliminarlo del array
+        if ($indiceFestivo !== null) {
+            unset($festivosArray['festivosNacionales-España'][$indiceFestivo]);
+            $festivosArray['festivosNacionales-España'] = array_values($festivosArray['festivosNacionales-España']);
+        }
+
+        // Codificar el array actualizado a JSON
+        $jsonActualizado = json_encode($festivosArray, JSON_PRETTY_PRINT);
+
+        // Guardar el JSON actualizado nuevamente en el archivo
+        file_put_contents("/app/src/Resources/festivosNacionales.json", $jsonActualizado);
+
+        //Obtenemos los ids de los festivosNacionales
+        $ids = $this->festivoNacionalRepository->obtenerids($nombreFestivo);
+        //Borramos los eventos asociados
+        foreach ($ids as $id) {
+            $this->eventoRepository->removeByFestivoNacionalId($id);
+        }
+        //Borramos todos los festivos nacionales
+        $this->festivoNacionalRepository->removeByNombre($nombreFestivo);
+    }
+
     public function completaFestivosNacionalIntermedios($festivoNacional): void
     {
         $inicio = \DateTime::createFromFormat('d-m-y', $festivoNacional->getInicio());

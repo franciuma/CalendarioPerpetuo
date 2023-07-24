@@ -110,11 +110,11 @@ class FestivoNacionalAdminController extends AbstractController
     #[Route('/eliminar/festivo/nacional', name: 'app_eliminar_festivo_nacional_admin')]
     public function eliminar(Request $request): Response
     {
+        $mensaje = "Periodo nacional eliminado correctamente";
         $festivoSeleccionado = $request->get("festivoSeleccionado");
+        $this->festivoNacionalService->eliminarFestivoCompleto($festivoSeleccionado);
 
-        return $this->render('editar/periodoNacional.html.twig', [
-            'festivoSeleccionado' => $festivoSeleccionado,
-        ]);
+        return $this->redirectToRoute('app_menu_periodos_nacionales_admin',["mensaje" => $mensaje]);
     }
 
     /**
