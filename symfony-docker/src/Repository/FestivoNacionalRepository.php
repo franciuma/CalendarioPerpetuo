@@ -70,4 +70,55 @@ class FestivoNacionalRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+
+    public function findOneFechaInicioFinal($inicio, $final): ?FestivoNacional
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.inicio = :inicio')
+            ->andWhere('f.final = :final')
+            ->setParameter('inicio', $inicio)
+            ->setParameter('final', $final)
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult()
+        ;
+    }
+
+    public function removeByNombre($nombre)
+    {
+        $query = $this->createQueryBuilder('f')
+            ->delete(FestivoNacional::class, 'fn')
+            ->where('fn.nombre = :nombre')
+            ->setParameter('nombre', $nombre)
+            ->getQuery();
+
+        $query->execute();
+    }
+
+    public function obtenerids($nombre)
+    {
+        $query = $this->createQueryBuilder('fn')
+            ->select('fn.id')
+            ->where('fn.nombre = :nombre')
+            ->setParameter('nombre', $nombre)
+            ->getQuery()
+            ->getResult()
+            ;
+
+        $result = array_column($query, 'id');
+        return $result;
+    }
+
+    public function findByNombreAnio($nombre, $anios): ?FestivoNacional
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.nombre = :nombre')
+            ->andWhere('f.inicio = :anioPrimero')
+            ->orWhere('f.inicio = :anioPrimero')
+            ->setParameter('anioPrimero', $anios[0])
+            ->setParameter('nombre', $nombre)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

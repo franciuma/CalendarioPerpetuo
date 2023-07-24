@@ -87,4 +87,16 @@ class EventoRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    public function removeByFestivoNacionalId($festivoNacionalId)
+    {
+        $query = $this->createQueryBuilder('e')
+            ->delete(Evento::class, 'e')
+            ->where('e.festivoNacional = :festivoNacionalId')
+            ->setParameter('festivoNacionalId', $festivoNacionalId)
+            ->getQuery()
+            ;
+
+        $query->execute();
+    }
 }

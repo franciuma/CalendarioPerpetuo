@@ -81,7 +81,9 @@ class FestivoCentroService
             //Añadimos un día al inicio
             $inicio->add(new \DateInterval('P1D')); 
             $festivoIntermedio->setInicio($inicio->format('j-n-y'));
-            $this->festivoCentroRepository->save($festivoIntermedio);
+            if(!$this->festivoCentroRepository->findOneFechaInicioFinal($festivoIntermedio->getInicio(), $festivoIntermedio->getFinal())) {
+                $this->festivoCentroRepository->save($festivoIntermedio);
+            }
         }
     }
 

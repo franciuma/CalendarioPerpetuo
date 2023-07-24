@@ -78,4 +78,27 @@ class ManejarPostsController extends AbstractController
         $arrayFestivos[$nodo] = array_merge($arrayFestivos[$nodo], $datosDecodeFestivo);
         return $arrayFestivos;
     }
+
+    public function editarPosts($entidad, $festivoArray): void
+    {
+        // Se obtiene el JSON
+        $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosNacionales.json');
+        $festivosNacionalesArrayJson = json_decode($festivosJson, true);
+
+        // Buscar el festivo a editar en el $festivosNacionalesArrayJson
+        foreach ($festivosNacionalesArrayJson['festivosNacionales-España'] as &$festivo) {
+            if ($festivo['nombre'] === $festivoArray[0]['nombre']) {
+                // Actualizar el inicio y el final del festivo
+                $festivo['inicio'] = $festivoArray[0]['inicio'];
+                $festivo['final'] = $festivoArray[0]['final'];
+                break;
+            }
+        }
+
+        // Convertir el array actualizado a JSON
+        $festivosNacionalesActualizadosJson = json_encode($festivosNacionalesArrayJson, JSON_PRETTY_PRINT);
+
+        // Guardar el JSON actualizado en el archivo o donde sea que esté almacenado
+        file_put_contents("/app/src/Resources/".$entidad.".json", $festivosNacionalesActualizadosJson);
+    }
 }

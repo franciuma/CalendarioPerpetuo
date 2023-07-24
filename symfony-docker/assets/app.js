@@ -61,7 +61,7 @@ if(
                 const modalidad = clase.modalidad
                 const claveMap = fecha+asignaturaId+grupoLetra+horario;
                 let esPractica = true;
-                if(modalidad == "Teoria") {
+                if(modalidad == "Teorica") {
                     esPractica = false;
                 }
 
@@ -136,7 +136,7 @@ if(
 
                 //Filtramos clases por teoria y practica
                 leccionesFiltradasTeoria = leccionesFiltradas.filter(function(clase) {
-                    return clase.modalidad === "Teoria";
+                    return clase.modalidad === "Teorica";
                 });
                 leccionesFiltradasPractica = leccionesFiltradas.filter(function(clase) {
                     return clase.modalidad === "Practica";
@@ -1424,6 +1424,15 @@ $('#festivosNacionalesTable tbody').on('focus', '.datepicker-festivo-nacional', 
     });
 });
 
+$('#festivosNacionalesEditarTable tbody').on('focus', '.datepicker-festivo-nacional', function() {
+    $(this).datepicker({
+        format: 'dd-mm-yyyy',
+        language: 'es',
+        weekStart: 1,
+        startDate: new Date()
+    });
+});
+
 let idFestivosNacionales = 0;
 $(document).on('click', '.aniadir-festivos-nacional', function() {
     idFestivosNacionales++;
@@ -1431,27 +1440,73 @@ $(document).on('click', '.aniadir-festivos-nacional', function() {
     $('#festivosNacionalesTable tbody').append(fila);
 });
 
-$(document).on('click', '.guardar-festivos-nacional', function() {
+$(document).on('click', '.guardar-festivos-nacional, .editar-festivo-nacional', function() {
     // Obtener los valores de las filas de la tabla
     const festivosNacionales = [];
-    $('#festivosNacionalesTable tbody tr').each(function() {
+    let tabla;
+
+    if($(this).hasClass('guardar-festivos-nacional')) {
+        tabla = '#festivosNacionalesTable tbody tr';
+    } else {
+        tabla = '#festivosNacionalesEditarTable tbody tr';
+    }
+
+    $(tabla).each(function() {
+        const id = $(this).find('.idFestivonacional').val();
         const nombre = $(this).find('.nombreFestivonacional').val();
         let inicio = $(this).find('.inicioFestivonacional').val();
         let final = $(this).find('.finalFestivonacional').val();
         //Modificamos la fecha, para recibir el formato dd-mm-%AN% o dd-mm-%AC% siendo AN año anterior y AC año actual.
         inicio = modificarFecha(inicio);
         final = modificarFecha(final);
-        festivosNacionales.push({ nombre, inicio, final });
+        if(id) {
+        festivosNacionales.push({ id, nombre, inicio, final });
+        } else {
+            festivosNacionales.push({ nombre, inicio, final });
+        }
     });
+
     // Convertir el objeto a JSON
     const festivosnacionalesJSON = JSON.stringify(festivosNacionales);
 
-    // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/manejar/posts/festivosnacionales', {festivosnacionalesJSON: festivosnacionalesJSON},'/menu/periodos/nacionales/admin');
-
-    // Mostrar el popup de añadido festivo centro correctamente
-    mostrarPopUp("festivo/s nacional/es añadido/s");
+    if($(this).hasClass('guardar-festivos-nacional')) {
+        // Enviar el objeto JSON a través de una petición AJAX
+        enviarPost('/manejar/posts/festivosnacionales', {festivosnacionalesJSON: festivosnacionalesJSON},'/menu/periodos/nacionales/admin');
+        // Mostrar el popup de añadido festivo centro correctamente
+        mostrarPopUp("periodo/s nacional/es añadido/s");
+    } else {
+        enviarPost('/post/editar/festivo/nacional', {festivosnacionalesJSON: festivosnacionalesJSON},'/menu/periodos/nacionales/admin');
+        mostrarPopUp("periodo nacional editado");
+    }
 });
+
+//Si se está editando un festivo nacional
+if(window.location.pathname == "/editar/festivo/nacional") {
+    //Obtenemos la asignatura y lecciones y creamos sus filas
+    const festivoNacional = JSON.parse(document.getElementById('festivosNacionales').dataset.festivonacional);
+    const fila = crearFilasExistentesFestivos(festivoNacional, "nacional");
+    $('#festivosNacionalesEditarTable tbody').append(fila);
+}
+
+function crearFilasExistentesFestivos(festivo, tipoDeFestivo) {
+
+    const formatearFecha = (fechaStr) => {
+        const [dia, mes, anio] = fechaStr.split('-');
+        return `${dia.padStart(2, '0')}-${mes.padStart(2, '0')}-${anio.padStart(4, '20')}`;
+    };
+    
+    const festivoInicio = formatearFecha(festivo.inicio);
+    const festivoFinal = formatearFecha(festivo.final);
+    
+    return $(`
+        <tr class="fila-festivo-${tipoDeFestivo}" id="festivoCentro${festivo.id}">
+            <td><input hidden type="text" class="form-control idFestivo${tipoDeFestivo}" name="idFestivo${tipoDeFestivo}" id="idFestivo${tipoDeFestivo}" value="${festivo.id}"></td>
+            <td><input type="text" class="form-control nombreFestivo${tipoDeFestivo}" name="nombreFestivo${tipoDeFestivo}" id="nombreFestivo${tipoDeFestivo}${festivo.id}" value="${festivo.nombre}" disabled></td>
+            <td><input type="text" class="form-control inicioFestivo${tipoDeFestivo} datepicker-festivo-${tipoDeFestivo}" name="inicioFestivo${tipoDeFestivo}" id="inicioFestivo${tipoDeFestivo}${festivo.id}" value="${festivoInicio}"></td>
+            <td><input type="text" class="form-control finalFestivo${tipoDeFestivo} datepicker-festivo-${tipoDeFestivo}" name="finalFestivo${tipoDeFestivo}" id="finalFestivo${tipoDeFestivo}${festivo.id}" value="${festivoFinal}"></td>
+        </tr>
+    `);
+}
 
 // Formulario festivos locales admin
 // Datepicker de festivosLocales
@@ -1681,7 +1736,11 @@ function enviarPost(url, data, href) {
         data: data, // los datos a enviar, en este caso el objeto JSON
         success: function(response) {
             console.log(response); // loguear la respuesta del servidor (opcional)
-            window.location.replace(href);
+            if (href) {
+                window.location.replace(href);
+            } else {
+                window.location.reload();
+            }
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(textStatus, errorThrown); // loguear el error (opcional)

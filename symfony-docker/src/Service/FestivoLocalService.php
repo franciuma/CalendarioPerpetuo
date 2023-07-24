@@ -52,7 +52,7 @@ class FestivoLocalService
 
                 //Buscamos los festivos que tengan dias intermedios y no sean acerca de cuatrimestres (inicios y finales de cuatrimestres)
                 if($festivoLocal->getInicio() != $festivoLocal->getFinal()) {
-                    self::completaFestivosCentroIntermedios($festivoLocal, $provincia);
+                    self::completaFestivosLocalesIntermedios($festivoLocal, $provincia);
                 }
             }
         }
@@ -62,7 +62,7 @@ class FestivoLocalService
         return $festivos;
     }
 
-    public function completaFestivosCentroIntermedios($festivoLocal, $provincia): void
+    public function completaFestivosLocalesIntermedios($festivoLocal, $provincia): void
     {
         $inicio = \DateTime::createFromFormat('d-m-y', $festivoLocal->getInicio());
         $final = \DateTime::createFromFormat('d-m-y', $festivoLocal->getFinal());
@@ -79,7 +79,9 @@ class FestivoLocalService
             //Añadimos un día al inicio
             $inicio->add(new \DateInterval('P1D')); 
             $festivoIntermedio->setInicio($inicio->format('j-n-y'));
-            $this->festivoLocalRepository->save($festivoIntermedio);
+            if(!$this->festivoLocalRepository->findOneFechaInicioFinal($festivoIntermedio->getInicio(), $festivoIntermedio->getFinal())) {
+                $this->festivoLocalRepository->save($festivoIntermedio);
+            }
         }
     }
 

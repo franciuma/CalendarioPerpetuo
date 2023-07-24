@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Seleccionar periodo nacional
+{% endblock %}
+
+{% block body %}
+	{{ parent() }}
+	<!DOCTYPE html>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-7">
+				<h1 class="font-weight-bold">{{accion}}</h1>
+				<form action="{{ path(controlador) }}" method="POST">
+						<select class="form-control" id="nombreDelPeriodoNacional" name="periodoNacionalSeleccionado">
+							<option selected>-- Selecciona el nombre del periodo nacional --</option>
+							{% for festivoNacional in festivosNacionales %}
+								<option>{{ festivoNacional }}</option>
+							{% endfor %}
+						</select>
+					<button type="submit" class="btn btn-primary">{{accion}}</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<footer class="footer mt-auto py-3">
+        <div class="container">
+            <div class="text-left">
+				<a href="{{ path('app_menu_periodos_nacionales_admin') }}" class="btn btn-primary">Volver al menú</a>
+            </div>
+        </div>
+    </footer>
+{% endblock %}

@@ -38,7 +38,7 @@ class ActualizarFestivosController extends AbstractController
             $curso = $request->get('cursoacademico');
             $cursoFormato = explode("/",$curso);
 
-            $this->festivoNacionalService->getFestivosNacionales([$cursoFormato[0], $cursoFormato[1]]);
+            $this->festivoNacionalService->getFestivosNacionales([$cursoFormato[0], $cursoFormato[1]], true);
             return $this->redirectToRoute('app_menu_periodos_nacionales_admin', ['mensaje' => $mensaje]);
         }
         return $this->render('editar/actualizarfestivosnacionales.html.twig', [

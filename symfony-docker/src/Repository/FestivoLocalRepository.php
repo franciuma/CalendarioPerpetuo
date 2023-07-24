@@ -70,6 +70,19 @@ class FestivoLocalRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findOneFechaInicioFinal($inicio, $final): ?FestivoLocal
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.inicio = :inicio')
+            ->andWhere('f.final = :final')
+            ->setParameter('inicio', $inicio)
+            ->setParameter('final', $final)
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult()
+        ;
+    }
+
     public function findOneFechaProvincia($fecha, $provincia): ?FestivoLocal
     {
         return $this->createQueryBuilder('f')

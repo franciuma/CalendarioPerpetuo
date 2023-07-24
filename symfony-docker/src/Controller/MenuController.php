@@ -9,6 +9,7 @@ use App\Service\FestivoCentroService;
 use App\Service\FestivoLocalService;
 use App\Service\FestivoNacionalService;
 use App\Service\UsuarioService;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -119,7 +120,7 @@ class MenuController extends AbstractController
     public function periodosNacionalesAdmin(Request $request): Response
     {
         $mensaje = $request->get("mensaje");
-        $festivosNacionales = $this->festivoNacionalService->getFestivosNacionalesNombres();
+        $festivosNacionales = $this->festivoNacionalService->getFestivosNacionales(self::calcularAnios(), true);
         return $this->render('menus/navbarAdministrador/periodosNacionalesAdmin.html.twig', [
             'mensaje' => $mensaje,
             'festivosNacionalesLista' => $festivosNacionales
@@ -166,5 +167,20 @@ class MenuController extends AbstractController
         return $this->render('menus/navbarAdministrador/centroAdmin.html.twig',[
             'centroLista' => $centros
         ]);
+    }
+
+    /**
+     *  Calcula los años actual y anterior en base a los meses actuales.
+     *  Siempre que se cree un calendario, este será para el año actual y el siguiente.
+     */
+    public function calcularAnios(): array
+    {
+        $fechaHoy = new DateTime();
+        $aniofechaHoy = $fechaHoy->format('Y');
+
+        $anioAc = $aniofechaHoy;
+        $anioSig = intval($aniofechaHoy) + 1;
+
+        return [$anioAc, $anioSig];
     }
 }

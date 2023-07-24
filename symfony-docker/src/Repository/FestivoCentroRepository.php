@@ -76,6 +76,19 @@ class FestivoCentroRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findOneFechaInicioFinal($inicio, $final): ?FestivoCentro
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.inicio = :inicio')
+            ->andWhere('f.final = :final')
+            ->setParameter('inicio', $inicio)
+            ->setParameter('final', $final)
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult()
+        ;
+    }
+
     public function findOneFechaFinalCentro($fecha, $centroId): ?FestivoCentro
     {
         return $this->createQueryBuilder('f')
