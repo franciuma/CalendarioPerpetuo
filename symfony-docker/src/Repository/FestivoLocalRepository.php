@@ -44,6 +44,19 @@ class FestivoLocalRepository extends ServiceEntityRepository
         }
     }
 
+    public function removeByNombreProvincia($nombre, $provincia)
+    {
+        $query = $this->createQueryBuilder('f')
+            ->delete(FestivoLocal::class, 'fn')
+            ->where('fn.nombre = :nombre')
+            ->andWhere('fn.provincia = :provincia')
+            ->setParameter('nombre', $nombre)
+            ->setParameter('provincia', $provincia)
+            ->getQuery();
+
+        $query->execute();
+    }
+
 //    /**
 //     * @return FestivoLocal[] Returns an array of FestivoLocal objects
 //     */
@@ -94,5 +107,19 @@ class FestivoLocalRepository extends ServiceEntityRepository
             ->setMaxResults(1)
             ->getOneOrNullResult()
         ;
+    }
+
+    public function obtenerids($nombre)
+    {
+        $query = $this->createQueryBuilder('fl')
+            ->select('fl.id')
+            ->where('fl.nombre = :nombre')
+            ->setParameter('nombre', $nombre)
+            ->getQuery()
+            ->getResult()
+            ;
+
+        $result = array_column($query, 'id');
+        return $result;
     }
 }

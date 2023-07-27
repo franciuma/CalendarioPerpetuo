@@ -99,4 +99,28 @@ class EventoRepository extends ServiceEntityRepository
 
         $query->execute();
     }
+
+    public function removeByFestivoLocalId($festivoLocalId)
+    {
+        $query = $this->createQueryBuilder('e')
+            ->delete(Evento::class, 'e')
+            ->where('e.festivoLocal = :festivoLocalId')
+            ->setParameter('festivoLocalId', $festivoLocalId)
+            ->getQuery()
+            ;
+
+        $query->execute();
+    }
+
+    public function removeByFestivoCentroId($festivoCentroId)
+    {
+        $query = $this->createQueryBuilder('e')
+            ->delete(Evento::class, 'e')
+            ->where('e.festivoCentro = :festivoCentroId')
+            ->setParameter('festivoCentroId', $festivoCentroId)
+            ->getQuery()
+            ;
+
+        $query->execute();
+    }
 }

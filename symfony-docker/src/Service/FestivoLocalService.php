@@ -4,9 +4,8 @@ namespace App\Service;
 
 use App\Repository\FestivoLocalRepository;
 use Symfony\Component\Serializer\SerializerInterface;
-use App\Controller\CalendarioController;
-use App\Entity\Centro;
 use App\Entity\FestivoLocal;
+use App\Repository\EventoRepository;
 
 /**
  * Clase utilizada para traducir JSON festivoLocales y persistirlo en la base de datos.
@@ -15,17 +14,17 @@ class FestivoLocalService
 {
     private SerializerInterface $serializer;
     private FestivoLocalRepository $festivoLocalRepository;
-    private CalendarioController $calendarioController;
+    private EventoRepository $eventoRepository;
 
     public function __construct(
         SerializerInterface $serializer,
         FestivoLocalRepository $festivoLocalRepository,
-        CalendarioController $calendarioController
+        EventoRepository $eventoRepository
     )
     {
         $this->serializer = $serializer;
         $this->festivoLocalRepository = $festivoLocalRepository;
-        $this->calendarioController = $calendarioController;
+        $this->eventoRepository = $eventoRepository;
     }
 
     public function getFestivosLocales($provincia, $curso): array
@@ -85,6 +84,64 @@ class FestivoLocalService
         }
     }
 
+    public function editaFestivoLocal($curso, $festivoLocal, $festivoLocalNuevo): void
+    {
+        $anio = substr($curso[0], 2, 3);
+        $anioSiguiente = substr($curso[1], 2, 3);
+
+        $festivoLocalNuevo[0]['inicio'] = str_replace('%AN%', $anio, $festivoLocalNuevo[0]['inicio']);
+        $festivoLocalNuevo[0]['inicio'] = str_replace('%AC%', $anioSiguiente, $festivoLocalNuevo[0]['inicio']);
+        $festivoLocalNuevo[0]['final'] = str_replace('%AN%', $anio, $festivoLocalNuevo[0]['final']);
+        $festivoLocalNuevo[0]['final'] = str_replace('%AC%', $anioSiguiente, $festivoLocalNuevo[0]['final']);
+
+        if($festivoLocalNuevo[0]['inicio'] == $festivoLocalNuevo[0]['final']) {
+            $festivoLocal->setInicio($festivoLocalNuevo[0]['inicio']);
+            $festivoLocal->setFinal($festivoLocalNuevo[0]['final']);
+        } else {
+            $nombreFestivoLocal = $festivoLocalNuevo[0]['nombre'];
+            //Obtenemos los ids de los festivosNacionales
+            $ids = $this->festivoLocalRepository->obtenerids($nombreFestivoLocal);
+            //Borramos los eventos asociados
+            foreach ($ids as $id) {
+                $this->eventoRepository->removeByFestivoLocalId($id);
+            }
+            //Borramos los intermedios
+            $this->festivoLocalRepository->removeByNombreProvincia($nombreFestivoLocal, $festivoLocal->getProvincia());
+            self::completaFestivosLocalesIntermedios($festivoLocal, $festivoLocal->getProvincia());
+        }
+    }
+
+    public function eliminarFestivoCompleto($nombreFestivo, $provincia): void
+    {
+        $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosLocales.json');
+        $festivosArray = json_decode($festivosJson, true);
+
+        $festivosProvincia = &$festivosArray['festivosLocales'.$provincia];
+        foreach ($festivosProvincia as $indice => $festivo) {
+            if ($festivo['nombre'] === $nombreFestivo) {
+                unset($festivosProvincia[$indice]);
+                break;
+            }
+        }
+
+        $festivosProvincia = array_values($festivosProvincia);
+
+        // Codificar el array actualizado a JSON
+        $jsonActualizado = json_encode($festivosArray, JSON_PRETTY_PRINT);
+
+        // Guardar el JSON actualizado nuevamente en el archivo
+        file_put_contents("/app/src/Resources/festivosLocales.json", $jsonActualizado);
+
+        //Obtenemos los ids de los festivosNacionales
+        $ids = $this->festivoLocalRepository->obtenerids($nombreFestivo);
+        //Borramos los eventos asociados
+        foreach ($ids as $id) {
+            $this->eventoRepository->removeByFestivoLocalId($id);
+        }
+        //Borramos los festivos locales
+        $this->festivoLocalRepository->removeByNombreProvincia($nombreFestivo, $provincia);
+    }
+
     public function getProvincias(): array
     {
         $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosLocales.json');
@@ -133,5 +190,43 @@ class FestivoLocalService
         }
 
         return $festivosArray;
+    }
+
+    /**
+     * Devuelve los festivos de un año concreto
+     */
+    public function filtrarFestivos($anios): array
+    {
+        $anioAnterior = (int)$anios[0];
+        $anioActual = (int)$anios[1];
+
+        $festivosLocales = $this->festivoLocalRepository->findAll();
+
+        foreach ($festivosLocales as $festivoLocal) {
+            $inicio = \DateTime::createFromFormat('d-m-y', $festivoLocal->getInicio());
+            //La fecha debe estar entre septiembre de anio[0] y julio de anio[1]
+            $anioInicio = (int)$inicio->format('Y');
+            $mesInicio = (int)$inicio->format('m');
+            if(($mesInicio >= 9 && $anioInicio == $anioAnterior) || ($mesInicio <= 6 && $anioInicio == $anioActual)) {
+                $festivosFiltrados[] = $festivoLocal;
+            }
+        }
+        return $festivosFiltrados;
+    }
+
+    /**
+     * Busca los festivos a partir de un nombre
+     */
+    public function buscarPorNombre($festivos, $nombre, $provincia): FestivoLocal
+    {
+        $festivoNacional = null;
+        foreach ($festivos as $festivo) {
+            if($festivo->getNombre() == $nombre && $festivo->getProvincia() == $provincia) {
+                $festivoNacional = $festivo;
+                return $festivoNacional;
+            }
+        }
+
+        return $festivoNacional;
     }
 }

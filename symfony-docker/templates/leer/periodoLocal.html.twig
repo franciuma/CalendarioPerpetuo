@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{accion}} periodos locales
+{% endblock %}
+
+{% block body %}
+	{{ parent() }}
+	<!DOCTYPE html>
+	<div class="container">
+		<div class="row">
+			<h1 class="font-weight-bold">{{accion}} periodos no lectivos locales</h1>
+			<div class="col-md-6">
+				<form action="{{ path(controlador) }}" method="POST">
+					<div class="form-group">
+						<label for="nombreFestivoLocal">Escoge la localidad: </label>
+						<select class="form-control nombreFestivoLocal" id="nombreFestivoLocal" name="FestivoLocalSeleccionado">
+							{% if provinciaSeleccionada == "" %}
+								<option selected>-- Selecciona la localidad --</option>
+							{% endif %}
+							{% for provincia in provincias %}
+								{% if provincia == provinciaSeleccionada %}
+									<option selected>{{ provincia }}</option>
+								{% else %}
+									<option>{{ provincia }}</option>
+								{% endif %}
+							{% endfor %}
+						</select>
+
+						<button type="submit" name="accionPost" value="SeleccionarLocalidad" class="btn btn-primary seleccionar-festivos-locales">seleccionar localidad</button>
+					</div>
+
+                    <select class="form-control nombrePeriodoLocal" id="nombrePeriodoLocal" name="PeriodoLocal" {{disponible}}>
+                        <option selected>-- Selecciona el periodo --</option>
+                        {% for festivoLocalSeleccionado in festivosLocalSeleccionado %}
+                            <option>{{ festivoLocalSeleccionado }}</option>
+                        {% endfor %}
+                    </select>
+				<button type="submit" name="accionPost" value="{{accion}}" class="btn btn-primary" {{disponible}}>{{accion}} periodo</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<footer class="footer mt-auto py-3">
+        <div class="container">
+            <div class="text-left">
+                <a href="{{ path('app_menu_periodos_locales_admin') }}" class="btn btn-primary">Volver al menú administrador</a>
+            </div>
+        </div>
+    </footer>
+{% endblock %}

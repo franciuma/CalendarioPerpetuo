@@ -8,13 +8,13 @@
 	<!DOCTYPE html>
 	<div class="container">
 		<div class="row">
-			<h1 class="font-weight-bold">Editar periodo no lectivo nacional</h1>
+			<h1 class="font-weight-bold">Editar periodo no lectivo local</h1>
 			<div class="col-md-6">
 				<form>
 					<div class="alert alert-info" role="alert">
 						<b>Es posible que un festivo comience y acabe el mismo día</b>
 					</div>
-					<table id="festivosNacionalesEditarTable" class="table">
+					<table id="festivosLocalesEditarTable" class="table">
 						<thead>
 							<tr>
 								<th></th>
@@ -25,13 +25,13 @@
 						</thead>
 						<tbody></tbody>
 					</table>
-				<button type="button" class="btn btn-primary editar-festivo-nacional">Editar periodo</button>
+				<button type="button" class="btn btn-primary editar-festivo-local">Editar periodo</button>
 				</form>
 			</div>
 		</div>
 	</div>
 
-	<div id="festivosNacionales" data-festivonacional="{{ festivoNacionalJson }}" style="display: none;"></div>
+	<div id="festivosLocales" data-festivolocal="{{ festivoLocalJson }}" style="display: none;"></div>
 
 	<footer class="footer mt-auto py-3">
         <div class="container">

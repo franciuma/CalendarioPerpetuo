@@ -1356,7 +1356,7 @@ $(document).on('click', '.guardar-festivos-centro', function() {
         festivoscentroJSON: festivoscentroJSON
     }
     // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/manejar/posts/festivoscentro', datosPost,'/menu/administrador');
+    enviarPost('/manejar/posts/festivoscentro', datosPost,'/menu/periodos/centro/admin');
 
     // Mostrar el popup de añadido festivo centro correctamente
     mostrarPopUp("festivo/s añadido/s");
@@ -1497,6 +1497,13 @@ function crearFilasExistentesFestivos(festivo, tipoDeFestivo) {
     
     const festivoInicio = formatearFecha(festivo.inicio);
     const festivoFinal = formatearFecha(festivo.final);
+
+    let dato;
+    if(tipoDeFestivo == "Local") {
+        const dato = festivo.provincia;
+    } else if (tipoDeFestivo == "Centro") {
+        const dato = festivo.centro;
+    }
     
     return $(`
         <tr class="fila-festivo-${tipoDeFestivo}" id="festivoCentro${festivo.id}">
@@ -1504,6 +1511,7 @@ function crearFilasExistentesFestivos(festivo, tipoDeFestivo) {
             <td><input type="text" class="form-control nombreFestivo${tipoDeFestivo}" name="nombreFestivo${tipoDeFestivo}" id="nombreFestivo${tipoDeFestivo}${festivo.id}" value="${festivo.nombre}" disabled></td>
             <td><input type="text" class="form-control inicioFestivo${tipoDeFestivo} datepicker-festivo-${tipoDeFestivo}" name="inicioFestivo${tipoDeFestivo}" id="inicioFestivo${tipoDeFestivo}${festivo.id}" value="${festivoInicio}"></td>
             <td><input type="text" class="form-control finalFestivo${tipoDeFestivo} datepicker-festivo-${tipoDeFestivo}" name="finalFestivo${tipoDeFestivo}" id="finalFestivo${tipoDeFestivo}${festivo.id}" value="${festivoFinal}"></td>
+            <td><input hidden type="text" class="form-control datoFestivo${tipoDeFestivo}" name="datoFestivo${tipoDeFestivo}" id="datoFestivo${tipoDeFestivo}" value=${festivo.provincia}></td>
         </tr>
     `);
 }
@@ -1511,6 +1519,15 @@ function crearFilasExistentesFestivos(festivo, tipoDeFestivo) {
 // Formulario festivos locales admin
 // Datepicker de festivosLocales
 $('#festivosLocalesTable tbody').on('focus', '.datepicker-festivo-local', function() {
+    $(this).datepicker({
+        format: 'dd-mm-yyyy',
+        language: 'es',
+        weekStart: 1,
+        startDate: new Date()
+    });
+});
+
+$('#festivosLocalesEditarTable tbody').on('focus', '.datepicker-festivo-local', function() {
     $(this).datepicker({
         format: 'dd-mm-yyyy',
         language: 'es',
@@ -1537,18 +1554,40 @@ $(document).on('click', '.aniadir-festivos-local', function() {
     $('#festivosLocalesTable tbody').append(fila);
 });
 
-$(document).on('click', '.guardar-festivos-local', function() {
+//Si se está editando un festivo local
+if(window.location.pathname == "/editar/festivo/local") {
+    //Obtenemos la asignatura y lecciones y creamos sus filas
+    const festivoLocal = JSON.parse(document.getElementById('festivosLocales').dataset.festivolocal);
+    const fila = crearFilasExistentesFestivos(festivoLocal, "local");
+    $('#festivosLocalesEditarTable tbody').append(fila);
+}
+
+$(document).on('click', '.guardar-festivos-local, .editar-festivo-local', function() {
     // Obtener los valores de las filas de la tabla
-    const provincia = $('#nombreFestivoLocal').val();
+    let provincia = $('#nombreFestivoLocal').val();
     const festivosLocales = [];
-    $('#festivosLocalesTable tbody tr').each(function() {
+    let tabla;
+    if($(this).hasClass('guardar-festivos-local')) {
+        tabla = '#festivosLocalesTable tbody tr';
+    } else {
+        tabla = '#festivosLocalesEditarTable tbody tr';
+    }
+
+    $(tabla).each(function() {
+        const id = $(this).find('.idFestivolocal').val();
         const nombre = $(this).find('.nombreFestivolocal').val();
         let inicio = $(this).find('.inicioFestivolocal').val();
         let final = $(this).find('.finalFestivolocal').val();
         //Modificamos la fecha, para recibir el formato dd-mm-%AN% o dd-mm-%AC% siendo AN año anterior y AC año actual.
         inicio = modificarFecha(inicio);
         final = modificarFecha(final);
-        festivosLocales.push({ nombre, inicio, final });
+        if(id) {
+            provincia = $(this).find('.datoFestivolocal').val();
+            console.log();
+            festivosLocales.push({ id, nombre, inicio, final });
+        } else {
+            festivosLocales.push({ nombre, inicio, final });
+        }
     });
     // Convertir el objeto a JSON
     const festivoslocalesJSON = JSON.stringify(festivosLocales);
@@ -1558,11 +1597,15 @@ $(document).on('click', '.guardar-festivos-local', function() {
         festivoslocalesJSON: festivoslocalesJSON
     }
 
-    // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/manejar/posts/festivoslocales', datosPost,'/menu/administrador');
-
-    // Mostrar el popup de añadido festivo centro correctamente
-    mostrarPopUp("festivo/s local/es añadido/s");
+    if($(this).hasClass('guardar-festivos-local')) {
+        // Enviar el objeto JSON a través de una petición AJAX
+        enviarPost('/manejar/posts/festivoslocales', datosPost,'/menu/periodos/locales/admin');
+        // Mostrar el popup de añadido festivo centro correctamente
+        mostrarPopUp("festivo/s local/es añadido/s");
+    } else {
+        enviarPost('/post/editar/festivo/local', datosPost,'/menu/periodos/locales/admin');
+        mostrarPopUp("periodo local editado");
+    }
 });
 
 //Formulario titulación
