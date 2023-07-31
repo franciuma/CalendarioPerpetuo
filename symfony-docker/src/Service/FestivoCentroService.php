@@ -4,28 +4,32 @@ namespace App\Service;
 
 use App\Repository\FestivoCentroRepository;
 use Symfony\Component\Serializer\SerializerInterface;
-use App\Controller\CalendarioController;
 use App\Entity\Centro;
 use App\Entity\FestivoCentro;
+use App\Repository\CentroRepository;
+use App\Repository\EventoRepository;
 
 /**
- * Clase utilizada para traducir JSON festivoLocales y persistirlo en la base de datos.
+ * Clase utilizada para traducir JSON festivoCentro y persistirlo en la base de datos.
  */
 class FestivoCentroService
 {
     private SerializerInterface $serializer;
     private FestivoCentroRepository $festivoCentroRepository;
-    private CalendarioController $calendarioController;
+    private CentroRepository $centroRepository;
+    private EventoRepository $eventoRepository;
 
     public function __construct(
         SerializerInterface $serializer,
         FestivoCentroRepository $festivoCentroRepository,
-        CalendarioController $calendarioController
+        EventoRepository $eventoRepository,
+        CentroRepository $centroRepository
     )
     {
         $this->serializer = $serializer;
         $this->festivoCentroRepository = $festivoCentroRepository;
-        $this->calendarioController = $calendarioController;
+        $this->eventoRepository = $eventoRepository;
+        $this->centroRepository = $centroRepository;
     }
 
     public function getFestivosCentro(Centro $centro, $curso): array
@@ -155,5 +159,107 @@ class FestivoCentroService
         }
 
         return $festivosArray;
+    }
+
+    /**
+     * Devuelve los festivos de un año concreto
+     */
+    public function filtrarFestivos($anios, $centroId): array
+    {
+        $anioAnterior = (int)$anios[0];
+        $anioActual = (int)$anios[1];
+
+        $festivosCentro = $this->festivoCentroRepository->findByCentroId($centroId);
+
+        $festivosFiltrados = [];
+        foreach ($festivosCentro as $festivoCentro) {
+            $inicio = \DateTime::createFromFormat('d-m-y', $festivoCentro->getInicio());
+            //La fecha debe estar entre septiembre de anio[0] y julio de anio[1]
+            $anioInicio = (int)$inicio->format('Y');
+            $mesInicio = (int)$inicio->format('m');
+            if(($mesInicio >= 9 && $anioInicio == $anioAnterior) || ($mesInicio <= 6 && $anioInicio == $anioActual)) {
+                $festivosFiltrados[] = $festivoCentro;
+            }
+        }
+        return $festivosFiltrados;
+    }
+
+    /**
+     * Busca los festivos a partir de un nombre
+     */
+    public function buscarPorNombre($festivos, $nombre, $centro): FestivoCentro
+    {
+        $festivoCentro = null;
+        foreach ($festivos as $festivo) {
+            if($festivo->getNombre() == $nombre &&
+                $festivo->getCentro()->getNombre()."-".$festivo->getCentro()->getProvincia() == $centro
+            ) {
+                $festivoCentro = $festivo;
+                return $festivoCentro;
+            }
+        }
+
+        return $festivoCentro;
+    }
+
+    public function editaFestivoCentro($curso, $festivoCentro, $festivoCentroNuevo): void
+    {
+        $anio = substr($curso[0], 2, 3);
+        $anioSiguiente = substr($curso[1], 2, 3);
+
+        $festivoCentroNuevo[0]['inicio'] = str_replace('%AN%', $anio, $festivoCentroNuevo[0]['inicio']);
+        $festivoCentroNuevo[0]['inicio'] = str_replace('%AC%', $anioSiguiente, $festivoCentroNuevo[0]['inicio']);
+        $festivoCentroNuevo[0]['final'] = str_replace('%AN%', $anio, $festivoCentroNuevo[0]['final']);
+        $festivoCentroNuevo[0]['final'] = str_replace('%AC%', $anioSiguiente, $festivoCentroNuevo[0]['final']);
+
+        if($festivoCentroNuevo[0]['inicio'] == $festivoCentroNuevo[0]['final']) {
+            $festivoCentro->setInicio($festivoCentroNuevo[0]['inicio']);
+            $festivoCentro->setFinal($festivoCentroNuevo[0]['final']);
+        } else {
+            $nombreFestivoLocal = $festivoCentroNuevo[0]['nombre'];
+            //Obtenemos los ids de los festivos locales
+            $ids = $this->festivoCentroRepository->obtenerids($nombreFestivoLocal);
+            //Borramos los eventos asociados
+            foreach ($ids as $id) {
+                $this->eventoRepository->removeByFestivoLocalId($id);
+            }
+            //Borramos los intermedios
+            $this->festivoCentroRepository->removeByNombreCentro($nombreFestivoLocal, $festivoCentro->getCentro()->getId());
+
+            self::completaFestivosCentroIntermedios($festivoCentro);
+        }
+    }
+
+    public function eliminarFestivoCompleto($nombreFestivo, $centro): void
+    {
+        $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosCentro.json');
+        $festivosArray = json_decode($festivosJson, true);
+
+        $festivosCentro = &$festivosArray['festivosCentro'.$centro];
+        foreach ($festivosCentro as $indice => $festivo) {
+            if ($festivo['nombre'] === $nombreFestivo) {
+                unset($festivosCentro[$indice]);
+                break;
+            }
+        }
+
+        $festivosCentro = array_values($festivosCentro);
+
+        // Codificar el array actualizado a JSON
+        $jsonActualizado = json_encode($festivosArray, JSON_PRETTY_PRINT);
+
+        // Guardar el JSON actualizado nuevamente en el archivo
+        file_put_contents("/app/src/Resources/festivosCentro.json", $jsonActualizado);
+
+        //Obtenemos los ids de los festivos de centro
+        $ids = $this->festivoCentroRepository->obtenerids($nombreFestivo);
+        //Borramos los eventos asociados
+        foreach ($ids as $id) {
+            $this->eventoRepository->removeByFestivoLocalId($id);
+        }
+        //Borramos los festivos locales
+        $centroFormato = explode("-",$centro);
+        $centroObjeto = $this->centroRepository->findOneByNombre($centroFormato[0]);
+        $this->festivoCentroRepository->removeByNombreCentro($nombreFestivo, $centroObjeto->getId());
     }
 }

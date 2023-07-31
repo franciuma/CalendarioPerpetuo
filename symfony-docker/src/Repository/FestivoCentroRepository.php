@@ -104,4 +104,31 @@ class FestivoCentroRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+
+    public function removeByNombreCentro($nombre, $centro)
+    {
+        $query = $this->createQueryBuilder('f')
+            ->delete(FestivoCentro::class, 'fc')
+            ->where('fc.nombre = :nombre')
+            ->andWhere('fc.centro = :centro')
+            ->setParameter('nombre', $nombre)
+            ->setParameter('centro', $centro)
+            ->getQuery();
+
+        $query->execute();
+    }
+
+    public function obtenerids($nombre)
+    {
+        $query = $this->createQueryBuilder('fc')
+            ->select('fc.id')
+            ->where('fc.nombre = :nombre')
+            ->setParameter('nombre', $nombre)
+            ->getQuery()
+            ->getResult()
+            ;
+
+        $result = array_column($query, 'id');
+        return $result;
+    }
 }

@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editar periodos no lectivos
+{% endblock %}
+
+{% block body %}
+	{{ parent() }}
+	<!DOCTYPE html>
+	<div class="container">
+		<div class="row">
+			<h1 class="font-weight-bold">Editar periodo no lectivo de centro</h1>
+			<div class="col-md-6">
+				<form>
+					<div class="alert alert-info" role="alert">
+						<b>Es posible que un festivo comience y acabe el mismo día</b>
+					</div>
+					<table id="festivosCentroEditarTable" class="table">
+						<thead>
+							<tr>
+								<th></th>
+								<th>Nombre</th>
+								<th>Inicio</th>
+								<th>Final</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				<button type="button" class="btn btn-primary editar-festivos-centro">Editar periodo</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div id="festivosCentro" data-festivocentro="{{ festivoCentroJson }}" style="display: none;"></div>
+
+	<footer class="footer mt-auto py-3">
+        <div class="container">
+            <div class="text-left">
+                <a href="{{ path('app_menu_periodos_centro_admin') }}" class="btn btn-primary">Volver al menú</a>
+            </div>
+        </div>
+    </footer>
+{% endblock %}

@@ -1306,6 +1306,23 @@ $('#festivosCentroTable tbody').on('focus', '.datepicker-festivo-centro', functi
     });
 });
 
+$('#festivosCentroEditarTable tbody').on('focus', '.datepicker-festivo-centro', function() {
+    $(this).datepicker({
+        format: 'dd-mm-yyyy',
+        language: 'es',
+        weekStart: 1,
+        startDate: new Date()
+    });
+});
+
+//Si se está editando un festivo de centro
+if(window.location.pathname == "/editar/festivo/centro") {
+    //Obtenemos la asignatura y lecciones y creamos sus filas
+    const festivoCentro = JSON.parse(document.getElementById('festivosCentro').dataset.festivocentro);
+    const fila = crearFilasExistentesFestivos(festivoCentro, "centro");
+    $('#festivosCentroEditarTable tbody').append(fila);
+}
+
 $(document).on('click', '.seleccionar-festivos-centro', function() {
     // Mostrar el popup de centro seleccionado
     Swal.fire({
@@ -1335,18 +1352,33 @@ function crearFilaFestivo(idFestivo, tipoDeFestivo) {
     `);
 }
 
-$(document).on('click', '.guardar-festivos-centro', function() {
+$(document).on('click', '.guardar-festivos-centro, .editar-festivos-centro', function() {
     // Obtener los valores de las filas de la tabla
-    const nombreCentro = $('#nombreCentroFestivo').val();
+    let nombreCentro = $('#nombreCentroFestivo').val();
     const festivosCentro = [];
-    $('#festivosCentroTable tbody tr').each(function() {
+
+    let tabla;
+    if($(this).hasClass('guardar-festivos-centro')) {
+        tabla = '#festivosCentroTable tbody tr';
+    } else {
+        tabla = '#festivosCentroEditarTable tbody tr';
+    }
+
+    $(tabla).each(function() {
+        const id = $(this).find('.idFestivocentro').val();
         const nombre = $(this).find('.nombreFestivocentro').val();
         let inicio = $(this).find('.inicioFestivocentro').val();
         let final = $(this).find('.finalFestivocentro').val();
         //Modificamos la fecha, para recibir el formato dd-mm-%AN% o dd-mm-%AC% siendo AN año anterior y AC año actual.
         inicio = modificarFecha(inicio);
         final = modificarFecha(final);
-        festivosCentro.push({ nombre, inicio, final });
+
+        if(id) {
+            nombreCentro = $(this).find('.datoFestivocentro').val();
+            festivosCentro.push({ id, nombre, inicio, final });
+        } else {
+            festivosCentro.push({ nombre, inicio, final });
+        }
     });
     // Convertir el objeto a JSON
     const festivoscentroJSON = JSON.stringify(festivosCentro);
@@ -1355,11 +1387,18 @@ $(document).on('click', '.guardar-festivos-centro', function() {
         nombreCentro: nombreCentro,
         festivoscentroJSON: festivoscentroJSON
     }
-    // Enviar el objeto JSON a través de una petición AJAX
-    enviarPost('/manejar/posts/festivoscentro', datosPost,'/menu/periodos/centro/admin');
 
-    // Mostrar el popup de añadido festivo centro correctamente
-    mostrarPopUp("festivo/s añadido/s");
+    if($(this).hasClass('guardar-festivos-centro')) {
+        // Enviar el objeto JSON a través de una petición AJAX
+        enviarPost('/manejar/posts/festivoscentro', datosPost,'/menu/periodos/centro/admin');
+        // Mostrar el popup de añadido festivo centro correctamente
+        mostrarPopUp("festivo/s añadido/s");
+    } else {
+        // Enviar el objeto JSON a través de una petición AJAX
+        enviarPost('/post/editar/festivo/centro', datosPost,'/menu/periodos/centro/admin');
+        // Mostrar el popup de añadido festivo centro correctamente
+        mostrarPopUp("periodo de centro editado");
+    }
 });
 
 function modificarFecha(fecha) {
@@ -1499,10 +1538,10 @@ function crearFilasExistentesFestivos(festivo, tipoDeFestivo) {
     const festivoFinal = formatearFecha(festivo.final);
 
     let dato;
-    if(tipoDeFestivo == "Local") {
-        const dato = festivo.provincia;
-    } else if (tipoDeFestivo == "Centro") {
-        const dato = festivo.centro;
+    if(tipoDeFestivo == "local") {
+        dato = festivo.provincia;
+    } else if (tipoDeFestivo == "centro") {
+        dato = festivo.centro;
     }
     
     return $(`
@@ -1511,7 +1550,7 @@ function crearFilasExistentesFestivos(festivo, tipoDeFestivo) {
             <td><input type="text" class="form-control nombreFestivo${tipoDeFestivo}" name="nombreFestivo${tipoDeFestivo}" id="nombreFestivo${tipoDeFestivo}${festivo.id}" value="${festivo.nombre}" disabled></td>
             <td><input type="text" class="form-control inicioFestivo${tipoDeFestivo} datepicker-festivo-${tipoDeFestivo}" name="inicioFestivo${tipoDeFestivo}" id="inicioFestivo${tipoDeFestivo}${festivo.id}" value="${festivoInicio}"></td>
             <td><input type="text" class="form-control finalFestivo${tipoDeFestivo} datepicker-festivo-${tipoDeFestivo}" name="finalFestivo${tipoDeFestivo}" id="finalFestivo${tipoDeFestivo}${festivo.id}" value="${festivoFinal}"></td>
-            <td><input hidden type="text" class="form-control datoFestivo${tipoDeFestivo}" name="datoFestivo${tipoDeFestivo}" id="datoFestivo${tipoDeFestivo}" value=${festivo.provincia}></td>
+            <td><input hidden type="text" class="form-control datoFestivo${tipoDeFestivo}" name="datoFestivo${tipoDeFestivo}" id="datoFestivo${tipoDeFestivo}" value=${dato}></td>
         </tr>
     `);
 }
@@ -1583,7 +1622,6 @@ $(document).on('click', '.guardar-festivos-local, .editar-festivo-local', functi
         final = modificarFecha(final);
         if(id) {
             provincia = $(this).find('.datoFestivolocal').val();
-            console.log();
             festivosLocales.push({ id, nombre, inicio, final });
         } else {
             festivosLocales.push({ nombre, inicio, final });

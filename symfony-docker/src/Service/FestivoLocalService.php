@@ -99,7 +99,7 @@ class FestivoLocalService
             $festivoLocal->setFinal($festivoLocalNuevo[0]['final']);
         } else {
             $nombreFestivoLocal = $festivoLocalNuevo[0]['nombre'];
-            //Obtenemos los ids de los festivosNacionales
+            //Obtenemos los ids de los festivos locales
             $ids = $this->festivoLocalRepository->obtenerids($nombreFestivoLocal);
             //Borramos los eventos asociados
             foreach ($ids as $id) {
@@ -132,7 +132,7 @@ class FestivoLocalService
         // Guardar el JSON actualizado nuevamente en el archivo
         file_put_contents("/app/src/Resources/festivosLocales.json", $jsonActualizado);
 
-        //Obtenemos los ids de los festivosNacionales
+        //Obtenemos los ids de los festivos locales
         $ids = $this->festivoLocalRepository->obtenerids($nombreFestivo);
         //Borramos los eventos asociados
         foreach ($ids as $id) {
@@ -219,14 +219,14 @@ class FestivoLocalService
      */
     public function buscarPorNombre($festivos, $nombre, $provincia): FestivoLocal
     {
-        $festivoNacional = null;
+        $festivoLocal = null;
         foreach ($festivos as $festivo) {
             if($festivo->getNombre() == $nombre && $festivo->getProvincia() == $provincia) {
-                $festivoNacional = $festivo;
-                return $festivoNacional;
+                $festivoLocal = $festivo;
+                return $festivoLocal;
             }
         }
 
-        return $festivoNacional;
+        return $festivoLocal;
     }
 }

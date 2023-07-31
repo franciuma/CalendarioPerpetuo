@@ -61,8 +61,8 @@ class CrearLocalidadAdminController extends AbstractController
         // Guarda los cambios en el archivo JSON
         file_put_contents($rutaArchivo, $contenidoActualizado);
 
-        // Redirecciona a la ruta 'app_menu_administrador'
-        return $this->redirectToRoute('app_menu_administrador');
+        // Redirecciona a la ruta 'app_menu_periodos_locales_admin'
+        return $this->redirectToRoute('app_menu_periodos_locales_admin');
     }
 
     public function localidadExistente($localidad): bool

@@ -96,7 +96,7 @@ class ManejarPostsController extends AbstractController
                 }
             }
         } else {
-            $nodo = 'festivosLocales'.$dato;
+            $nodo = $entidad.$dato;
             foreach ($festivosArrayJson[$nodo] as &$festivo) {
                 if ($festivo['nombre'] === $festivoArray[0]['nombre']) {
                     // Actualizar el inicio y el final del festivo
