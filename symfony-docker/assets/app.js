@@ -826,8 +826,17 @@ $(document).on('click', '.crear-profesor, .editar-profesor', function() {
         const asignaturaNombreCentro = $(this).find('.asignatura').val();
         const asignaturaNombre = asignaturaNombreCentro.split("-")[0];
         const horario = $(this).find('.horario').val();
-        const diasTeoria = $(this).find('.diasTeoria').val();
-        const diasPractica = $(this).find('.diasPractica').val();
+        let diasTeoria = $(this).find('.diasTeoria').val();
+        let diasPractica = $(this).find('.diasPractica').val();
+
+        // Verificar si diasTeoria y diasPractica contienen una coma y están rodeadas por comillas
+        if ( diasTeoria.some(dias => dias.includes(',') && !dias.startsWith('"') && !dias.endsWith('"'))) {
+            diasTeoria = diasTeoria[0].split(',').map(dia => dia.trim());
+        }
+
+        if ( diasPractica.some(dias => dias.includes(',') && !dias.startsWith('"') && !dias.endsWith('"'))) {
+            diasPractica = diasPractica[0].split(',').map(dia => dia.trim());
+        }
 
         const camposObligatorios = [
             { nombre: 'grupo', valor: letra },
