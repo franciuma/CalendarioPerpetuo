@@ -52,20 +52,18 @@ class CentroRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-//    /**
-//     * @return Centro[] Returns an array of Centro objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return Centro[] Returns an array of Centro objects
+     */
+    public function findByLocalidad($localidad): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.provincia = :val')
+            ->setParameter('val', $localidad)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
     public function findOneByNombre($nombre): ?Centro
     {

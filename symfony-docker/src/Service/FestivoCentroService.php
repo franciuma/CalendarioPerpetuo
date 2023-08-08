@@ -255,7 +255,7 @@ class FestivoCentroService
         $ids = $this->festivoCentroRepository->obtenerids($nombreFestivo);
         //Borramos los eventos asociados
         foreach ($ids as $id) {
-            $this->eventoRepository->removeByFestivoLocalId($id);
+            $this->eventoRepository->removeByFestivoCentroId($id);
         }
         //Borramos los festivos locales
         $centroFormato = explode("-",$centro);

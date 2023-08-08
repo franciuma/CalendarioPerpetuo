@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edición de {{localidad}}
+{% endblock %}
+
+{% block body %}
+	{{ parent() }}
+	<!DOCTYPE html>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<h1 class="font-weight-bold">Edición de localidad {{localidad}}</h1>
+				<form action="{{ path('app_procesar_editar_localidad_admin') }}" method="post">
+					<div class="form-group">
+
+					<label for="NombreLocalidad">Nombre de localidad: </label>
+					<input class="form-control" id="nombreLocalidad" name="nombreLocalidad" value="{{localidad}}">
+					<input hidden class="form-control" id="nombreLocalidadAntiguo" name="nombreLocalidadAntiguo" value="{{localidad}}">
+
+					</div>
+					<button type="submit" class="btn btn-primary">Editar localidad</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<footer class="footer mt-auto py-3">
+        <div class="container">
+            <div class="text-left">
+                <a href="{{ path('app_menu_localidades_admin') }}" class="btn btn-primary">Volver al menú</a>
+            </div>
+        </div>
+    </footer>
+{% endblock %}

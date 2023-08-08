@@ -57,20 +57,25 @@ class FestivoLocalRepository extends ServiceEntityRepository
         $query->execute();
     }
 
+    public function removeFestivosLocales(array $festivosLocales): void
+    {
+        foreach ($festivosLocales as $festivoLocal) {
+            $this->getEntityManager()->remove($festivoLocal);
+        }
+    }
+
 //    /**
 //     * @return FestivoLocal[] Returns an array of FestivoLocal objects
 //     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('f.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findByProvincia($provincia): array
+    {
+        return $this->createQueryBuilder('fl')
+            ->andWhere('fl.provincia = :val')
+            ->setParameter('val', $provincia)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
     public function findOneFecha($fecha): ?FestivoLocal
     {
@@ -115,6 +120,20 @@ class FestivoLocalRepository extends ServiceEntityRepository
             ->select('fl.id')
             ->where('fl.nombre = :nombre')
             ->setParameter('nombre', $nombre)
+            ->getQuery()
+            ->getResult()
+            ;
+
+        $result = array_column($query, 'id');
+        return $result;
+    }
+
+    public function obteneridsByProvincia($provincia)
+    {
+        $query = $this->createQueryBuilder('fl')
+            ->select('fl.id')
+            ->where('fl.provincia = :provincia')
+            ->setParameter('provincia', $provincia)
             ->getQuery()
             ->getResult()
             ;

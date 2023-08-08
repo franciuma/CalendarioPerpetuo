@@ -171,7 +171,7 @@ class CentroController extends AbstractController
         $centroAntiguo->setProvincia($nombreProvincia);
         $this->centroRepository->flush();
 
-        return $this->redirectToRoute('app_menu_periodos_centro_admin');
+        return $this->redirectToRoute('app_menu_centro_admin');
     }
 
     #[Route('/eliminar/centro/admin', name: 'app_eliminar_centro')]
@@ -209,7 +209,7 @@ class CentroController extends AbstractController
 
         //Borramos el centro
         $this->centroRepository->remove($centroObjeto, true);
-        return $this->redirectToRoute('app_menu_periodos_centro_admin');
+        return $this->redirectToRoute('app_menu_centro_admin');
     }
 
     //Crear un nodo centro vacío (solo el título)
@@ -256,8 +256,8 @@ class CentroController extends AbstractController
         //Creamos el centro en la base de datos
         $this->centroService->insertaCentroBd($nombreProvincia, $nombreCentro);
 
-        // Redirecciona a la ruta 'app_menu_periodos_centro_admin'
-        return $this->redirectToRoute('app_menu_periodos_centro_admin');
+        // Redirecciona a la ruta 'app_menu_centro_admin'
+        return $this->redirectToRoute('app_menu_centro_admin');
     }
 
     public function centroExistente($nombreCentro, $nombreProvincia): bool
