@@ -21,4 +21,10 @@
         'nombrePlural': 'docentes',
         'lista': profesorLista
     } %}
+
+    <script>
+	{% if mensaje %}
+        Swal.fire('¡Éxito!', '{{ mensaje }}', 'success');
+	{% endif %}
+    </script>
 {% endblock %}

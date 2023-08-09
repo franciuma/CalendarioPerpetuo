@@ -22,4 +22,9 @@
         'lista': centroLista
     } %}
 
+    <script>
+	{% if mensaje %}
+        Swal.fire('¡Éxito!', '{{ mensaje }}', 'success');
+	{% endif %}
+    </script>
 {% endblock %}

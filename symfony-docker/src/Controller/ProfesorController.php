@@ -6,6 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\AsignaturaRepository;
+use App\Repository\CalendarioRepository;
+use App\Repository\EventoRepository;
 use App\Repository\GrupoRepository;
 use App\Repository\UsuarioGrupoRepository;
 use App\Repository\UsuarioRepository;
@@ -18,6 +20,8 @@ class ProfesorController extends AbstractController
 {
     
     private AsignaturaRepository $asignaturaRepository;
+    private CalendarioRepository $calendarioRepository;
+    private EventoRepository $eventoRepository;
     private UsuarioService $usuarioService;
     private UsuarioRepository $usuarioRepository;
     private GrupoRepository $grupoRepository;
@@ -27,6 +31,8 @@ class ProfesorController extends AbstractController
 
     public function __construct(
         AsignaturaRepository $asignaturaRepository,
+        CalendarioRepository $calendarioRepository,
+        EventoRepository $eventoRepository,
         UsuarioService $usuarioService,
         UsuarioRepository $usuarioRepository,
         GrupoRepository $grupoRepository,
@@ -35,6 +41,8 @@ class ProfesorController extends AbstractController
         UsuarioGrupoService $usuarioGrupoService
         ){
         $this->asignaturaRepository = $asignaturaRepository;
+        $this->calendarioRepository = $calendarioRepository;
+        $this->eventoRepository = $eventoRepository;
         $this->usuarioService = $usuarioService;
         $this->usuarioRepository = $usuarioRepository;
         $this->grupoRepository = $grupoRepository;
@@ -89,9 +97,17 @@ class ProfesorController extends AbstractController
             $grupos = $this->usuarioRepository->findGruposByUsuario($nombre, $apellidoPr, $apellidoSeg);
             $profesorGrupo = $this->usuarioGrupoRepository->findUsuarioGrupoByUsuarioId($profesorObjeto->getId());
 
+            //Obtenemos el calendario del profesor
+            $calendario = $this->calendarioRepository->findOneByUsuario($profesorObjeto->getId());
+            //Borramos los eventos de clase
+            $eventosClases = $this->eventoRepository->findEventoClaseByCalendario($calendario);
+            $this->eventoRepository->removeEventos($eventosClases);
+
             $this->usuarioGrupoRepository->removeUsuarioGrupos($profesorGrupo);
             $this->grupoRepository->removeGrupos($grupos);
             $this->usuarioRepository->remove($profesorObjeto);
+            //Borramos el calendario asociado
+            $this->calendarioRepository->remove($calendario);
             $this->usuarioRepository->flush();
 
             return $this->redirectToRoute('app_menu_docentes_admin', ["mensaje" => $mensaje]);

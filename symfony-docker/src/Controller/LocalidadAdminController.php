@@ -14,6 +14,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class LocalidadAdminController extends AbstractController
 {
+    const ERROR = "error";
+    const SUCCESS = "success";
+    const EXITO = "Éxito";
+    const FALLO = "Error";
     private CentroRepository $centroRepository;
     private FestivoLocalService $festivoLocalService;
     private FestivoLocalRepository $festivoLocalRepository;
@@ -42,6 +46,7 @@ class LocalidadAdminController extends AbstractController
     #[Route('/crear/localidad/admin/procesar', name: 'app_crear_localidad_admin_procesar', methods: ['POST'])]
     public function procesarFormulario(Request $request): Response
     {
+        $mensaje = "Localidad creada correctamente";
         // Obtén los datos del formulario
         $nombreLocalidad = $request->request->get('nombreDeLocalidad');
 
@@ -64,7 +69,12 @@ class LocalidadAdminController extends AbstractController
                 throw new Exception("Localidad vacía o ya existente");
             }
         } catch (Exception $e) {
-            echo $e->getMessage();
+            $mensaje = "Localidad ya existente";
+            return $this->redirectToRoute('app_menu_localidades_admin',[
+                "principal"=>self::FALLO,
+                "mensaje" => $mensaje,
+                "estado" => self::ERROR
+            ]);
         }
 
         // Codifica los datos actualizados a JSON
@@ -74,7 +84,11 @@ class LocalidadAdminController extends AbstractController
         file_put_contents($rutaArchivo, $contenidoActualizado);
 
         // Redirecciona al menú de localidades
-        return $this->redirectToRoute('app_menu_localidades_admin');
+        return $this->redirectToRoute('app_menu_localidades_admin',[
+            "principal"=>self::EXITO,
+            "mensaje" => $mensaje,
+            "estado" => self::SUCCESS
+            ]);
     }
 
     #[Route('/seleccionar/editar/localidad/admin', name: 'app_seleccionar_editar_localidad')]
@@ -121,6 +135,8 @@ class LocalidadAdminController extends AbstractController
     #[Route('procesar/editar/localidad', name: 'app_procesar_editar_localidad_admin')]
     public function procesarEditar(Request $request): Response
     {
+        $mensaje = "Localidad editada correctamente";
+
         $localidadAntigua = $request->get('nombreLocalidadAntiguo');
         $localidadNueva = $request->get('nombreLocalidad');
 
@@ -155,7 +171,11 @@ class LocalidadAdminController extends AbstractController
         }
         $this->centroRepository->flush();
 
-        return $this->redirectToRoute('app_menu_localidades_admin');
+        return $this->redirectToRoute('app_menu_localidades_admin',[
+            "principal"=>self::EXITO,
+            "mensaje" => $mensaje,
+            "estado" => self::SUCCESS
+        ]);
     }
 
     #[Route('/eliminar/localidad/admin', name: 'app_eliminar_localidad_admin')]
@@ -199,7 +219,11 @@ class LocalidadAdminController extends AbstractController
         //Actualizamos
         $this->festivoLocalRepository->flush();
 
-        return $this->redirectToRoute('app_menu_localidades_admin', ["mensaje" => $mensaje]);
+        return $this->redirectToRoute('app_menu_localidades_admin',[
+            "principal"=>self::EXITO,
+            "mensaje" => $mensaje,
+            "estado" => self::SUCCESS
+            ]);
     }
 
     public function localidadExistente($localidad): bool

@@ -21,4 +21,10 @@
         'nombrePlural': 'titulaciones',
         'lista': titulacionLista
     } %}
+
+    <script>
+	{% if mensaje %}
+        Swal.fire('¡Éxito!', '{{ mensaje }}', 'success');
+	{% endif %}
+    </script>
 {% endblock %}

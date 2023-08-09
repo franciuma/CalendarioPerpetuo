@@ -131,6 +131,7 @@ class CentroController extends AbstractController
     #[Route('/editar/centro/admin/procesar', name: 'app_editar_centro_admin')]
     public function procesarFormularioEditar(Request $request)
     {
+        $mensaje = "Centro editado correctamente";
         // Obtenemos los datos del formulario
         $nombreCentro = $request->get('nombreDelCentro');
         $nombreProvincia = $request->get('nombreDeProvincia');
@@ -171,12 +172,13 @@ class CentroController extends AbstractController
         $centroAntiguo->setProvincia($nombreProvincia);
         $this->centroRepository->flush();
 
-        return $this->redirectToRoute('app_menu_centro_admin');
+        return $this->redirectToRoute('app_menu_centro_admin',["mensaje" => $mensaje]);
     }
 
     #[Route('/eliminar/centro/admin', name: 'app_eliminar_centro')]
     public function eliminarCentro(Request $request): Response
     {
+        $mensaje = "Centro eliminado correctamente";
         $centroId = $request->get('centroId');
         $centroObjeto = $this->centroRepository->find($centroId);
         $centroNombre = $centroObjeto->getNombre();
@@ -209,13 +211,14 @@ class CentroController extends AbstractController
 
         //Borramos el centro
         $this->centroRepository->remove($centroObjeto, true);
-        return $this->redirectToRoute('app_menu_centro_admin');
+        return $this->redirectToRoute('app_menu_centro_admin', ["mensaje" => $mensaje]);
     }
 
     //Crear un nodo centro vacío (solo el título)
     #[Route('/crear/centro/admin/procesar', name: 'app_crear_centro_admin_procesar', methods: ['POST'])]
     public function procesarFormulario(Request $request)
     {
+        $mensaje = "Centro creado correctamente";
         // Obtén los datos del formulario
         $nombreCentro = $request->request->get('nombreDelCentro');
         $nombreProvincia = $request->request->get('nombreDeProvincia');
@@ -257,7 +260,7 @@ class CentroController extends AbstractController
         $this->centroService->insertaCentroBd($nombreProvincia, $nombreCentro);
 
         // Redirecciona a la ruta 'app_menu_centro_admin'
-        return $this->redirectToRoute('app_menu_centro_admin');
+        return $this->redirectToRoute('app_menu_centro_admin', ["mensaje" => $mensaje]);
     }
 
     public function centroExistente($nombreCentro, $nombreProvincia): bool

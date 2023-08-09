@@ -96,23 +96,25 @@ class MenuController extends AbstractController
 
     //Menú administrador
     #[Route('/menu/docentes/admin', name: 'app_menu_docentes_admin')]
-    public function docentesAdmin(): Response
+    public function docentesAdmin(Request $request): Response
     {
         $conCalendario = false;
         $profesores = $this->usuarioService->getAllProfesoresNombreCompleto($conCalendario);
-
+        $mensaje = $request->get("mensaje");
         return $this->render('menus/navbarAdministrador/docentesAdmin.html.twig',[
-            'profesorLista' => $profesores
+            'profesorLista' => $profesores,
+            'mensaje' => $mensaje
         ]);
     }
 
     #[Route('/menu/titulaciones/admin', name: 'app_menu_titulaciones_admin')]
-    public function titulacionesAdmin(): Response
+    public function titulacionesAdmin(Request $request): Response
     {
+        $mensaje = $request->get("mensaje");
         $titulaciones = $this->titulacionRepository->findAllNombre();
-
         return $this->render('menus/navbarAdministrador/titulacionesAdmin.html.twig' ,[
-            'titulacionLista' => $titulaciones
+            'titulacionLista' => $titulaciones,
+            'mensaje' => $mensaje
         ]);
     }
 
@@ -142,9 +144,13 @@ class MenuController extends AbstractController
     public function LocalidadesAdmin(Request $request): Response
     {
         $mensaje = $request->get("mensaje");
+        $estado = $request->get("estado");
+        $msjPrincipal = $request->get("principal");
         $localidades = $this->festivoLocalService->getProvincias();
         return $this->render('menus/navbarAdministrador/localidadAdmin.html.twig', [
             'mensaje' => $mensaje,
+            'msjPrincipal' => $msjPrincipal,
+            'estado' => $estado,
             'localidadLista' => $localidades
         ]);
     }
@@ -161,11 +167,13 @@ class MenuController extends AbstractController
     }
 
     #[Route('/menu/centro/admin', name: 'app_menu_centro_admin')]
-    public function centroAdmin(): Response
+    public function centroAdmin(Request $request): Response
     {
+        $mensaje = $request->get("mensaje");
         $centros = $this->centroRepository->findAllNombre();
         return $this->render('menus/navbarAdministrador/centroAdmin.html.twig',[
-            'centroLista' => $centros
+            'centroLista' => $centros,
+            'mensaje' => $mensaje
         ]);
     }
 

@@ -46,7 +46,7 @@ class CalendarioRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
+            ->setParameter('val', $asignaturaId)
             ->orderBy('c.id', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
