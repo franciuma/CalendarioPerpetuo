@@ -151,7 +151,7 @@ class CalendarioController extends AbstractController
         $alumno = $this->usuarioRepository->findOneByDni($dni);
 
         if(!$alumno) {
-            $mensaje = "El alumno introducido no existe";
+            $mensaje = "El alumno ".$dni." no existe";
             return $this->redirectToRoute('app_menu_alumno',[
                 "principal"=>"Error",
                 "mensaje" => $mensaje,
@@ -160,6 +160,14 @@ class CalendarioController extends AbstractController
         }
 
         $usuarioGrupos = $this->usuarioGrupoRepository->findUsuarioGrupoByUsuarioId($alumno->getId());
+        if(empty($usuarioGrupos)) {
+            $mensaje = "No hay asignaturas asociadas al alumno ".$dni;
+            return $this->redirectToRoute('app_menu_alumno',[
+                "principal"=>"Error",
+                "mensaje" => $mensaje,
+                "estado" => "error"
+                ]);
+        }
         $centro = $usuarioGrupos[0]->getGrupo()->getAsignatura()->getTitulacion()->getCentro();
         $this->tipoUsuario = "Alumno";
         $this->centro = $centro;
