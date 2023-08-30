@@ -148,7 +148,7 @@ class AlumnoController extends AbstractController
         $alumno = $this->usuarioRepository->findOneByDni($dni);
 
         if(!$alumno) {
-            $mensaje = "El alumno introducido no existe";
+            $mensaje = "El alumno ".$dni." introducido no existe";
             return $this->redirectToRoute('app_menu_alumno',[
                 "principal"=>self::FALLO,
                 "mensaje" => $mensaje,
@@ -159,6 +159,15 @@ class AlumnoController extends AbstractController
         $alumnoId = $alumno->getId();
 
         $alumnoGrupos = $this->usuarioGrupoRepository->findUsuarioGrupoByUsuarioId($alumno->getId());
+
+        if(empty($alumnoGrupos)) {
+            $mensaje = "Debido a un error, debe eliminar y crear el alumno nuevamente";
+            return $this->redirectToRoute('app_menu_alumno',[
+                "principal"=>self::FALLO,
+                "mensaje" => $mensaje,
+                "estado" => self::ERROR
+            ]);
+        }
 
         $gruposAlumnoArray = array_map(function($alumnoGrupo) {
             $titulacion = $alumnoGrupo->getGrupo()->getAsignatura()->getTitulacion();
@@ -242,7 +251,7 @@ class AlumnoController extends AbstractController
         $alumno = $this->usuarioRepository->findOneByDni($alumnoDni);
 
         if(!$alumno) {
-            $mensaje = "El alumno introducido no existe";
+            $mensaje = "El alumno ".$alumnoDni." no existe";
             return $this->redirectToRoute('app_menu_alumno',[
                 "principal"=>self::FALLO,
                 "mensaje" => $mensaje,
