@@ -72,10 +72,16 @@ class ManejarPostsController extends AbstractController
     {
         //Obtenemos el array de festivos
         $datosJSONfestivo = file_get_contents("/app/src/Resources/".$entidad.".json");
-        //Lo pasamos a array
-        $arrayFestivos = json_decode($datosJSONfestivo, true);
-        //Cogemos el nodo y metemos los datos
-        $arrayFestivos[$nodo] = array_merge($arrayFestivos[$nodo], $datosDecodeFestivo);
+        if($datosJSONfestivo == "") {
+            $arrayFestivos = [];
+            $arrayFestivos = [$nodo => array_merge($arrayFestivos, $datosDecodeFestivo)];
+        } else {
+            //Lo pasamos a array
+            $arrayFestivos = json_decode($datosJSONfestivo, true);
+            //Cogemos el nodo y metemos los datos
+            $arrayFestivos[$nodo] = array_merge($arrayFestivos[$nodo], $datosDecodeFestivo);
+        }
+        
         return $arrayFestivos;
     }
 

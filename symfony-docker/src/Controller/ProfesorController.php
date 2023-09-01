@@ -99,15 +99,18 @@ class ProfesorController extends AbstractController
 
             //Obtenemos el calendario del profesor
             $calendario = $this->calendarioRepository->findOneByUsuario($profesorObjeto->getId());
-            //Borramos los eventos de clase
-            $eventosClases = $this->eventoRepository->findEventoClaseByCalendario($calendario);
-            $this->eventoRepository->removeEventos($eventosClases);
+            if($calendario) {
+                //Borramos los eventos de clase
+                $eventosClases = $this->eventoRepository->findEventoClaseByCalendario($calendario);
+                $this->eventoRepository->removeEventos($eventosClases);
+                //Borramos el calendario asociado
+                $this->calendarioRepository->remove($calendario);
+            }
 
             $this->usuarioGrupoRepository->removeUsuarioGrupos($profesorGrupo);
             $this->grupoRepository->removeGrupos($grupos);
             $this->usuarioRepository->remove($profesorObjeto);
-            //Borramos el calendario asociado
-            $this->calendarioRepository->remove($calendario);
+
             $this->usuarioRepository->flush();
 
             return $this->redirectToRoute('app_menu_docentes_admin', ["mensaje" => $mensaje]);

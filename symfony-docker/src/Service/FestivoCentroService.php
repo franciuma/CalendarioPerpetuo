@@ -114,6 +114,11 @@ class FestivoCentroService
     {
         $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosCentro.json');
         $festivosArray = json_decode($festivosJson, true);
+
+        if(empty($festivosArray)) {
+            return [];
+        }
+
         $centrosArray = array_keys($festivosArray);
 
         $centroFiltrado = [];
@@ -147,6 +152,10 @@ class FestivoCentroService
         $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosCentro.json');
         $festivosArrayJson = json_decode($festivosJson, true);
         $festivosArray = [];
+
+        if(empty($festivosArray)) {
+            return $festivosArray;
+        }
 
         // Itera sobre los datos y agrega los nombres de los centros y festivos al array resultante
         foreach ($festivosArrayJson as $centro => $festivos) {

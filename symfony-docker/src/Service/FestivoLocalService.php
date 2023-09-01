@@ -146,6 +146,11 @@ class FestivoLocalService
     {
         $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosLocales.json');
         $festivosArray = json_decode($festivosJson, true);
+
+        if(empty($festivosArray)) {
+            return [];
+        }
+
         $provinciasArray = array_keys($festivosArray);
 
         $provinciasFiltrado = [];
@@ -179,6 +184,10 @@ class FestivoLocalService
         $festivosJson = file_get_contents(__DIR__ . '/../resources/festivosLocales.json');
         $festivosArrayJson = json_decode($festivosJson, true);
         $festivosArray = [];
+
+        if(empty($festivosArray)) {
+            return $festivosArray;
+        }
 
         // Itera sobre los datos y agrega los nombres de las localidades y festivos al array resultante
         foreach ($festivosArrayJson as $localidad => $festivos) {

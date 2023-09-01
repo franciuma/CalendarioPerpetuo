@@ -37,6 +37,10 @@ class FestivoNacionalService
         $festivosArray = json_decode($festivosJson, true);
         $arrayNombreFestivos = [];
 
+        if(empty($festivosArray)) {
+            return $arrayNombreFestivos;
+        }
+
         foreach ($festivosArray['festivosNacionales-España'] as &$festivo) {
             $festivo['inicio'] = str_replace('%AN%', $anio, $festivo['inicio']);
             $festivo['inicio'] = str_replace('%AC%', $anioSiguiente, $festivo['inicio']);
