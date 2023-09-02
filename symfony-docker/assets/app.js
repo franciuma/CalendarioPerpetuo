@@ -1308,7 +1308,7 @@ function editarCalendario(nombreCentroProvincia, profesor, curso)
 // Datepicker de festivosCentro
 $('#festivosCentroTable tbody').on('focus', '.datepicker-festivo-centro', function() {
     $(this).datepicker({
-        format: 'dd-mm-yyyy',
+        format: 'd-m-yyyy',
         language: 'es',
         weekStart: 1,
         startDate: new Date()
@@ -1317,7 +1317,7 @@ $('#festivosCentroTable tbody').on('focus', '.datepicker-festivo-centro', functi
 
 $('#festivosCentroEditarTable tbody').on('focus', '.datepicker-festivo-centro', function() {
     $(this).datepicker({
-        format: 'dd-mm-yyyy',
+        format: 'd-m-yyyy',
         language: 'es',
         weekStart: 1,
         startDate: new Date()
@@ -1465,7 +1465,7 @@ function mostrarPopUp(titulo) {
 // Datepicker de festivosNacionales
 $('#festivosNacionalesTable tbody').on('focus', '.datepicker-festivo-nacional', function() {
     $(this).datepicker({
-        format: 'dd-mm-yyyy',
+        format: 'd-m-yyyy',
         language: 'es',
         weekStart: 1,
         startDate: new Date()
@@ -1474,7 +1474,7 @@ $('#festivosNacionalesTable tbody').on('focus', '.datepicker-festivo-nacional', 
 
 $('#festivosNacionalesEditarTable tbody').on('focus', '.datepicker-festivo-nacional', function() {
     $(this).datepicker({
-        format: 'dd-mm-yyyy',
+        format: 'd-m-yyyy',
         language: 'es',
         weekStart: 1,
         startDate: new Date()
@@ -1568,7 +1568,7 @@ function crearFilasExistentesFestivos(festivo, tipoDeFestivo) {
 // Datepicker de festivosLocales
 $('#festivosLocalesTable tbody').on('focus', '.datepicker-festivo-local', function() {
     $(this).datepicker({
-        format: 'dd-mm-yyyy',
+        format: 'd-mm-yyyy',
         language: 'es',
         weekStart: 1,
         startDate: new Date()
@@ -1577,7 +1577,7 @@ $('#festivosLocalesTable tbody').on('focus', '.datepicker-festivo-local', functi
 
 $('#festivosLocalesEditarTable tbody').on('focus', '.datepicker-festivo-local', function() {
     $(this).datepicker({
-        format: 'dd-mm-yyyy',
+        format: 'd-mm-yyyy',
         language: 'es',
         weekStart: 1,
         startDate: new Date()

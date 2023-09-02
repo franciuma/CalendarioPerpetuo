@@ -185,7 +185,7 @@ class FestivoLocalService
         $festivosArrayJson = json_decode($festivosJson, true);
         $festivosArray = [];
 
-        if(empty($festivosArray)) {
+        if(empty($festivosArrayJson)) {
             return $festivosArray;
         }
 
