@@ -58,7 +58,8 @@ if(
                 const horario = clase.horario;
                 const asignaturaNombre = clase.asignaturaNombre;
                 const nombre = clase.nombre;
-                const modalidad = clase.modalidad
+                const enlace = clase.enlace;
+                const modalidad = clase.modalidad;
                 const claveMap = fecha+asignaturaId+grupoLetra+horario;
                 let esPractica = true;
                 if(modalidad == "Teorica") {
@@ -74,7 +75,8 @@ if(
                         mapFechaGrupo.set(claveMap, {
                             ...grupo,
                             esPractica,
-                            tituloSesion: nombre
+                            tituloSesion: nombre,
+                            enlace: enlace
                         });
                         //Le asignamos la variable grupo
                         grupo = mapFechaGrupo.get(claveMap);
@@ -373,11 +375,14 @@ function crearFilaCalendario(fechaStringFormato, asignaturaId, grupoLetra, horar
     let inactivo = "";
     let grupo = "";
     let tituloSesion = "";
+    let enlace = "";
     if (mapFechaGrupo.has(clave)) {
         esPractica = mapFechaGrupo.get(clave).esPractica;
         asignatura = mapFechaGrupo.get(clave).asignatura;
         grupo = mapFechaGrupo.get(clave).letra;
         tituloSesion = mapFechaGrupo.get(clave).tituloSesion;
+        enlace = mapFechaGrupo.get(clave).enlace ? mapFechaGrupo.get(clave).enlace : "";
+
         // Si las fechas tienen un map asociado, ya estarán colocadas en el calendario. Estas serán inamovibles.
         inactivo = "disabled";
     }
@@ -412,7 +417,7 @@ function crearFilaCalendario(fechaStringFormato, asignaturaId, grupoLetra, horar
                     <option ${horario === 'Tarde' ? 'selected' : ''}>Tarde</option>
                 </select>
             </td>
-            <td><input type="text" class="form-control enlace" name="enlace" id="enlace${fechaStringFormato}" placeholder="Enlace a la clase" ></td>
+            <td><input type="text" class="form-control enlace" name="enlace" id="enlace${fechaStringFormato}" placeholder="Enlace a la clase" value="${enlace}"></td>
             <td><button data-asignatura-id="${asignaturaId}" type="button" class="btn btn-primary permutar-fecha">Permutar</button></td>
             <td><button class="btn btn-danger eliminar-fecha">Eliminar</button></td>
         </tr>
@@ -496,7 +501,7 @@ $(document).on('click', '.permutar-fecha', function() {
         // Mostrar el popup de permutación exitosa
         Swal.fire({
             title: 'Permutación exitosa',
-            text: 'Las clases han sido agregadas al final de la página',
+            text: 'Permutación exitosa',
             icon: 'success',
             confirmButtonText: 'Aceptar',
             confirmButtonColor: '#007BFF'
