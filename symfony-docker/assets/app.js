@@ -1753,16 +1753,19 @@ $(document).on('click', '.eliminar-festivo-local, .eliminar-grupo, .eliminar-asi
 });
 
 //Claves para el menú docente y administrador
-$(document).on('click', '.menu-profesor, .menu-admin', function() {
+$(document).on('click', '.menu-profesor, .menu-admin, .menu-alumno', function() {
     let contrasenia;
     let usuario;
 
     if($(this).hasClass('menu-profesor')) {
-        contrasenia = "";
+        contrasenia = "docente";
         usuario = "Docente";
-    } else {
-        contrasenia = "";
+    } else if($(this).hasClass('menu-admin')) {
+        contrasenia = "admin";
         usuario = "Admin";
+    } else {
+        contrasenia = "alumno";
+        usuario = "Alumno";
     }
 
     Swal.fire({
@@ -1789,6 +1792,13 @@ $(document).on('click', '.menu-profesor, .menu-admin', function() {
                     icon: 'success',
                     title: 'Clave válida',
                     text: '¡Bienvenido al menú administrador!',
+                });
+            } else if(clave == contrasenia && usuario == "Alumno"){
+                window.location.replace("/menu/alumno");
+                return Swal.fire({
+                    icon: 'success',
+                    title: 'Clave válida',
+                    text: '¡Bienvenido al menú alumno!',
                 });
             } else {
                 return Swal.fire({

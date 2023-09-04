@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FestivoLocalAdminController extends AbstractController
 {
-    private $provinciaSeleccionada;
+    private $provinciaSeleccionada = "";
     private FestivoLocalService $festivoLocalService;
     private ManejarPostsController $manejarPostsController;
     private FestivoLocalRepository $festivoLocalRepository;
