@@ -233,7 +233,7 @@ class AlumnoController extends AbstractController
         $alumno = $this->usuarioRepository->findOneById($alumnoId);
 
         $grupos = $this->usuarioRepository->findGruposByUsuarioId($alumnoId);
-        $gruposNuevos = $this->grupoService->editarGruposAlumnos($grupos);
+        $gruposNuevos = $this->grupoService->editarGruposAlumnos($grupos, $alumnoId);
         $this->usuarioGrupoService->getUsuarioGrupo($alumno, $gruposNuevos);
 
         return $this->redirectToRoute('app_menu_alumno',[

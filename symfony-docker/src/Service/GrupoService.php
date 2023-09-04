@@ -63,7 +63,7 @@ class GrupoService
         return $grupos;
     }
 
-    public function editarGruposAlumnos(array $grupos)
+    public function editarGruposAlumnos(array $grupos, $alumnoId)
     {
         $gruposNuevos = self::getGrupos(false);
         $gruposActualizados = [];
@@ -75,8 +75,8 @@ class GrupoService
             $grupoExistente = $this->buscarGrupo($grupo, $gruposNuevos, "borrar");
             if(!$grupoExistente) {
                 //Si el grupo no está en los nuevos, es porque se ha borrado
-                $usuarioGrupos = $this->usuarioGrupoRepository->findByGrupoId($grupo->getId());
-                $this->usuarioGrupoRepository->removeUsuarioGrupos($usuarioGrupos);
+                $usuarioGrupo = $this->usuarioGrupoRepository->findOneByUsuarioGrupo($alumnoId, $grupo->getId());
+                $this->usuarioGrupoRepository->remove($usuarioGrupo);
             }
         }
 
